@@ -3,17 +3,24 @@
 
 [![image](https://img.shields.io/badge/used-docker-blue.svg)](https://www.docker.com/) [![image](https://img.shields.io/badge/used-Prometheus-red.svg)](https://prometheus.io/) [![image](https://img.shields.io/badge/used-etcd-blue.svg)](https://etcd.io/) [![image](https://img.shields.io/badge/used-Grafana-orange.svg)](https://grafana.com)
 
-注释及配图覆盖率达80%以上，旨在帮助快速入门，建议学习时长1个月+
+如何基于K8S部署成PaaS（一套完整的软件研发和部署平台）——教程（实战代码/欢迎讨论/大量注释/操作配图），你将习得部署如：K8S、dashboard、Harbor、Jenkins、本地gitlab、Apollo框架、promtheus、grafana、spinnaker。
+
+注释及配图覆盖率达80%以上，旨在帮助快速入门。
 
 并将告诉你：是什么（WHAT）、为什么这么做(WHY)、怎么做(HOW)。
+
+建议学习时长1个月+。
 
 ## PaaS架构图
 
 ![K8S_PaaS架构图](assets/K8S_PaaS架构图.png)
 
-### <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9%E6%88%AA%E5%9B%BE.md">多个维度保障你学完：学习内容截图</a>
+## <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/Features.md">Features</a>
 
-
+- 对做的事情进行说明是什么（WHAT），为什么要做（WHY）
+- 对相关文件进行解析，并配图避免学习出错
+- 指明在哪部机器操作，及容易报错点添加解决办法
+- 匹配对应文件，避免无法被下架无法下载等情况
 
 ## 学习章节：
 
