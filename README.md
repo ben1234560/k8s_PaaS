@@ -3,7 +3,7 @@
 
 [![image](https://img.shields.io/badge/used-docker-blue.svg)](https://www.docker.com/)[![image](https://img.shields.io/badge/used-Prometheus-red.svg)](https://prometheus.io/)[![image](https://img.shields.io/badge/used-etcd-blue.svg)](https://etcd.io/)[![image](https://img.shields.io/badge/used-Grafana-orange.svg)](https://grafana.com)
 
-注释及配图覆盖率达80%以上，旨在帮助快速入门
+注释及配图覆盖率达80%以上，旨在帮助快速入门，建议学习时长1个月+
 
 并将告诉你：是什么（WHAT）、为什么这么做(WHY)、怎么做(HOW)。
 
@@ -13,9 +13,18 @@
 
 # 学习内容截图
 
-![1584257636330](assets/1584257636330.png)
+![1584258151218](assets/1584258151218.png)
 
-> 一句代码将含注释、配图、及流程解析等，无需担心学不会
+- 对做的事情进行说明是什么（WHAT），为什么要做（WHY）
+
+![1584258268594](assets/1584258268594.png)
+
+- 对相关文件进行解析，并配图避免学习出错
+
+![1584258427709](assets/1584258427709.png)
+
+- 指明在哪部机器操作，及容易报错的点添加解决办法
+- ...
 
 ## 学习章节：
 
