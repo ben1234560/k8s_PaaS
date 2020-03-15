@@ -1,4 +1,4 @@
-## 第三章——dashboard插件及k8s实战交付
+## 第四章——dashboard插件及k8s实战交付
 
 > 引言：在集群的章节，我们开始使用交付服务的形式来交付，接下来我们也会持续使用这种方式来交付，流程：**准备镜像—>准备资源配置清单—>解析域名（没有ingress则不需要）—>应用配置清单—>完成**
 
@@ -400,7 +400,7 @@ serviceAccountName: kubernetes-dashboard-admin
 
 
 
-### dashboard——heapster
+### dashboard——heapster（可不做）
 
 > **WHAT：**让dashboard有更多图形化的小插件，不过目前由于收集的数据展示的图并不那么准确，所以可以不用部署仅作了解
 

@@ -27,46 +27,46 @@
 ## 学习章节：
 
 <ul>
-  <li>第一章——Docker
+    <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md">第一章——Docker</a>
     <ul>
-      <li>安装Docker
-      <li>开启我们的第一个docker容器
-      <li>Dockerhub注册（自己的远程仓库）
-      <li>Docker镜像管理实战
-      <li>docker容器高级操作
-      <li>dockerfile 综合实验
+        <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%AE%89%E8%A3%85docker">安装Docker</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%BC%80%E5%90%AF%E6%88%91%E4%BB%AC%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAdocker%E5%AE%B9%E5%99%A8">开启我们的第一个docker容器</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#dockerhub%E6%B3%A8%E5%86%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93">Dockerhub注册（自己的远程仓库）</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#docker%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86%E5%AE%9E%E6%88%98">Docker镜像管理实战</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#docker%E5%AE%B9%E5%99%A8%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C">docker容器操作</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#dockerfile-%E7%BB%BC%E5%90%88%E5%AE%9E%E9%AA%8C">dockerfile 综合实验</a>
     </ul>
   </li>
-  <li>第二章——企业部署实战_K8S
+    <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md">第二章——企业部署实战_K8S</a>
     <ul>
-      <li>K8S前置准备工作——bind9安装部署（DNS服务）
-      <li>K8S前置工作——部署docker环境
-      <li>Dockerhub注册（自己的远程仓库）
-      <li>K8S前置工作——部署harbor仓库
-      <li>安装部署主控节点服务etcd
-      <li>部署API-server集群
-      <li>安装部署主控节点L4反代服务
-      <li>安装部署controller-managerv
-      <li>安装部署运算节点服务
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E6%88%91%E4%BB%AC%E9%83%A8%E7%BD%B2%E7%9A%84%E6%9E%B6%E6%9E%84%E5%9B%BE%E6%88%91%E4%BB%AC%E9%83%A8%E7%BD%B2%E7%9A%84%E6%98%AF%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%9A%84paas%E6%9C%8D%E5%8A%A1">K8S前置准备工作——bind9安装部署（DNS服务）</a>
+      <li><a herf="">K8S前置工作——准备签发证书环境</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#k8s%E5%89%8D%E7%BD%AE%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9Cbind9%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2dns%E6%9C%8D%E5%8A%A1">K8S前置工作——部署docker环境</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#k8s%E5%89%8D%E7%BD%AE%E5%B7%A5%E4%BD%9C%E9%83%A8%E7%BD%B2harbor%E4%BB%93%E5%BA%93">K8S前置工作——部署harbor仓库</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E4%B8%BB%E6%8E%A7%E8%8A%82%E7%82%B9%E6%9C%8D%E5%8A%A1etcd">安装部署主控节点服务etcd</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E9%83%A8%E7%BD%B2api-server%E9%9B%86%E7%BE%A4">部署API-server集群</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E4%B8%BB%E6%8E%A7%E8%8A%82%E7%82%B9l4%E5%8F%8D%E4%BB%A3%E6%9C%8D%E5%8A%A1">安装部署主控节点L4反代服务</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2controller-managerv%E8%8A%82%E7%82%B9%E6%8E%A7%E5%88%B6%E5%99%A8%E8%B0%83%E5%BA%A6%E5%99%A8%E6%9C%8D%E5%8A%A1">安装部署controller-managerv</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2%E8%BF%90%E7%AE%97%E8%8A%82%E7%82%B9%E6%9C%8D%E5%8A%A1kubelet">安装部署运算节点服务</a>
     </ul>
   </li>
-  <li>第三章——k8s集群
+    <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94k8s%E9%9B%86%E7%BE%A4.md">第三章——k8s集群</a>
     <ul>
-      <li>安装部署flanneld
-      <li>flannel之SNAT规则优化
-      <li>安装部署coredns（服务发现）
-      <li>K8S的服务暴露ingress
+        <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94k8s%E9%9B%86%E7%BE%A4.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2flanneld">安装部署flanneld</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94k8s%E9%9B%86%E7%BE%A4.md#flannel%E4%B9%8Bsnat%E8%A7%84%E5%88%99%E4%BC%98%E5%8C%96">flannel之SNAT规则优化</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94k8s%E9%9B%86%E7%BE%A4.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2coredns%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0">安装部署coredns（服务发现）</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%89%E7%AB%A0%E2%80%94%E2%80%94k8s%E9%9B%86%E7%BE%A4.md#k8s%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%9A%B4%E9%9C%B2ingress">K8S的服务暴露ingress</a>
     </ul>
   </li>
-  <li>第四章——dashboard插件及k8s实战交付
+  <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94dashboard%E6%8F%92%E4%BB%B6%E5%8F%8Ak8s%E5%AE%9E%E6%88%98%E4%BA%A4%E4%BB%98.md">第四章——dashboard插件及k8s实战交付</a>
     <ul>
-      <li>dashboard安装部署
-      <li>K8S仪表盘鉴权
-      <li>dashboard——heapster
-      <li>K8S平滑升级技巧
+        <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94dashboard%E6%8F%92%E4%BB%B6%E5%8F%8Ak8s%E5%AE%9E%E6%88%98%E4%BA%A4%E4%BB%98.md#dashboard%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2">dashboard安装部署</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94dashboard%E6%8F%92%E4%BB%B6%E5%8F%8Ak8s%E5%AE%9E%E6%88%98%E4%BA%A4%E4%BB%98.md#k8s%E4%BB%AA%E8%A1%A8%E7%9B%98%E9%89%B4%E6%9D%83">K8S仪表盘鉴权</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94dashboard%E6%8F%92%E4%BB%B6%E5%8F%8Ak8s%E5%AE%9E%E6%88%98%E4%BA%A4%E4%BB%98.md#dashboardheapster">dashboard——heapster</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%9B%9B%E7%AB%A0%E2%80%94%E2%80%94dashboard%E6%8F%92%E4%BB%B6%E5%8F%8Ak8s%E5%AE%9E%E6%88%98%E4%BA%A4%E4%BB%98.md#k8s%E5%B9%B3%E6%BB%91%E5%8D%87%E7%BA%A7%E6%8A%80%E5%B7%A7">K8S平滑升级技巧</a>
     </ul>
   </li>
-  <li>第五章——K8S结合CI&CD持续交付和集中管理配置
+  <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md">第五章——K8S结合CI&CD持续交付和集中管理配置</a>
     <ul>
       <li>安装部署zookeeper
       <li>安装部署Jenkins
@@ -80,7 +80,7 @@
       <li>实战K8S集群毁灭性测试
     </ul>
   </li>
-  <li>第六章——在K8S中集成Apollo配置中心
+  <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md">第六章——在K8S中集成Apollo配置中心</a>
     <ul>
       <li>configmap使用详解
       <li>交付Apollo-ConfigService到K8S
@@ -95,7 +95,7 @@
       <li>实战演示项目提测，发版流程
     </ul>
   </li>
-  <li>第七章——Promtheus监控k8s企业家应用
+  <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E5%AE%B6%E5%BA%94%E7%94%A8.md">第七章——Promtheus监控k8s企业家应用</a>
     <ul>
       <li>Prometheus监控软件概述
       <li>交付kube-state-metric
@@ -118,7 +118,7 @@
       <li>详解Kibana生产实践方法
     </ul>
   </li>
-  <li>第八章——spinaker部署与应用
+  <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md">第八章——spinaker部署与应用</a>
     <ul>
       <li>部署Spinnaker的Amory发行版
       <li>安装部署redis
