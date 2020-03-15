@@ -1,15 +1,21 @@
 # k8s_PaaS
-[![image](https://img.shields.io/badge/conda-jupyter-deepgreen.svg)](https://www.anaconda.com/)
+[![image](https://img.shields.io/badge/google-kubernetes-blue.svg)](https://kubernetes.io/)[![image](https://img.shields.io/badge/ctripcorp-apollo-gray.svg)](https://github.com/ctripcorp/apollo)[![image](https://img.shields.io/badge/CNCD-Spinnaker-skyblue.svg)](https://www.spinnaker.io/)[![image](https://img.shields.io/badge/JAVA-Jenkins-orange.svg)](https://jenkins.io/zh/)[![image](https://img.shields.io/badge/Git-Gitee-red.svg)](https://gitee.com)[![image](https://img.shields.io/badge/Git-GitLab-orange.svg)]()[![image](https://img.shields.io/badge/Apache-zookeeper-Crimson.svg)](http://zookeeper.apache.org/)[![image](https://img.shields.io/badge/used-Harbor-green.svg)](https://goharbor.io/)
 
-#### 注释及配图前期覆盖率为80%以上，旨在帮助快速入门
+[![image](https://img.shields.io/badge/used-docker-blue.svg)](https://www.docker.com/)[![image](https://img.shields.io/badge/used-Prometheus-red.svg)](https://prometheus.io/)[![image](https://img.shields.io/badge/used-etcd-blue.svg)](https://etcd.io/)[![image](https://img.shields.io/badge/used-Grafana-orange.svg)](https://grafana.com)
 
-#### 将告诉你：是什么（WHAT）、为什么这么做(WHY)、怎么做(HOW)。
+注释及配图覆盖率达80%以上，旨在帮助快速入门
 
-
+并将告诉你：是什么（WHAT）、为什么这么做(WHY)、怎么做(HOW)。
 
 ## PaaS架构图
 
 ![K8S_PaaS架构图](assets/K8S_PaaS架构图.png)
+
+# 学习内容截图
+
+![1584257636330](assets/1584257636330.png)
+
+> 一句代码将含注释、配图、及流程解析等，无需担心学不会
 
 ## 学习章节：
 
