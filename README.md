@@ -83,8 +83,39 @@
     </ul>
   </li>
   <li>第七章——Promtheus监控k8s企业家应用
+    <ul>
+      <li>Prometheus监控软件概述
+      <li>交付kube-state-metric
+      <li>交付node-exporter
+      <li>交付cadvisor
+      <li>交付blackbox-exporter
+      <li>安装部署Prometheus-server
+      <li>配置Prometheus监控业务容器
+      <li>安装部署配置Grafana
+      <li>安装部署alertmanager
+      <li>测试alertmanager报警功能
+      <li>通过K8S部署dubbo微服务接入ELK架构
+      <li>制作tomcat容器的底包镜像
+      <li>交付tomcat形式的dubbo服务消费者到K8S集群
+      <li>二进制安装部署elasticsearch
+      <li>安装部署kafka和kafka-manager
+      <li>制作filebeat底包并接入dubbo服务消费者
+      <li>部署logstash镜像
+      <li>交付kibana到K8S集群
+      <li>详解Kibana生产实践方法
+    </ul>
   </li>
   <li>第八章——spinaker部署与应用
+    <ul>
+      <li>部署Spinnaker的Amory发行版
+      <li>安装部署redis
+      <li>安装部署clouddriver
+      <li>安装部署spinnaker其余组件
+      <li>使用spinnaker结合Jenkins构建镜像
+      <li>使用spinnaker配置dubbo服务提供者发布至K8S
+      <li>使用spinnaker配置dubbo服务消费者到K8S
+      <li>模拟生产上代码迭代
+    </ul>
   </li>
 </ul>
 
