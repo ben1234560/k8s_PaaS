@@ -1,5 +1,5 @@
 # k8s_PaaS
-[![image](https://img.shields.io/badge/google-kubernetes-blue.svg)](https://kubernetes.io/)[![image](https://img.shields.io/badge/ctripcorp-apollo-gray.svg)](https://github.com/ctripcorp/apollo)[![image](https://img.shields.io/badge/CNCD-Spinnaker-skyblue.svg)](https://www.spinnaker.io/)[![image](https://img.shields.io/badge/JAVA-Jenkins-orange.svg)](https://jenkins.io/zh/)[![image](https://img.shields.io/badge/Git-Gitee-red.svg)](https://gitee.com)[![image](https://img.shields.io/badge/Git-GitLab-orange.svg)]()[![image](https://img.shields.io/badge/Apache-zookeeper-Crimson.svg)](http://zookeeper.apache.org/)[![image](https://img.shields.io/badge/used-Harbor-green.svg)](https://goharbor.io/)
+[![image](https://img.shields.io/badge/google-kubernetes-blue.svg)](https://kubernetes.io/) [![image](https://img.shields.io/badge/ctripcorp-apollo-gray.svg)](https://github.com/ctripcorp/apollo) [![image](https://img.shields.io/badge/CNCD-Spinnaker-skyblue.svg)](https://www.spinnaker.io/) [![image](https://img.shields.io/badge/JAVA-Jenkins-orange.svg)](https://jenkins.io/zh/)[![image](https://img.shields.io/badge/Git-Gitee-red.svg)](https://gitee.com) [![image](https://img.shields.io/badge/Git-GitLab-orange.svg)]() [![image](https://img.shields.io/badge/Apache-zookeeper-Crimson.svg)](http://zookeeper.apache.org/) [![image](https://img.shields.io/badge/used-Harbor-green.svg)](https://goharbor.io/)
 
 [![image](https://img.shields.io/badge/used-docker-blue.svg)](https://www.docker.com/)[![image](https://img.shields.io/badge/used-Prometheus-red.svg)](https://prometheus.io/)[![image](https://img.shields.io/badge/used-etcd-blue.svg)](https://etcd.io/)[![image](https://img.shields.io/badge/used-Grafana-orange.svg)](https://grafana.com)
 
@@ -11,20 +11,9 @@
 
 ![K8S_PaaS架构图](assets/K8S_PaaS架构图.png)
 
-# 学习内容截图
+### <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%AD%A6%E4%B9%A0%E5%86%85%E5%AE%B9%E6%88%AA%E5%9B%BE.md">多个维度保障你学完：学习内容截图</a>
 
-![1584258151218](assets/1584258151218.png)
 
-- 对做的事情进行说明是什么（WHAT），为什么要做（WHY）
-
-![1584258268594](assets/1584258268594.png)
-
-- 对相关文件进行解析，并配图避免学习出错
-
-![1584258427709](assets/1584258427709.png)
-
-- 指明在哪部机器操作，及容易报错的点添加解决办法
-- ...
 
 ## 学习章节：
 
