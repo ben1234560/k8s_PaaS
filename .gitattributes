@@ -1,2 +1,0 @@
-*.md linguist-language=shell
-软件包/kubernetes-server-linux-amd64-v1.15.2.tar.gz filter=lfs diff=lfs merge=lfs -text
