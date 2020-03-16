@@ -27,10 +27,10 @@
 ## 学习章节：
 
 <ul>
-    <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md">第一章——Docker</a>
+    <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md">第一章——Docker</a>
     <ul>
-        <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%AE%89%E8%A3%85docker">安装Docker</a>
-      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%BC%80%E5%90%AF%E6%88%91%E4%BB%AC%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAdocker%E5%AE%B9%E5%99%A8">开启我们的第一个docker容器</a>
+        <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%AE%89%E8%A3%85docker">安装Docker</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#%E5%BC%80%E5%90%AF%E6%88%91%E4%BB%AC%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AAdocker%E5%AE%B9%E5%99%A8">开启我们的第一个docker容器</a>
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#dockerhub%E6%B3%A8%E5%86%8C%E8%87%AA%E5%B7%B1%E7%9A%84%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93">Dockerhub注册（自己的远程仓库）</a>
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#docker%E9%95%9C%E5%83%8F%E7%AE%A1%E7%90%86%E5%AE%9E%E6%88%98">Docker镜像管理实战</a>
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker.md#docker%E5%AE%B9%E5%99%A8%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C">docker容器操作</a>
@@ -131,7 +131,7 @@
   </li>
 </ul>
 
-<a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E6%A8%A1%E6%8B%9F%E7%94%9F%E4%BA%A7%E4%B8%8A%E4%BB%A3%E7%A0%81%E8%BF%AD%E4%BB%A3">模拟生产上代码迭代</a>
+
 
 
 ## 说明
