@@ -131,6 +131,7 @@
   </li>
 </ul>
 
+<a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E6%A8%A1%E6%8B%9F%E7%94%9F%E4%BA%A7%E4%B8%8A%E4%BB%A3%E7%A0%81%E8%BF%AD%E4%BB%A3">模拟生产上代码迭代</a>
 
 
 ## 说明
