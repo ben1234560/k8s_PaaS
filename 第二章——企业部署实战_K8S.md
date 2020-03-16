@@ -75,7 +75,7 @@
 
 ![1578637749475](assets/1578637749475.png)
 
-使用我的镜像包或者任意7.6以上版本的centos（这个工具是VMware Workstation Pro）
+使用我的镜像包（待上传）或者任意7.6以上版本的centos（这个工具是VMware Workstation Pro）
 
 ![1583025768982](assets/1583025768982.png)
 
@@ -519,15 +519,19 @@ location: /data/harbor/logs
 > ~~~
 > 
 > ~~~
+>
+> ~~~
 > - **-s：**软连接，可以对整个目录进行链接
->
+> 
 > **harbor.yml解析：**
->
+> 
 > - port为什么改成180：因为后面我们要装nginx，nginx用的80，所以要把它们错开
 > - data_volume：数据卷，即docker镜像放在哪里
 > - location：日志文件
->
+> 
 > **./install.sh：**启动shell脚本
+> 
+> ~~~
 >
 > ~~~
 > 
@@ -734,7 +738,7 @@ certs]# ll
 # 创建用户
 src]# useradd -s /sbin/nologin -M etcd
 src]# id etcd
-# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/tags
+# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/tags，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
 src]# 这里要有一部把etcd包拉进来的操作
 src]# tar xf etcd-v3.1.20-linux-amd64.tar.gz -C /opt
 src]# cd /opt
@@ -756,25 +760,14 @@ opt]# cd etcd
 >   语法:ln [参数][源文件或目录][目标文件或目录]
 >   ```
 > ```
-> 
-> ```
->
-> ```
-> 
-> ```
 > - **-s：**软连接，可以对整个目录进行链接
->
+> 
 > **useradd：**建立用户帐号
->
+> 
 > - **-s：**指定用户登入后所使用的shell
 > - **-M：**不要自动建立用户的登入目录
 > ```
-> 
-> ```
 >
-> ```
-> 
-> ```
 
 ![1578833934325](assets/1578833934325.png)
 
@@ -896,6 +889,8 @@ etcd]# netstat -luntp|grep etcd
 [kubernetes官网](https://github.com/kubernetes/kubernetes/tags?after=v1.14.9-beta.0)
 
 网址的页面坏了进不去没办法截图，你们就直接用我的包吧
+
+百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
 
 根据架构图，我们把运算节点部署在21和22机器
 

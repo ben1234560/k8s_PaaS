@@ -22,7 +22,7 @@
 - 对做的事情进行说明是什么（WHAT），为什么要做（WHY）
 - 对相关文件进行解析，并配图避免学习出错
 - 指明在哪部机器操作，及容易报错点添加解决办法
-- 匹配对应文件，避免无法被下架无法下载等情况
+- 匹配对应文件，避免无法被下架无法下载等情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
 
 ## 学习章节：
 
@@ -91,7 +91,7 @@
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98apollo%E5%88%86%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86dubbo%E6%9C%8D%E5%8A%A1-%E4%BA%A4%E4%BB%98apollo-configservice">实战Apollo分环境管理dubbo服务-交付Apollo-configservice</a>
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98%E4%BD%BF%E7%94%A8apollo%E5%88%86%E7%8E%AF%E5%A2%83%E7%AE%A1%E7%90%86dubbo%E6%9C%8D%E5%8A%A1%E4%BA%A4%E4%BB%98apollo-portal%E5%92%8Cadminservice">实战使用Apollo分环境管理dubbo服务——交付Apollo-portal和adminservice</a>
       <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98%E5%8F%91%E5%B8%83dubbo%E8%BF%9E%E6%8E%A5apollo%E5%88%B0%E4%B8%8D%E5%90%8C%E7%8E%AF%E5%A2%83">实战发布dubbo连接Apollo到不同环境</a>
-      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA%E9%A1%B9%E7%9B%AE%E6%8F%90%E6%B5%8B%E5%8F%91%E7%89%88%E6%B5%81%E7%A8%8B"></a>实战演示项目提测，发版流程</a>
+      <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA%E9%A1%B9%E7%9B%AE%E6%8F%90%E6%B5%8B%E5%8F%91%E7%89%88%E6%B5%81%E7%A8%8B">实战演示项目提测，发版流程</a>
     </ul>
   </li>
   <li><a herf="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E5%AE%B6%E5%BA%94%E7%94%A8.md">第七章——Promtheus监控k8s企业家应用</a>
