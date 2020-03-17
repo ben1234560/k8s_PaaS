@@ -75,7 +75,9 @@
 
 ![1578637749475](assets/1578637749475.png)
 
-使用我的镜像包（待上传）或者任意7.6以上版本的centos（这个工具是VMware Workstation Pro）
+使用我的镜像包或者任意7.6以上版本的centos（这个工具是VMware Workstation Pro）
+
+> 7.6镜像网上资源少，这里提供一个：https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h 。注意：镜像包的network是ens33，我用的是eth0，下面你就知道在哪用了，你也可以改成跟我一样，这是百度经验https://jingyan.baidu.com/article/17bd8e524c76a285ab2bb8ff.html
 
 ![1583025768982](assets/1583025768982.png)
 
@@ -134,6 +136,8 @@
 然后在xshell访问id即可，如图
 
 [xshell下载](https://xshell.en.softonic.com/download)
+
+> 当然我也有提供软件包：https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h 。里面还有Xftp，是用来进行本地电脑和虚拟机的文件传输
 
 ![1578655333674](assets/1578655333674.png)
 
@@ -521,15 +525,19 @@ location: /data/harbor/logs
 > ~~~
 >
 > ~~~
+> 
+> ~~~
 > - **-s：**软连接，可以对整个目录进行链接
-> 
+>
 > **harbor.yml解析：**
-> 
+>
 > - port为什么改成180：因为后面我们要装nginx，nginx用的80，所以要把它们错开
 > - data_volume：数据卷，即docker镜像放在哪里
 > - location：日志文件
-> 
+>
 > **./install.sh：**启动shell脚本
+>
+> ~~~
 > 
 > ~~~
 >
@@ -760,14 +768,17 @@ opt]# cd etcd
 >   语法:ln [参数][源文件或目录][目标文件或目录]
 >   ```
 > ```
+> 
+> ```
 > - **-s：**软连接，可以对整个目录进行链接
-> 
+>
 > **useradd：**建立用户帐号
-> 
+>
 > - **-s：**指定用户登入后所使用的shell
 > - **-M：**不要自动建立用户的登入目录
 > ```
->
+> 
+> ```
 
 ![1578833934325](assets/1578833934325.png)
 
