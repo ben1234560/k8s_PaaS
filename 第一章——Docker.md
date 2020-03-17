@@ -13,8 +13,12 @@
 > - 这里推荐我认为讲的很不错的一篇文章https://blog.csdn.net/deng624796905/article/details/86493330
 >
 > **WHY：**docker的一个核心就是容器（沙箱），在开发环境开发的代码，到测试环境需要调整，到预生产环境也需要调整，到生产环境更加需要调整，而我们想要的是一次部署到处运行，这就是为什么使用docker。
+>
+> 推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
 
-环境：centos7.6，2C2G
+环境：centos7.6，2核2G内存（1C2G即可）
+
+> 如果你需要7.6的镜像和xshell可以去网上下载或者我提供的包https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h。当然如果你下载7.6镜像包比较慢，想先上手做一下，可以联系我QQ：909336740给你开一个**免费**的7天1C2G云服务器（腾讯云/限2020年6月前）
 
 ~~~
 # 查看机器信息，内核版本必须是3.8以上
@@ -108,6 +112,10 @@
 >
 > docker info：查看docker信息
 
+完成
+
+
+
 ### 开启我们的第一个docker容器
 
 ~~~
@@ -132,6 +140,10 @@ ${registry_name}/${repository_name}/${image_name}:${tag_name}
 docker.io/library/alipine:3.10.1
 ~~~
 
+完成
+
+
+
 ### Dockerhub注册（自己的远程仓库）
 
 ![1578551639317](assets/1578551639317.png)
@@ -148,6 +160,10 @@ docker.io/library/alipine:3.10.1
 > - cat：用于连接文件并打印内容到页面
 
 ![1578551787380](assets/1578551787380.png)
+
+完成
+
+
 
 ### Docker镜像管理实战
 
@@ -205,6 +221,10 @@ docker.io/library/alipine:3.10.1
 ~~~
 # 镜像不管多大，实际线上只会改变变动的部分，并不会全部替换，所以不需要担心速度问题，只有首次比较慢
 ~~~
+
+完成
+
+
 
 ### docker容器基本操作
 
@@ -306,6 +326,10 @@ EOF
 
 ![1578558054990](assets/1578558054990.png)
 
+完成
+
+
+
 ### dockerfile
 
 > **WHAT：**通过指令编排镜像，帮你自动化的构建镜像
@@ -391,6 +415,10 @@ dockerfile]# docker run --rm -p80:80 909336740/nginx:baidu
 
 ![1578564376367](assets/1578564376367.png)
 
+完成
+
+
+
 ### dockerfile四种网络类型
 
 - NAT（默认）
@@ -398,3 +426,4 @@ dockerfile]# docker run --rm -p80:80 909336740/nginx:baidu
 - Host
 - 联合网络
 
+恭喜你已经完成了docker的部分，当然你也许还是云里雾里，不用担心，后续我们会继续用到这些内容，如果你对docker的历史、源码等解析有兴趣，推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
