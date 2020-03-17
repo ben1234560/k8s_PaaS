@@ -14,5 +14,6 @@
 
 ![1584272695417](assets/1584272695417.png)
 
-- 匹配对应文件，避免无法被下架无法下载等情况百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+- 使用文件皆是官方文件，且软件包有对应文件，避免无法被更新或其它问题导致无法下载等情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1。
+- 不间断更新，欢迎给我们提供你的建议、扩展、报错，一起建设代码。
 
