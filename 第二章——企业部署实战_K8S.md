@@ -1,4 +1,4 @@
-## 第二章——企业部署实战_K8S
+第二章——企业部署实战_K8S
 
 #### 前言：如果你是新手，机器的名字及各种账户密码一定要和我的一样，先学一遍，再自己改
 
@@ -36,9 +36,9 @@
 >
 > **Node：**运行容器应用，由Master管理
 
-### 我们部署的架构图（我们部署的是一套完整的PaaS服务）
+### 我们部署的K8S架构图
 
-![1582098847887](assets/1582098847887.png)
+![1584700891603](assets/1584700891603.png)
 
 > 可以简单理解成：
 >
@@ -627,7 +627,7 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 
 看我们的结构图，可以看到我们在12/21/22机器都部署了etcd
 
-![1582179787236](assets/1582179787236.png)
+![1584701032598](assets/1584701032598.png)
 
 ~~~
 # 我们开始制作证书，200机器：
@@ -872,7 +872,7 @@ etcd]# netstat -luntp|grep etcd
 
 根据架构图，我们把运算节点部署在21和22机器
 
-![1582184370360](assets/1582184370360.png)
+![1584701070750](assets/1584701070750.png)
 
 ~~~
 # 21/22机器
@@ -1151,7 +1151,7 @@ bin]# supervisorctl status
 
 根据我们架构图，在11/12机器上做反代
 
-![1582184405108](assets/1582184405108.png)
+![1584701103579](assets/1584701103579.png)
 
 ~~~
 # 11/12机器
@@ -1321,7 +1321,7 @@ vrrp_instance VI_1 {
 
 让我们再搬出我们的架构图
 
-![1582187925219](assets/1582187925219.png)
+![1584701137068](assets/1584701137068.png)
 
 ~~~
 # 21/22机器：
@@ -1485,6 +1485,7 @@ conf]# kubectl config set-context myk8s-context \
 
 conf]# kubectl config use-context myk8s-context --kubeconfig=kubelet.kubeconfig
 #out: Switched to context "myk8s-context".
+# 做权限授权，推荐文章https://www.jianshu.com/p/9991f189495f
 conf]# vi k8s-node.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
