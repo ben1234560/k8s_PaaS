@@ -79,10 +79,6 @@ logs]# rm -fr ./*
 
 ![1581059149533](assets/1581059149533.png)
 
-![1581059200427](assets/1581059200427.png)
-
-![1581059308327](assets/1581059308327.png)
-
 ~~~
 # 11/12机器，修改zoo.cfg配置：
 zookeeper]# cd /opt/zookeeper/conf
@@ -100,7 +96,7 @@ zookeeper]# ps aux|grep zoo
 zookeeper]# bin/zkServer.sh status
 ~~~
 
-![1581059797902](assets/1581059797902.png)
+![1584697777390](assets/1584697777390.png)
 
 Mode: standalone 模式，拆分完成
 
@@ -209,8 +205,6 @@ dubbo-monitor]# mv dp2.yaml dp.yaml
 # 看一下相关容器有没有起来
 ~~~
 
-![1581063627359](assets/1581063627359.png)
-
 ![1583198817470](assets/1583198817470.png)
 
 ![1583198829279](assets/1583198829279.png)
@@ -287,7 +281,7 @@ conf]# kubectl create cm kubelet-cm --from-file=./kubelet.kubeconfig
 #out: configmap/kubelet-cm created
 ~~~
 
-![1581143620638](assets/1581143620638.png)
+可以在dashoboard的default名称空间下Config Maps看到
 
 随后记得删除
 
@@ -295,11 +289,13 @@ conf]# kubectl create cm kubelet-cm --from-file=./kubelet.kubeconfig
 
 #### 官方Apollo框架：
 
-![1581240089269](assets/1581240089269.png)
+![img](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/overall-architecture.png)
 
 #### 简化Apollo框架：
 
-![1581238094884](assets/1581238094884.png)
+![1584698746125](assets/1584698746125.png)
+
+![1584698613252](assets/1584698613252.png)
 
 > Client通过推拉结合和ConfigService交互，然后ConfigService去拿ConfigDB里面的配置给Client端返回去。
 >
@@ -696,8 +692,6 @@ spec:
 ~]# kubectl apply -f http://k8s-yaml.od.com/apollo-configservice/ingress.yaml
 ~~~
 
-![1581235919602](assets/1581235919602.png)
-
 ![1583206365045](assets/1583206365045.png)
 
 资源给的少，可能稍微慢了一些，点进去->点右上角的LOGS，日志有点多，记得点击右下角的翻页
@@ -740,7 +734,7 @@ none)]> show processlist;
 
 [官网下载https://github.com/ctripcorp/apollo/releases/tag/v1.5.1](https://github.com/ctripcorp/apollo/releases/tag/v1.5.1)
 
-![1581238371858](assets/1581238371858.png)
+![1584698854148](assets/1584698854148.png)
 
 ~~~
 # 200机器：
@@ -1270,7 +1264,7 @@ Password: admin
 > 第一件事，修改密码，任何开源软件的第一件事，就是修改默认密码
 >
 
-![1581322515259](assets/1581322515259.png)
+![1584699514174](assets/1584699514174.png)
 
 ![1583221587411](assets/1583221587411.png)
 
@@ -2215,3 +2209,4 @@ base_image: base/jre8:8u112
 ![1583316620715](assets/1583316620715.png)
 
 已经改变，成功
+
