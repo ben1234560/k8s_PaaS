@@ -1115,7 +1115,7 @@ prometheus         A    10.4.7.10
 
 如何监控存活性，只需要修改配置
 
-![1581517517953](assets/1581517517953.png)
+![1584699708597](assets/1584699708597.png)
 
 ~~~
 # Edit a Deployment（TCP），添加以下内容
@@ -3094,5 +3094,5 @@ jre8]# docker push harbor.od.com/base/jre8:8u112_with_logs
 
 ![1584237947516](assets/1584237947516.png)
 
-下面就要你接着做了...
+下面就要你接着做了
 
