@@ -71,7 +71,7 @@
   <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md">第五章——K8S结合CI&CD持续交付和集中管理配置</a>
     <ul>
         <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2zookeeper">安装部署zookeeper</a>
-        <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2jenkins"></a>安装部署Jenkins
+        <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2jenkins">安装部署Jenkins</a>
         <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E5%AE%89%E8%A3%85maven">安装maven</a>
         <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E5%88%B6%E4%BD%9Cdubbo%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%BA%95%E5%8C%85%E9%95%9C%E5%83%8F">制作dubbo微服务的底包镜像</a>
         <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%94%E7%AB%A0%E2%80%94%E2%80%94K8S%E7%BB%93%E5%90%88CI%26CD%E6%8C%81%E7%BB%AD%E4%BA%A4%E4%BB%98%E5%92%8C%E9%9B%86%E4%B8%AD%E7%AE%A1%E7%90%86%E9%85%8D%E7%BD%AE.md#%E4%BD%BF%E7%94%A8jenkins%E6%8C%81%E7%BB%AD%E6%9E%84%E5%BB%BA%E4%BA%A4%E4%BB%98dubbo%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%8F%90%E4%BE%9B%E8%80%85">使用Jenkins持续构建交付dubbo服务的提供者</a>
@@ -135,6 +135,7 @@
 
 
 
+##### 资料参考[老男孩教育K8S容器云架构师1期](https://www.luffycity.com/home):+1:
 
 ## 说明
 
@@ -142,7 +143,7 @@
 <p> 本人水平有限，文字代码难免有遗漏错误的地方，望不吝赐教，万分感谢。
 <p> Email：909336740@qq.com
 <p> QQ：909336740
-<p> PS：看到点赞很开心😊
+<p> PS：看到点赞很开心，谢谢😊
 
 
 
