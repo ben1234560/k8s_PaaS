@@ -877,7 +877,7 @@ traefik            A    10.4.7.10
 
 当用户输入traefik.od.com时，被dns解析到10.4.7.10，而10则在11上，去找L7层服务，而反代配置的od.com.conf，则是将*.od.com无差别的抛给了ingress，ingress则通过noteselect找到pod
 
-![1579167639653](assets/1579167639653.png)
+![1584961721898](assets/1584961721898.png)
 
 再回顾上面的架构图，我们已经全部安装部署完。
 
