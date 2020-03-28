@@ -421,9 +421,15 @@ dockerfile]# docker run --rm -p80:80 909336740/nginx:baidu
 
 ### dockerfile四种网络类型
 
-- NAT（默认）
-- None
-- Host
-- 联合网络
+- Bridge contauner（NAT）   桥接式网络模式(默认)
+- None(Close) container   封闭式网络模式，不为容器配置网络
+- Host(open) container   开放式网络模式，和宿主机共享网络
+- Container(join) container   联合挂载式网络模式，和其他容器共享网络
+
+> 用什么类型的网络要根据我们的业务去决定
+
+
+
+### Docker部分完结
 
 恭喜你已经完成了docker的部分，当然你也许还是云里雾里，不用担心，后续我们会继续用到这些内容，如果你对docker的历史、源码等解析有兴趣，推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
