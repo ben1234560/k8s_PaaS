@@ -1248,9 +1248,7 @@ portal             A    10.4.7.10
 ~]# kubectl apply -f http://k8s-yaml.od.com/apollo-portal/ingress.yaml
 ~~~
 
-查看起来的portal的logs日志，可能稍微有些慢
-
-![1581322247898](assets/1581322247898.png)
+可以查看起来的portal的logs日志，可能稍微有些慢
 
 [浏览器输入portal.od.com](portal.od.com)
 
@@ -1557,7 +1555,7 @@ dubbo-demo-consumer]# vi dp.yaml
 
 ![1583291244653](assets/1583291244653.png)
 
-![1581327148407](assets/1581327148407.png)
+再去Applications可以看到已经起来了
 
 ~~~
 # 浏览器访问demo.od.com/hello?name=apollo
