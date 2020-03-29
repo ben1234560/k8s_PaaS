@@ -135,7 +135,7 @@
 
 ##### 资料参考：
 
-[深入剖析kubernetes](https://time.geekbang.org/column/intro/116)
+[深入剖析kubernetes](https://time.geekbang.org/column/intro/116)也可以免费下载（在Docker章节最下面）
 
 [老男孩教育K8S容器云架构师1期](https://www.luffycity.com/home)
 
