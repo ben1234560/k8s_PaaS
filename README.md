@@ -20,10 +20,9 @@
 ## <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/Features.md">Features</a>
 
 - 对做的事情进行说明是什么（WHAT），为什么要做（WHY）。
-- 对相关文件进行解析，并配图避免学习出错。
-- 指明在哪部机器操作，及容易报错点添加解决办法。
-- 使用文件皆是官方文件，且软件包有对应文件，避免无法被更新或其它问题导致无法下载等情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1。
-- 不间断更新，欢迎给我们提供你的建议、扩展、报错，一起建设代码。
+- 对相关文件进行解析、指明哪部机器操作、配图，并在易出错点添加解决办法。
+- 使用文件皆是官方文件，相关软件包有对应文件，避免被更新或其它问题导致无法下载等情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1。
+- 无数前人遍历/建设代码，为代码完整性保驾护航，欢迎给我们提供你的建议、扩展、报错。
 - 整理了多人问的4个问题<a href="https://github.com/ben1234560/k8s_PaaS/blob/master/Features.md#qa">Q&A</a>：配置只有4核8G够吗，新手可以吗，找不到报错怎么办，做完看不懂怎么办
 
 ## 学习章节：
