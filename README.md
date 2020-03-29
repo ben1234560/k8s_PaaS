@@ -134,8 +134,11 @@
 </ul>
 
 
+##### 资料参考：
 
-##### 资料参考[老男孩教育K8S容器云架构师1期](https://www.luffycity.com/home)
+[深入剖析kubernetes](https://time.geekbang.org/column/intro/116)
+
+[老男孩教育K8S容器云架构师1期](https://www.luffycity.com/home)
 
 ## 说明
 
