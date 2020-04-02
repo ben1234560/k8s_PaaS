@@ -200,7 +200,7 @@ docker.io/library/alipine:3.10.1
 ~]# docker push docker.io/909336740/alpine:v3.10.3
 ~~~
 
-> **docker push**：将本地的镜像上传到镜像仓库,要先登陆到镜像仓库
+> **docker push**：将本地的镜像上传到镜像仓库,要先登陆到镜像仓库，带版本号
 >
 > - 语法：docker push [OPTIONS] NAME[:TAG]
 
