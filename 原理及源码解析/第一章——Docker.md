@@ -12,7 +12,9 @@
 
 **Cgroups 技术**是用来制造约束的主要手段，而**Namespace 技术**则是用来修改进程视图的主要方法。
 
-如何理解：在Linux启动一个容器
+> **Cgroups ：**其名称源自**控制组群**（control groups）的简写，是[Linux内核](https://baike.baidu.com/item/Linux%E5%86%85%E6%A0%B8)的一个功能，用来限制、控制与分离一个[进程组](https://baike.baidu.com/item/%E8%BF%9B%E7%A8%8B%E7%BB%84)的[资源](https://baike.baidu.com/item/%E8%B5%84%E6%BA%90)（如CPU、内存、磁盘输入输出等）。
+
+在Linux启动一个容器
 
 ~~~
 $ docker run -it busybox /bin/sh
@@ -128,4 +130,21 @@ unshare命令，就是通过unshare()系统调用实现的。
 
 
 ### 深入理解容器镜像
+
+**挂载在容器根目录上、用来为容器进程提供隔离后执行环境的文件系统，就是所谓的“容器镜像”。它还有一个更为专业的名字，叫作：rootfs（根文件系统）。**
+
+一个最常见的 rootfs，或者说容器镜像，会包括如下所示的一些目录和文件：
+
+~~~
+$ ls /
+bin dev etc home lib lib64 mnt opt proc root run sbin sys tmp usr var
+~~~
+
+对 Docker 项目来说，它最核心的原理实际上就是为待创建的用户进程：
+
+1. 启用 Linux Namespace 配置；
+2. 设置指定的 Cgroups 参数；
+3. 切换进程的根目录（Change Root）。
+
+这样，一个完整的容器就诞生了。当然内核还是共享宿主机操作系统的内核。
 
