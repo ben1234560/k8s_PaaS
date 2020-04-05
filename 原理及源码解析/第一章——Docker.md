@@ -146,5 +146,63 @@ bin dev etc home lib lib64 mnt opt proc root run sbin sys tmp usr var
 2. 设置指定的 Cgroups 参数；
 3. 切换进程的根目录（Change Root）。
 
-这样，一个完整的容器就诞生了。当然内核还是共享宿主机操作系统的内核。
+这样，一个完整的容器就诞生了。当然内核还是共享宿主机操作系统的内核。正是由于 rootfs 的存在，容器才有了一个被反复宣传至今的**重要特性：一致性**。
+
+这种深入到操作系统级别的运行环境一致性，打通了应用在本地开发和远端执行环境之间难以逾越的鸿沟。
+
+**问题：**那么开发一个应用，或者升级一下现有的应用，都要重复制作一次 rootfs 吗？我在rootfs装了python环境，部署了python应用，我的其它同事想发布python应用时，当然希望用到我的python环境，而不是他也需要部署一遍。
+
+而docker镜像的设计中，引入了层（layer）的概念，也就是说，用户制作镜像的每一步操作，都会生成一个层，也就是一个增量 rootfs。docker使用的rootfs往往由多个“层”组成：
+
+~~~
+$ docker image inspect ubuntu:latest
+...
+     "RootFS": {
+      "Type": "layers",
+      "Layers": [
+        "sha256:f49017d4d5ce9c0f544c...",
+        "sha256:8f2b771487e9d6354080...",
+        "sha256:ccd4d61916aaa2159429...",
+        "sha256:c01d74f99de40e097c73...",
+        "sha256:268a067217b5fe78e000..."
+      ]
+    }
+~~~
+
+> 上面的镜像实际由五个层组成。这五个层就是五个增量 rootfs，每一层都是 Ubuntu 操作系统文件与目录的一部分；
+
+而在使用镜像时，Docker 会把这些增量联合挂载在一个统一的挂载点上。这个挂载点就是 /var/lib/docker/aufs/mnt/，这个目录下面就是一个完整的Ubuntu 操作系统
+
+~~~
+$ ls /var/lib/docker/aufs/mnt/6e3be5d2ecccae7cc0fcfa2a2f5c89dc21ee30e166be823ceaeba15dce645b3e
+bin boot dev etc home lib lib64 media mnt opt proc root run sbin srv sys tmp usr var
+~~~
+
+这五个层的信息记录在 AuFS 的系统目录 /sys/fs/aufs 下面，查看挂载信息找到这个目录对应的 AuFS 的内部 ID（也叫：si）：
+
+~~~
+$ cat /proc/mounts| grep aufs
+none /var/lib/docker/aufs/mnt/6e3be5d2ecccae7cc0fc... aufs rw,relatime,si=972c6d361e6b32ba,dio,dirperm1 0 0
+~~~
+
+通过ID在 /sys/fs/aufs 下查看被联合挂载在一起的各个层的信息：
+
+~~~
+$ cat /sys/fs/aufs/si_972c6d361e6b32ba/br[0-9]*
+/var/lib/docker/aufs/diff/6e3be5d2ecccae7cc...=rw
+/var/lib/docker/aufs/diff/6e3be5d2ecccae7cc...-init=ro+wh
+/var/lib/docker/aufs/diff/32e8e20064858c0f2...=ro+wh
+/var/lib/docker/aufs/diff/2b8858809bce62e62...=ro+wh
+/var/lib/docker/aufs/diff/20707dce8efc0d267...=ro+wh
+/var/lib/docker/aufs/diff/72b0744e06247c7d0...=ro+wh
+/var/lib/docker/aufs/diff/a524a729adadedb90...=ro+wh
+~~~
+
+> 镜像的层都放置在 /var/lib/docker/aufs/diff 目录下，然后被联合挂载在 /var/lib/docker/aufs/mnt 里面。
+
+从这个结构可以看出，这个容器的rootfs由下图的三个部分组成：
+
+![1585989648933](assets/1585989648933.png)
+
+我们可以通过docker commit和push指令，保存被修改过的可读写层，并上传到Docker Hub上，供其它人增强使用；且原先的只读层里的内容不会有任何改变；这就解决了刚刚的问题。
 
