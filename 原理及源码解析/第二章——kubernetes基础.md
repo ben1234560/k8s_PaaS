@@ -130,6 +130,191 @@ spec:
 4. **Failed：**这个状态下，Pod 里至少有一个容器以不正常的状态（非 0 的返回码）退出。这个状态的出现，意味着你得想办法 Debug 这个容器的应用，比如查看 Pod 的 Events 和日志。
 5. **Unknown：**这是一个异常状态，意味着 Pod 的状态不能持续地被 kubelet 汇报给 kube-apiserver，这很有可能是主从节点（Master 和 Kubelet）间的通信出现了问题。
 
+
+
+### 水平扩展和滚动升级
+
+举个例子，如果你更新了 Deployment 的 Pod 模板（比如，修改了容器的镜像），那么 Deployment 就需要遵循一种叫作“滚动更新”（rolling update）的方式，来升级现有的容器。
+
+这个能力的实现，依赖的是 Kubernetes 项目中的一个非常重要的概念（API 对象）：**ReplicaSet**。
+
+~~~
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-set
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+~~~
+
+> 它定义的 Pod 副本个数是 3（spec.replicas=3）。
+
+**一个 ReplicaSet 对象，其实就是由副本数目的定义和一个 Pod 模板组成的**。“水平扩展 / 收缩”只需要把这个值3改成4或者4改成3。而将一个集群中正在运行的多个 Pod 版本，交替地逐一升级的过程（去掉旧的增加新的），就是“滚动更新”。
+
+### RBAC:基于角色的权限控制
+
+三个基本概念：
+
+1. Role：角色，它其实是一组规则，定义了一组对 Kubernetes API 对象的操作权限。
+2. Subject：被作用者，既可以是“人”，也可以是“机器”，也可以使你在 Kubernetes 里定义的“用户”。
+3. RoleBinding：定义了“被作用者”和“角色”的绑定关系。
+
+~~~
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: mynamespace
+  name: example-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "watch", "list"]
+      ...
+  secrets:
+  - name: example-sa-token-vmfg6
+~~~
+
+>  Role 对象指定了它能产生作用的 Namepace 是：mynamespace。
+>
+> **rules：**定义权限规则
+>
+> **verbs：**赋予用户 example-user 的权限
+>
+> **secrets：**对应的、用来跟 APIServer 进行交互的授权文件，我们一般称它为：Token，它以一个 Secret 对象的方式保存在 Etcd 当中。
+
+###  Operator 工作原理
+
+> **WAHT：**一个相对更加灵活和编程友好的管理“有状态应用”的解决方案
+
+以Etcd为例：
+
+Etcd Operator 的使用方法非常简单，只需要两步即可完成：
+
+**第一步，将这个 Operator 的代码 Clone 到本地：**
+
+~~~
+git clone https://github.com/coreos/etcd-operator
+~~~
+
+**第二步，将这个 Etcd Operator 部署在 Kubernetes 集群里。**
+
+~~~
+$ example/rbac/create_role.sh
+~~~
+
+上述脚本为 Etcd Operator 定义了如下所示的权限：
+
+1. 对 Pod、Service、PVC、Deployment、Secret 等 API 对象，有所有权限；
+2. 对 CRD 对象，有所有权限；
+3. 对属于 etcd.database.coreos.com 这个 API Group 的 CR（Custom Resource）对象，有所有权限。
+
+ Etcd Operator 本身，其实就是一个 Deployment，它的 YAML 文件如下所示：
+
+~~~
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: etcd-operator
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: etcd-operator
+    spec:
+      containers:
+      - name: etcd-operator
+        image: quay.io/coreos/etcd-operator:v0.9.2
+        command:
+        - etcd-operator
+        env:
+        - name: MY_POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: MY_POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+...
+~~~
+
+使用上述的 YAML 文件来创建 Etcd Operator
+
+~~~
+$ kubectl create -f example/deployment.yaml
+~~~
+
+tcd Operator 的 Pod 进入了 Running 状态，就有一个 CRD 被自动创建了出来，如下所示：
+
+~~~
+$ kubectl get pods
+NAME                              READY     STATUS      RESTARTS   AGE
+etcd-operator-649dbdb5cb-bzfzp    1/1       Running     0          20s
+ 
+$ kubectl get crd
+NAME                                    CREATED AT
+etcdclusters.etcd.database.coreos.com   2018-09-18T11:42:55Z
+~~~
+
+这个 CRD 名叫`etcdclusters.etcd.database.coreos.com` 。你可以通过 kubectl describe 命令看到它的细节，如下所示：
+
+~~~
+$ kubectl describe crd  etcdclusters.etcd.database.coreos.com
+...
+Group:   etcd.database.coreos.com
+  Names:
+    Kind:       EtcdCluster
+    List Kind:  EtcdClusterList
+    Plural:     etcdclusters
+    Short Names:
+      etcd
+    Singular:  etcdcluster
+  Scope:       Namespaced
+  Version:     v1beta2
+  
+...
+~~~
+
+> 这个 CRD 相当于告诉了 Kubernetes：接下来，如果有 API 组（Group）是`etcd.database.coreos.com`、API 资源类型（Kind）是“EtcdCluster”的 YAML 文件被提交上来，你可一定要认识啊。
+
+所以说，通过上述两步操作，实际上是在 Kubernetes 里添加了一个名叫 EtcdCluster 的自定义资源类型。而 Etcd Operator 本身，就是这个自定义资源类型对应的自定义控制器。
+
+当 Etcd Operator 部署好之后，接下来在这个 Kubernetes 里创建一个 Etcd 集群的工作就非常简单了。你只需要编写一个 EtcdCluster 的 YAML 文件，然后把它提交给 Kubernetes 即可，如下所示：
+
+~~~
+$ kubectl apply -f example/example-etcd-cluster.yaml
+~~~
+
+这个 example-etcd-cluster.yaml 文件里描述的，是一个 3 个节点的 Etcd 集群。我们可以看到它被提交给 Kubernetes 之后，就会有三个 Etcd 的 Pod 运行起来，如下所示：
+
+~~~
+$ kubectl get pods
+NAME                            READY     STATUS    RESTARTS   AGE
+example-etcd-cluster-dp8nqtjznc   1/1       Running     0          1m
+example-etcd-cluster-mbzlg6sd56   1/1       Running     0          2m
+example-etcd-cluster-v6v6s6stxd   1/1       Running     0          2m
+~~~
+
+以上就完成了Etcd集群
+
+**Operator 的工作原理，实际上是利用了 Kubernetes 的自定义 API 资源（CRD），来描述我们想要部署的“有状态应用”；然后在自定义控制器里，根据自定义 API 对象的变化，来完成具体的部署和运维工作。**
+
+
+
 ### kubernetes技能图谱
 
 ![kubernetes技能图谱](assets/kubernetes技能图谱.jpg)
