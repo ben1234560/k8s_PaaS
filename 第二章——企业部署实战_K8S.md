@@ -2,16 +2,16 @@
 
 ##### 前言：如果你是新手，机器的名字及各种账户密码一定要和我的一样，先学一遍，再自己改
 
-> **WHAT:**用于管理云平台中多个主机上的容器化的应用，Kubernetes的目标是让部署容器化的应用简单并且高效（powerful）,Kubernetes提供了应用部署，规划，更新，维护的一种机制
+> **WHAT**：用于管理云平台中多个主机上的容器化的应用，Kubernetes的目标是让部署容器化的应用简单并且高效（powerful）,Kubernetes提供了应用部署，规划，更新，维护的一种机制
 >
-> **WHY：**为什么使用它，因为它是管理docker容器最主流的编排工具
+> **WHY**：为什么使用它，因为它是管理docker容器最主流的编排工具
 
 - Pod
   - Pod是K8S里能够被运行的最小的逻辑单元（原子单元）
   - 1个Pod里面可以运行多个容器，它们共享UTS+NET+IPC名称空间
   - 可以把Pod理解成豌豆荚，而同一Pod内的每个容器是一颗颗豌豆
   - 一个Pod里运行多个容器，又叫边车（SideCar）模式
-- Pod控制器
+- Pod控制器（关于更多<a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#%E5%88%9D%E8%AF%86pod">初识Pod</a>）
   - Pod控制器是Pod启动的一种模板，用来保证在K8S里启动的Pod始终按照人们的预期运行（副本数、生命周期、健康状态检查...）
   - Pod内提供了众多的Pod控制器，常用的有以下几种：
     - Deployment
@@ -24,7 +24,7 @@
   - 由于K8S内部，使用“资源”来定义每一种逻辑概念（功能），故每种“资源”，都应该有自己的“名称”
   - “资源”有api版本（apiVersion）类别（kind）、元数据（metadata）、定义清单（spec）、状态（status）等配置信息
   - “名称”通常定义在“资源”的“元数据”信息里
-- Namespace
+- <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E5%85%B3%E4%BA%8Enamespace">namespace</a>
   - 随着项目增多、人员增加、集群规模的扩大，需要一种能够隔离K8S内各种“资源”的方法，这就是名称空间
   - 名称空间可以理解尾K8S内部的虚拟集群组
   - 不同名称空间内的“资源”名称可以相同，相同名称空间内的同种“资源”、“名称”不能相同
@@ -59,21 +59,26 @@
 
 ![1582188308711](assets/1582188308711.png)
 
-> **kubectl：**Kubernetes集群的命令行接口
+> **kubectl**：Kubernetes集群的命令行接口
 >
-> **API Server：**的核心功能是对核心对象（例如：Pod，Service，RC）的增删改查操作，同时也是集群内模块之间数据交换的枢纽
+> **API Server**：的核心功能是对核心对象（例如：Pod，Service，RC）的增删改查操作，同时也是集群内模块之间数据交换的枢纽
 >
-> **Etcd：**包含在 APIServer 中，用来存储资源信息
+> **Etcd**：包含在 APIServer 中，用来存储资源信息
 >
-> **Controller Manager ：**负责维护集群的状态，比如故障检测、自动扩展、滚动更新等
+> **Controller Manager **：负责维护集群的状态，比如故障检测、自动扩展、滚动更新等
 >
-> **Scheduler：**负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上
+> **Scheduler**：负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上。可以通过这些有更深的了解：
 >
-> **kube-proxy：**负责为Service提供cluster内部的服务发现和负载均衡
+> - <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6.md">Kubernetes调度机制</a>
+> - <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6.md#kubernetes%E7%9A%84%E8%B5%84%E6%BA%90%E6%A8%A1%E5%9E%8B%E4%B8%8E%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86">Kubernetes的资源模型与资源管理</a>
+> - <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6.md#kubernetes%E9%BB%98%E8%AE%A4%E7%9A%84%E8%B0%83%E5%BA%A6%E7%AD%96%E7%95%A5">Kubernetes默认的调度策略</a>
+> - <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6.md#%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7%E4%B8%8E%E5%BC%BA%E5%88%B6%E6%9C%BA%E5%88%B6">调度器的优先级与强制机制</a>
 >
-> **Kubelet：**在Kubernetes中，应用容器彼此是隔离的，并且与运行其的主机也是隔离的，这是对应用进行独立解耦管理的关键点
+> **kube-proxy**：负责为Service提供cluster内部的服务发现和负载均衡
 >
-> **Node：**运行容器应用，由Master管理
+> **Kubelet**：在Kubernetes中，应用容器彼此是隔离的，并且与运行其的主机也是隔离的，这是对应用进行独立解耦管理的关键点。[Kubelet工作原理解析](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6.md#kubelet)
+>
+> **Node**：运行容器应用，由Master管理
 
 ### 我们部署的K8S架构图
 
@@ -158,11 +163,11 @@
 ~]# ping baidu.com
 ~~~
 
-> **ifcfg-eth0：**有些人的机器可能是ifcfg-esn33，自己注意即可
+> **ifcfg-eth0**：有些人的机器可能是ifcfg-esn33，自己注意即可
 >
-> **systemctl restart：**重启某个服务
+> **systemctl restart**：重启某个服务
 >
-> **ping：**用于测试网络连接量的程序
+> **ping**：用于测试网络连接量的程序
 
 ![1580370529295](assets/1580370529295.png)
 
@@ -192,22 +197,22 @@
 ~]# yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
 ~~~
 
-> **uname：**显示系统信息
+> **uname**:显示系统信息
 >
-> - **-a/-all:** 显示全部
+> - **-a/-all**：显示全部
 >
-> **yum：**提供了查找、安装、删除某一个、一组甚至全部软件包的命令
+> **yum**：提供了查找、安装、删除某一个、一组甚至全部软件包的命令
 >
-> - **install：**安装
-> - **-y：**当安装过程提示选择全部为"yes"
+> - **install**：安装
+> - **-y**：当安装过程提示选择全部为"yes"
 
 
 
 ### K8S前置准备工作——bind9安装部署（DNS服务）
 
-> **WHAT：**DNS（域名系统）说白了，就是把一个域和IP地址做了一下绑定，如你在里机器里面输入 nslookup www.qq.com，出来的Address是一堆IP，IP是不容易记的，所以DNS让IP和域名做一下绑定，这样你输入域名就可以了
+> **WHAT**：DNS（域名系统）说白了，就是把一个域和IP地址做了一下绑定，如你在里机器里面输入 nslookup www.qq.com，出来的Address是一堆IP，IP是不容易记的，所以DNS让IP和域名做一下绑定，这样你输入域名就可以了
 >
-> **WHY：**我们要用ingress，在K8S里要做7层调度，而且无论如何都要用域名（如之前的那个百度页面的域名，那个是host的方式），但是问题是我们怎么给K8S里的容器绑host，所以我们必须做一个DNS，然后容器服从我们的DNS解析调度
+> **WHY**：我们要用ingress，在K8S里要做7层调度，而且无论如何都要用域名（如之前的那个百度页面的域名，那个是host的方式），但是问题是我们怎么给K8S里的容器绑host，所以我们必须做一个DNS，然后容器服从我们的DNS解析调度
 
 ~~~
 # 在11机器：
@@ -227,17 +232,17 @@ dnssec-validation no;  # 原本是yes
 ~]# named-checkconf
 ~~~
 
-> **rpm：**软件包管理器
+> **rpm**：软件包管理器
 >
-> - **-qa：**查看已安装的所有软件包
+> - **-qa**：查看已安装的所有软件包
 >
-> **rpm和yum安装的区别：**前者不检查相依性问题，后者检查（即相关依赖包）
+> **rpm和yum安装的区别**：前者不检查相依性问题，后者检查（即相关依赖包）
 >
 > **named.conf文件内容解析：**
 >
-> - **listen-on：**监听端口，改为监听在内网，这样其它机器也可以用
-> - **allow-query：**哪些客户端能通过自建的DNS查
-> - **forwarders：**上级DNS是什么
+> - **listen-on**：监听端口，改为监听在内网，这样其它机器也可以用
+> - **allow-query**：哪些客户端能通过自建的DNS查
+> - **forwarders**：上级DNS是什么
 
 ![1580372858987](assets/1580372858987.png)
 
@@ -303,18 +308,18 @@ dns                A    10.4.7.11
 7-11 ~]# netstat -luntp|grep 53
 ~~~
 
-> **TTL 600：**指定IP包被路由器丢弃之前允许通过的最大网段数量
+> **TTL 600**：指定IP包被路由器丢弃之前允许通过的最大网段数量
 >
-> - **10 minutes：**过期时间10分钟
+> - **10 minutes**：过期时间10分钟
 >
-> **SOA：**一个域权威记录的相关信息，后面有5组参数分别设定了该域相关部分
+> **SOA**：一个域权威记录的相关信息，后面有5组参数分别设定了该域相关部分
 >
 > - **dnsadmin.od.com.**  一个假的邮箱
-> - **serial：**记录的时间
+> - **serial**：记录的时间
 >
-> **$ORIGIN：**即下列的域名自动补充od.com，如dns，外面看来是dns.od.com
+> **$ORIGIN**：即下列的域名自动补充od.com，如dns，外面看来是dns.od.com
 >
-> **netstat -luntp：**显示 tcp,udp 的端口和进程等相关情况
+> **netstat -luntp**：显示 tcp,udp 的端口和进程等相关情况
 
 ![1578819148759](assets/1578819148759.png)
 
@@ -329,9 +334,9 @@ DNS1=10.4.7.11
 7-11 ~]# ping hdss7-21.host.com
 ~~~
 
-> **dig -t A：**指的是找DNS里标记为A的相关记录，而后面会带上相关的域，如上面的hdss7-21.host.com，为什么外面配了HDSS7-21后面还会自动接上.host.com就是因为$ORIGIN，后面则是对应的IP
+> **dig -t A**：指的是找DNS里标记为A的相关记录，而后面会带上相关的域，如上面的hdss7-21.host.com，为什么外面配了HDSS7-21后面还会自动接上.host.com就是因为$ORIGIN，后面则是对应的IP
 >
-> - **+short：**表示只返回IP
+> - **+short**：表示只返回IP
 
 ![1578819653445](assets/1578819653445.png)
 
@@ -379,9 +384,9 @@ DNS1=10.4.7.11
 
 ### K8S前置工作——准备签发证书环境
 
-> **WHAT：**  证书，可以用来审计也可以保障安全，k8S组件启动的时候，则需要有对应的证书，证书的详解你也可以在网上搜到，这里就不细细说明了
+> **WHAT**： 证书，可以用来审计也可以保障安全，k8S组件启动的时候，则需要有对应的证书，证书的详解你也可以在网上搜到，这里就不细细说明了
 >
-> **WHY：**当然是为了让我们的组件能正常运行
+> **WHY**：当然是为了让我们的组件能正常运行
 
 ~~~
 # cfssl方式做证书，需要三个软件，按照我们的架构图，我们部署在200机器:
@@ -394,13 +399,13 @@ DNS1=10.4.7.11
 200 ~]# which cfssl-certinfo
 ~~~
 
-> **wget：**从网络上自动下载文件的自由工具
+> **wget**：从网络上自动下载文件的自由工具
 >
-> **chmod：**给对应的文件添加权限（[菜鸟教程](https://www.runoob.com/linux/linux-comm-chmod.html)）
+> **chmod**：给对应的文件添加权限（[菜鸟教程](https://www.runoob.com/linux/linux-comm-chmod.html)）
 >
-> - **+x：**给当前用户增加可执行该文件的权限
+> - **+x**：给当前用户增加可执行该文件的权限
 >
-> **which：**查看相应的东西在哪里
+> **which**：查看相应的东西在哪里
 
 ![1578822242531](assets/1578822242531.png)
 
@@ -435,16 +440,16 @@ certs]# cat ca.pem
 # 如果你这时候显示段错误或者json错误，就是之前克隆虚拟机的时候200机器地址和别的机器地址重叠冲突了，需要重建200虚拟机
 ~~~
 
-> **cd: **切换当前工作目录到 dirName
+> **cd **：切换当前工作目录到 dirName
 >
 > - 语法：cd [dirName]
 >
-> **mkdir：**建立名称为 dirName 之子目录
+> **mkdir**：建立名称为 dirName 之子目录
 >
 > - 语法：mkdir [-p] dirName
 > - **-p:** 确保目录存在，不存在则建一个，如mkdir empty/empty1/empty2
 >
-> **cfssl：**证书工具
+> **cfssl**：证书工具
 >
 > - gencert：生成的意思
 >
@@ -455,6 +460,8 @@ certs]# cat ca.pem
 > - L：Locality，地区
 > - O：Organization Name，组织名称
 > - OU：Organization Unit Name，组织单位名称
+>
+> <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E4%B8%AD%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E5%AD%97%E6%AE%B5%E7%9A%84%E5%90%AB%E4%B9%89%E5%92%8C%E7%94%A8%E6%B3%95">Pod中几个重要字段的含义和用法</a>
 
 ![1578822598528](assets/1578822598528.png)
 
@@ -462,9 +469,9 @@ certs]# cat ca.pem
 
 ### K8S前置工作——部署docker环境
 
-> **WHAY：**是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。
+> **WHAY**：是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。
 >
-> **WHY：**Pod里面就是由数个docker容器组成，Pod是豌豆荚，docker容器是里面的豆子。
+> **WHY**：Pod里面就是由数个docker容器组成，Pod是豌豆荚，docker容器是里面的豆子。
 
 ~~~
 # 如我们架构图所示，运算节点是21/22机器（没有docker则无法运行pod），运维主机是200机器（没有docker则没办法下载docker存入私有仓库），所以在三台机器安装（21/22/200）
@@ -502,9 +509,9 @@ certs]# cat ca.pem
 
 ### K8S前置工作——部署harbor仓库
 
-> **WHAT： **harbor仓库是可以部署到本地的私有仓库，也就是你可以把镜像推到这个仓库，然后需要用的时候再下载下来，这样的好处是：1、下载速度快，用到的时候能马上下载下来2、不用担心镜像改动或者下架等。
+> **WHAT **：harbor仓库是可以部署到本地的私有仓库，也就是你可以把镜像推到这个仓库，然后需要用的时候再下载下来，这样的好处是：1、下载速度快，用到的时候能马上下载下来2、不用担心镜像改动或者下架等。
 >
-> **WHY：**因为我们的部署K8S涉及到很多镜像，制作相关包的时候如果网速问题会导致失败重来，而且我们在公司里也会建自己的仓库，所以必须按照harbor仓库
+> **WHY**：因为我们的部署K8S涉及到很多镜像，制作相关包的时候如果网速问题会导致失败重来，而且我们在公司里也会建自己的仓库，所以必须按照harbor仓库
 
 ~~~
 # 如架构图，我们安装在200机器：
@@ -516,14 +523,14 @@ https://github.com/goharbor/harbor/releases/tag/v1.8.3
 7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/
 ~~~
 
-> **tag：**可以加入，解开备份文件内的文件
+> **tag**：可以加入，解开备份文件内的文件
 >
-> - **x：**解压
-> - **f：** 使用档案名字
-> - **-C：**切换到指定的目录
+> - **x**：解压
+> - **f**： 使用档案名字
+> - **-C**：切换到指定的目录
 > - 整条命令合起来就是，把tgz文件以tgz文件名为名字解压到opt目录下，并保存tgz文件原样
 >
-> **关于版本：**一般人都是喜欢用比较新的版本，我们当然也支持比较新的版本，但对于公司而已，稳定是最要紧的，v1.8.3是用的比较稳定的版本，而后续的各个组件也会有更加新的版本，你可以尝试新版本，但有些由于兼容问题不能用新的，后续那些不能用我会标记清楚。
+> **关于版本**：一般人都是喜欢用比较新的版本，我们当然也支持比较新的版本，但对于公司而已，稳定是最要紧的，v1.8.3是用的比较稳定的版本，而后续的各个组件也会有更加新的版本，你可以尝试新版本，但有些由于兼容问题不能用新的，后续那些不能用我会标记清楚。
 
 ~~~
 # 200机器：
@@ -546,11 +553,11 @@ location: /data/harbor/logs
 200 harbor]# ./install.sh
 ~~~
 
-> **mv：**为文件或目录改名、或将文件或目录移入其它位置。
+> **mv**：为文件或目录改名、或将文件或目录移入其它位置。
 >
 > - 这里的命令是有斜杠的，所以是移动到某个目录下
 >
-> **ln：**为某一个文件在另外一个位置建立一个同步的链接
+> **ln**：为某一个文件在另外一个位置建立一个同步的链接
 >
 > - `语法:ln [参数][源文件或目录][目标文件或目录]`
 > - `**-s：**软连接，可以对整个目录进行链接`
@@ -560,7 +567,7 @@ location: /data/harbor/logs
 > - port为什么改成180：因为后面我们要装nginx，nginx用的80，所以要把它们错开
 > - data_volume：数据卷，即docker镜像放在哪里
 > - location：日志文件
-> - **./install.sh：**启动shell脚本
+> - **./install.sh**：启动shell脚本
 
 ![1578830348081](assets/1578830348081.png)
 
@@ -593,9 +600,9 @@ server {
 200 harbor]# systemctl enable nginx
 ~~~
 
-> **nginx -t：**测试*nginx*.conf配置文件中是否存在语法错误
+> **nginx -t**：测试*nginx*.conf配置文件中是否存在语法错误
 >
-> **systemctl enable nginx：**开机自动启动
+> **systemctl enable nginx**：开机自动启动
 
 ~~~
 # 在11机器解析域名：
@@ -656,13 +663,13 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 
 ### 安装部署主控节点服务etcd
 
-> **WHAT：**一个高可用强一致性的服务发现存储仓库，关于服务发现，其本质就是知道了集群中是否有进程在监听udp和tcp端口（如上面部署的harbor就是监听180端口），并且通过名字就可以查找和连接。
+> **WHAT**：一个高可用强一致性的服务发现存储仓库，关于服务发现，其本质就是知道了集群中是否有进程在监听udp和tcp端口（如上面部署的harbor就是监听180端口），并且通过名字就可以查找和连接。
 >
-> - **一个强一致性、高可用的服务存储目录：**基于Raft算法的etcd天生就是这样
-> - **一种注册服务和监控服务健康状态的机制：**在etcd中注册服务，并且对注册的服务设置`key TTL`（TTL上面有讲到），定时保持服务的心跳以达到监控健康状态的效果
-> - **一种查找和连接服务的机制：**通过在etcd指定的主题下注册的服务也能在对应的主题下查找到，为了确保连接，我们可以在每个服务机器上都部署一个Proxy模式的etcd，这样就可以确保能访问etcd集群的服务都能互相连接
+> - **一个强一致性、高可用的服务存储目录**：基于Raft算法的etcd天生就是这样
+> - **一种注册服务和监控服务健康状态的机制**：在etcd中注册服务，并且对注册的服务设置`key TTL`（TTL上面有讲到），定时保持服务的心跳以达到监控健康状态的效果
+> - **一种查找和连接服务的机制**：通过在etcd指定的主题下注册的服务也能在对应的主题下查找到，为了确保连接，我们可以在每个服务机器上都部署一个Proxy模式的etcd，这样就可以确保能访问etcd集群的服务都能互相连接
 >
-> **WHY：**我们需要让服务快速透明地接入到计算集群中，让共享配置信息快速被集群中的所有机器发现
+> **WHY**：我们需要让服务快速透明地接入到计算集群中，让共享配置信息快速被集群中的所有机器发现
 
 看我们的结构图，可以看到我们在12/21/22机器都部署了etcd
 
@@ -748,7 +755,7 @@ certs]# ll
 >
 > - hosts：etcd有可能部署到哪些组件的IP都要填进来
 >
-> **cfssl gencert：**生成证书
+> **cfssl gencert**：生成证书
 
 ![1578833436255](assets/1578833436255.png)
 
@@ -768,23 +775,23 @@ opt]# ln -s /opt/etcd-v3.1.20/ /opt/etcd
 opt]# cd etcd
 ~~~
 
-> **tag：**可以加入，解开备份文件内的文件
+> **tag**：可以加入，解开备份文件内的文件
 >
-> - **x：**解压
-> - **f：** 使用档案名字
-> - **-C：**切换到指定的目录
+> - **x**：解压
+> - **f** ：使用档案名字
+> - **-C**：切换到指定的目录
 > - 整条命令合起来就是，把tgz文件以tgz文件名为名字解压到opt目录下，并保存tgz文件原样
 >
-> **ln：**为某一个文件在另外一个位置建立一个同步的链接
+> **ln**：为某一个文件在另外一个位置建立一个同步的链接
 >
 > - `语法:ln [参数][源文件或目录][目标文件或目录]`
-> - **-s：**软连接，可以对整个目录进行链接
+> - **-s**：软连接，可以对整个目录进行链接
 >
-> **useradd：**建立用户帐号
+> **useradd**：建立用户帐号
 >
-> **-s：**指定用户登入后所使用的shell
+> **-s**：指定用户登入后所使用的shell
 >
-> **-M：**不要自动建立用户的登入目录
+> **-M**：不要自动建立用户的登入目录
 
 ![1578833934325](assets/1578833934325.png)
 
@@ -827,18 +834,18 @@ etcd]# chown -R etcd.etcd /data/logs/etcd-server/
 etcd]# ll
 ~~~
 
-> **scp：**用于 *Linux* 之间复制文件和目录
+> **scp**：用于 *Linux* 之间复制文件和目录
 >
-> **chmod：**添加权限
+> **chmod**：添加权限
 >
-> - **+x：**给当前用户添加可执行该文件的权限权限
+> - **+x**：给当前用户添加可执行该文件的权限权限
 >
-> **chown：**指定文件的拥有者改为指定的用户或组
+> **chown**：指定文件的拥有者改为指定的用户或组
 >
-> - **-R：**处理指定目录以及其子目录下的所有文件
+> - **-R**：处理指定目录以及其子目录下的所有文件
 > - 这里即是把/opt/etcd...等的拥有者给etcd用户
 >
-> **ll：**列出权限、大小、名称等信息
+> **ll**：列出权限、大小、名称等信息
 
 ![1578834563843](assets/1578834563843.png)
 
@@ -877,9 +884,9 @@ etcd]# netstat -luntp|grep etcd
 #out:etcd-server-7-12: added process group
 ~~~
 
-> **systemctl enable：**开机启动
+> **systemctl enable**：开机启动
 >
-> **update：**更新
+> **update**：更新
 >
 > **netstat -luntp：**查看端口和进程情况
 >
@@ -930,19 +937,19 @@ bin]# rm -f *_tag
 bin]# ll
 ~~~
 
-> **tar xf -C：**解压到某个文件夹
+> **tar xf -C**：解压到某个文件夹
 >
-> **mv：**移动到哪里
+> **mv**：移动到哪里
 >
-> **ln -s：**建立软连接
+> **ln -s**：建立软连接
 >
-> **rm：**删除一个文件或者目录
+> **rm**：删除一个文件或者目录
 >
-> - **-r：**将目录及以下之档案亦逐一删除
-> - **-f：**直接删除，无需逐一确认（你可以试试先不加-f去删除）
+> - **-r**：将目录及以下之档案亦逐一删除
+> - **-f**：直接删除，无需逐一确认（你可以试试先不加-f去删除）
 > - 加起来就是强制删除
 >
-> ***.tar：** 这里的*的意思是模糊法，即只要你的结尾是.tar的都匹配上加上rm，就是把所有.tar结尾的文件都删除
+> ***.tar**： 这里的*的意思是模糊法，即只要你的结尾是.tar的都匹配上加上rm，就是把所有.tar结尾的文件都删除
 
 ![1578837147305](assets/1578837147305.png)
 
@@ -1026,7 +1033,7 @@ cert]# scp hdss7-200:/opt/certs/apiserver.pem .
 cert]# scp hdss7-200:/opt/certs/apiserver-key.pem .
 ~~~
 
-> **scp：**用于 *Linux* 之间复制文件和目录
+> **scp**：用于 *Linux* 之间复制文件和目录
 
 ![1578837706422](assets/1578837706422.png)
 
@@ -1172,15 +1179,17 @@ bin]# supervisorctl update
 bin]# supervisorctl status
 ~~~
 
-> **mkdir -p：**创建目录，没有上一级目录则创建
+> **mkdir -p**：创建目录，没有上一级目录则创建
 >
-> **supervisorctl update：**更新supervisorctl
+> **supervisorctl update**：更新supervisorctl
 >
 > **audit.yaml解析：**
 >
 > - 可以参考这篇文章[点击跳转](https://www.baidu.com/link?url=tFECOG31lKlcqDWeAZGF1VyjhzVAN9vUKHKEKKw5G8y0AC8MKpJxSZeL647MIFdw&wd=&eqid=dafe84b80019e4a3000000065e51d2e2)，当然这里的audit.yaml可能会有些不一样，但是我们后面用到的yaml文件就很相似了
 
 ![1578839161494](assets/1578839161494.png)
+
+> <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81">Pod的几种状态</a>
 
 完成
 
@@ -1231,13 +1240,13 @@ fi
 ~]# chmod +x /etc/keepalived/check_port.sh
 ~~~
 
-> **yum install -y：**安装并自动yes
+> **yum install -y**：安装并自动yes
 >
-> **nginx -t：**确定nginx.conf有没有语法错误
+> **nginx -t**：确定nginx.conf有没有语法错误
 >
-> **systemctl start：**启动服务
+> **systemctl start**：启动服务
 >
-> **systemctl enable：**开机自启
+> **systemctl enable**：开机自启
 
 ~~~
 # 仅以下分主从操作：
@@ -1439,13 +1448,13 @@ bin]# ln -s /opt/kubernetes/server/bin/kubectl /usr/bin/kubectl
 bin]# kubectl get cs
 ~~~
 
-> **ln -s：**建立软链接
+> **ln -s**：建立软链接
 >
-> **supervisorctl status：**查看supervisor的情况
+> **supervisorctl status**：查看supervisor的情况
 >
-> **supervisorctl update：**更新supervisor
+> **supervisorctl update**：更新supervisor
 >
-> **kubectl get：**    获取列出一个或多个资源的信息
+> **kubectl get**：获取列出一个或多个资源的信息
 >
 > - 上面一条命令的意思是：    列出所有cs信息
 
@@ -1493,7 +1502,7 @@ bin]# kubectl get cs
 200 certs]# ll
 ~~~
 
-> **kubelet-csr-hosts：**把所有可能用到的IP都放进来
+> **kubelet-csr-hosts**：把所有可能用到的IP都放进来
 
 ![1580436431973](assets/1580436431973.png)
 
@@ -1547,11 +1556,11 @@ cert]# cd ../conf/
 conf]# scp hdss7-21:/opt/kubernetes/server/bin/conf/kubelet.kubeconfig .
 ~~~
 
-> **scp：**用于 *Linux* 之间复制文件和目录
+> **scp**：用于 *Linux* 之间复制文件和目录
 >
-> **kubectl create -f：**    通过配置文件名或stdin创建一个集群资源对象
+> **kubectl create -f**  ：通过配置文件名或stdin创建一个集群资源对象
 >
-> **kubectl get ... -o ...：**    列出Pod以及运行Pod节点信息（你可以试下不加-o和加-o的区别）
+> **kubectl get ... -o ...**  ：列出Pod以及运行Pod节点信息（你可以试下不加-o和加-o的区别）
 
 ![1580436621354](assets/1580436621354.png)
 
@@ -1563,15 +1572,15 @@ certs]# docker tag f9d5de079539 harbor.od.com/public/pause:latest
 certs]# docker push harbor.od.com/public/pause:latest
 ~~~
 
-> **docker pull：**下载镜像
+> **docker pull**：下载镜像
 >
-> **docker images：**列出所有的镜像
+> **docker images**：列出所有的镜像
 >
 > - 这里加上|grep 管道符是为了过滤出来pause镜像
 >
-> **docker tag：**给镜像打名字
+> **docker tag**：给镜像打名字
 >
-> **docker push：**将镜像推送到指定的仓库
+> **docker push**：将镜像推送到指定的仓库
 
 ~~~
 # 21/21机器，注意修改主机名，有一处需要改：hdss7-21
@@ -1713,13 +1722,13 @@ done
 ~]# lsmod |grep ip_vs
 ~~~
 
-> **lsmod：**显示已载入系统的模块
+> **lsmod**：显示已载入系统的模块
 >
 > - 后面带的管道符则是过滤出ip_vs来
 >
-> **chmod +x：**给文件添加执行权限
+> **chmod +x**：给文件添加执行权限
 >
-> **./ipvs.sh：**运行文件
+> **./ipvs.sh**：运行文件
 
 ![1578846381651](assets/1578846381651.png)
 
@@ -1765,9 +1774,9 @@ bin]# ipvsadm -Ln
 bin]# kubectl get svc
 ~~~
 
-> **ipvsadm：**用于设置、维护和检查Linux内核中虚拟服务器列表的*命令*
+> **ipvsadm**：用于设置、维护和检查Linux内核中虚拟服务器列表的*命令*
 >
-> **ipvsadm -Ln：** 查看当前配置的虚拟服务和各个RS的权重
+> **ipvsadm -Ln** ：查看当前配置的虚拟服务和各个RS的权重
 
 ![1578846997119](assets/1578846997119.png)
 
@@ -1799,9 +1808,9 @@ spec:
 
 > **注意，如果你的pod的wide22的也在21上或者类似情况，那就是你的vi /etc/docker/daemon.json没改好机器名，需要重新做过全部机器**
 >
-> **kubectl create -f：**    通过配置文件名或stdin创建一个集群资源对象
+> **kubectl create -f**  ：通过配置文件名或stdin创建一个集群资源对象
 >
-> **kubectl get ... -o wide：**显示网络情况
+> **kubectl get ... -o wide**：显示网络情况
 >
 > **nginx-ds.yaml解析：**
 >
