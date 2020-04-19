@@ -38,7 +38,7 @@ spec:
 ...
 ~~~
 
-**shareProcessNamespace=true：**在这个 Pod 里的容器共享 PID Namespace
+**shareProcessNamespace=true**：在这个 Pod 里的容器共享 PID Namespace
 
 ~~~
 apiVersion: v1
@@ -58,9 +58,9 @@ spec:
 
 上面的YAML文件中，还定义了两个容器：一个是 nginx 容器，一个是开启了 tty 和 stdin 的 shell 容器。在 Pod 的 YAML 文件里声明开启它们俩，其实等同于设置了 docker run 里的 -it（-i 即 stdin，-t 即 tty）参数。
 
-> **tty：**Linux 给用户提供的一个常驻小程序，用于接收用户的标准输入，返回操作系统的标准输出
+> **tty**：Linux 给用户提供的一个常驻小程序，用于接收用户的标准输入，返回操作系统的标准输出
 >
-> **stdin：**为了能够在 tty 中输入信息，还需要同时开启 stdin（标准输入流）。
+> **stdin**：为了能够在 tty 中输入信息，还需要同时开启 stdin（标准输入流）。
 
 这个 Pod 被创建后，你就可以使用 shell 容器的 tty 跟这个容器进行交互了。
 
@@ -88,12 +88,12 @@ spec:
 
 #### Container是Pod中最重要的字段
 
-- **ImagePullPolicy：**定义了镜像拉取的策略
+- **ImagePullPolicy**：定义了镜像拉取的策略
 
   - 默认是 Always，即每次创建 Pod 都重新拉取一次镜像。
   - 可以定义为 Never 或者 IfNotPresent，则意味着 Pod 永远不会主动拉取这个镜像，或者只在宿主机上不存在这个镜像时才拉取。
 
-- **Lifecycle：**定义的是 Container Lifecycle Hooks。在容器状态发生变化时触发一系列“钩子”。如下例子：
+- **Lifecycle**：定义的是 Container Lifecycle Hooks。在容器状态发生变化时触发一系列“钩子”。如下例子：
 
   ~~~
   apiVersion: v1
@@ -113,22 +113,22 @@ spec:
             command: ["/usr/sbin/nginx","-s","quit"]
   ~~~
 
-  > **postStart ：**在容器启动后，立刻执行一个指定的操作。
+  > **postStart **：在容器启动后，立刻执行一个指定的操作。
   >
   > - 该操作虽然是在 Docker 容器 ENTRYPOINT 执行之后，但它并不严格保证顺序。也就是说，在 postStart 启动时，ENTRYPOINT 有可能还没有结束。
   > - 执行超时或者错误，Kubernetes 会在该 Pod 的 Events 中报出该容器启动失败的错误信息，导致 Pod 也处于失败的状态。
   >
-  > **preStop：**preStop 发生的时机，则是容器被杀死之前（比如，收到了 SIGKILL 信号）。preStop 操作的执行，是**同步**的，它会阻塞当前的容器杀死流程，直到这个 Hook 定义操作完成之后，才允许容器被杀死 
+  > **preStop**：preStop 发生的时机，则是容器被杀死之前（比如，收到了 SIGKILL 信号）。preStop 操作的执行，是**同步**的，它会阻塞当前的容器杀死流程，直到这个 Hook 定义操作完成之后，才允许容器被杀死 
 
 
 
 ### Pod的几种状态
 
-1. **Pending：**这个状态意味着，Pod 的 YAML 文件已经提交给了 Kubernetes，API 对象已经被创建并保存在 Etcd 当中。但是，这个 Pod 里有些容器因为某种原因而不能被顺利创建。比如，调度不成功。
-2. **Running：**这个状态下，Pod 已经调度成功，跟一个具体的节点绑定。它包含的容器都已经创建成功，并且至少有一个正在运行中。
-3. **Succeeded：**这个状态意味着，Pod 里的所有容器都正常运行完毕，并且已经退出了。这种情况在运行一次性任务时最为常见。
-4. **Failed：**这个状态下，Pod 里至少有一个容器以不正常的状态（非 0 的返回码）退出。这个状态的出现，意味着你得想办法 Debug 这个容器的应用，比如查看 Pod 的 Events 和日志。
-5. **Unknown：**这是一个异常状态，意味着 Pod 的状态不能持续地被 kubelet 汇报给 kube-apiserver，这很有可能是主从节点（Master 和 Kubelet）间的通信出现了问题。
+1. **Pending**：这个状态意味着，Pod 的 YAML 文件已经提交给了 Kubernetes，API 对象已经被创建并保存在 Etcd 当中。但是，这个 Pod 里有些容器因为某种原因而不能被顺利创建。比如，调度不成功。
+2. **Running**：这个状态下，Pod 已经调度成功，跟一个具体的节点绑定。它包含的容器都已经创建成功，并且至少有一个正在运行中。
+3. **Succeeded**：这个状态意味着，Pod 里的所有容器都正常运行完毕，并且已经退出了。这种情况在运行一次性任务时最为常见。
+4. **Failed**：这个状态下，Pod 里至少有一个容器以不正常的状态（非 0 的返回码）退出。这个状态的出现，意味着你得想办法 Debug 这个容器的应用，比如查看 Pod 的 Events 和日志。
+5. **Unknown**：这是一个异常状态，意味着 Pod 的状态不能持续地被 kubelet 汇报给 kube-apiserver，这很有可能是主从节点（Master 和 Kubelet）间的通信出现了问题。
 
 
 
@@ -189,11 +189,11 @@ rules:
 
 >  Role 对象指定了它能产生作用的 Namepace 是：mynamespace。
 >
-> **rules：**定义权限规则
+> **rules**：定义权限规则
 >
-> **verbs：**赋予用户 example-user 的权限
+> **verbs**：赋予用户 example-user 的权限
 >
-> **secrets：**对应的、用来跟 APIServer 进行交互的授权文件，我们一般称它为：Token，它以一个 Secret 对象的方式保存在 Etcd 当中。
+> **secrets**：对应的、用来跟 APIServer 进行交互的授权文件，我们一般称它为：Token，它以一个 Secret 对象的方式保存在 Etcd 当中。
 
 ###  Operator 工作原理
 
