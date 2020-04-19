@@ -2,7 +2,7 @@
 
 ### 初识Pod
 
-> **WHAT：**它只是一个逻辑概念、是一种编排思想、k8s中最小编排单位，k8s处理的还是宿主机上Linux的Namespace和Cgrous
+> **WHAT**它只是一个逻辑概念、是一种编排思想、k8s中最小编排单位，k8s处理的还是宿主机上Linux的Namespace和Cgrous
 >
 > **WHY：**
 >
