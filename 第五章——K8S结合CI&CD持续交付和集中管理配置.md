@@ -2,29 +2,29 @@
 
 #### 交付Dubbo服务到K8S前言
 
-> **WHAT：**阿里巴巴开源的一个高性能优秀的[服务框架](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6)，使得应用可通过高性能的 RPC 实现服务的输出和输入功能，可以和 [1]  [Spring](https://baike.baidu.com/item/Spring)框架无缝集成。
+> **WHAT**：阿里巴巴开源的一个高性能优秀的[服务框架](https://baike.baidu.com/item/%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6)，使得应用可通过高性能的 RPC 实现服务的输出和输入功能，可以和 [1]  [Spring](https://baike.baidu.com/item/Spring)框架无缝集成。
 >
-> **WHY：**用它来当作我们现实生产中的App业务，交付到我们的PaaS里
+> **WHY**：用它来当作我们现实生产中的App业务，交付到我们的PaaS里
 
-![1579490090656](assets/1579490090656.png)
+![1587274014276](assets/1587274014276.png)
 
 #### 交付架构图
 
 ![1582455172381](assets/1582455172381.png)
 
-> **zk（zookeeper）：**dubbo服务的注册中心是通过zk来做的，我们用3个zk组成一个集群，就跟etcd一样，有一个leader两个从，leader死了由其它来决定谁变成leader，因为zk是有状态的服务，所以我们放它放在集群外（红框外），集群内都是无状态的。
+> **zk（zookeeper）**：dubbo服务的注册中心是通过zk来做的，我们用3个zk组成一个集群，就跟etcd一样，有一个leader两个从，leader死了由其它来决定谁变成leader，因为zk是有状态的服务，所以我们放它放在集群外（红框外），集群内都是无状态的。
 >
-> **dubbo微服务：**在集群内通过点点点扩容（dashboard），即当有秒杀或者什么的时候就可以扩展，过了则缩容。
+> **dubbo微服务**：在集群内通过点点点扩容（dashboard），即当有秒杀或者什么的时候就可以扩展，过了则缩容。
 >
-> **git：**开发把代码传到git上，这里我们用gitee（码云）来做，也可以用GitHub来着，没什么区别
+> **git**：开发把代码传到git上，这里我们用gitee（码云）来做，也可以用GitHub来着，没什么区别
 >
-> **Jenkins：**用Jenkins把git的代码拉下来并编译打包成镜像，然后提送到harbor
+> **Jenkins**：用Jenkins把git的代码拉下来并编译打包成镜像，然后提送到harbor
 >
-> **OPS服务器（7-200机器）：**然后将harbor的镜像通过yaml应用到k8s里，现在我们是需要些yaml文件，后面会用spinnaker来做成点点点的方式
+> **OPS服务器（7-200机器）**：然后将harbor的镜像通过yaml应用到k8s里，现在我们是需要些yaml文件，后面会用spinnaker来做成点点点的方式
 >
-> **笑脸（用户）：**外部访问通过ingress转发到集群内的dubbo消费者（web服务），然后就可以访问
+> **笑脸（用户）**：外部访问通过ingress转发到集群内的dubbo消费者（web服务），然后就可以访问
 >
-> **最终目标：**实现所有事情都是点点点
+> **最终目标**：实现所有事情都是点点点
 
 梳理目前机器服务角色
 
@@ -40,9 +40,9 @@
 
 ### 安装部署zookeeper
 
-> **WHAT：**主要是用来解决分布式应用中经常遇到的一些数据管理问题，如：统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等。简单来说zookeeper=文件系统+监听通知机制。[推荐文章](https://blog.csdn.net/java_66666/article/details/81015302)
+> **WHAT**：主要是用来解决分布式应用中经常遇到的一些数据管理问题，如：统一命名服务、状态同步服务、集群管理、分布式应用配置项的管理等。简单来说zookeeper=文件系统+监听通知机制。[推荐文章](https://blog.csdn.net/java_66666/article/details/81015302)
 >
-> **WHY：**我们的dubbo服务要注册到zk里，把配置放到zk上，一旦配置信息发生变化，zk将获取到新的配置信息应用到系统中。
+> **WHY**：我们的dubbo服务要注册到zk里，把配置放到zk上，一旦配置信息发生变化，zk将获取到新的配置信息应用到系统中。
 
 ~~~
 # 11/12/21机器：
@@ -115,7 +115,7 @@ opt]# ps aux|grep zoo
 opt]# netstat -luntp|grep 2181
 ~~~
 
-> **ps aux：** 查看进程情况的命令
+> **ps aux** ：查看进程情况的命令
 
 ![1580178079898](assets/1580178079898.png)
 
@@ -125,9 +125,9 @@ opt]# netstat -luntp|grep 2181
 
 ### 安装部署Jenkins
 
-> **WHAT：**[Jenkins中文网](https://www.baidu.com/link?url=W22nPpmtH_sl0ovap9ypYFgfeS67PEutnmslKb9EZvm&wd=&eqid=de484ea10012b26f000000045e534b70)，引用一句话：构建伟大，无所不能
+> **WHAT**：[Jenkins中文网](https://www.baidu.com/link?url=W22nPpmtH_sl0ovap9ypYFgfeS67PEutnmslKb9EZvm&wd=&eqid=de484ea10012b26f000000045e534b70)，引用一句话：构建伟大，无所不能
 >
-> **WHY：**我们的之前的镜像是从网上下载下来然后push到harbor里面被应用到K8S里，那么我们自己开发的代码怎么做成镜像呢？就需要用到Jenkins
+> **WHY**：我们的之前的镜像是从网上下载下来然后push到harbor里面被应用到K8S里，那么我们自己开发的代码怎么做成镜像呢？就需要用到Jenkins
 
 ~~~
 # 200机器：
@@ -252,7 +252,7 @@ jenkins]# docker run --rm harbor.od.com/infra/jenkins:v2.190.3 ssh -T git@gitee.
 ~]# kubectl create secret docker-registry harbor --docker-server=harbor.od.com --docker-username=admin --docker-password=Harbor12345 -n infra
 ~~~
 
-> **kubectl create secret：**创建私有仓库
+> **kubectl create secret**创建私有仓库
 >
 > - 后面跟着的是对应的仓库、用户名、用户密码、仓库名称infra
 
@@ -436,12 +436,12 @@ full name：admin
 
 #### 安装蓝海
 
-> **WHAT：**从仪表板到各个Pipeline运行的查看分支和结果，使用可视编辑器修改Pipeline作为代码
+> **WHAT**：从仪表板到各个Pipeline运行的查看分支和结果，使用可视编辑器修改Pipeline作为代码
 >
 > - 连续交付（CD）Pipeline的复杂可视化，允许快速和直观地了解Pipeline的状态（下面回顾构建镜像流程的时候有使用到）
 > - ...
 >
-> **WHY：**当然是为了让我们能更清晰明了的看到构建的情况
+> **WHY**：当然是为了让我们能更清晰明了的看到构建的情况
 
 ![1583036159177](assets/1583036159177.png)
 
@@ -449,7 +449,7 @@ full name：admin
 
 > 这里如果没有内容的点一下check out，因为读取的慢的问题
 >
-> **ctrl+f：**呼出页面搜索
+> **ctrl+f**呼出页面搜索
 
 ![1583036408736](assets/1583036408736.png)
 
@@ -499,9 +499,9 @@ full name：admin
 
 ### 安装maven
 
-> **WHAT：**一个项目管理工具，可以对 Java 项目进行构建、依赖管理。
+> **WHAT**：一个项目管理工具，可以对 Java 项目进行构建、依赖管理。
 >
-> **WHY：**构建项目镜像时需要
+> **WHY**：构建项目镜像时需要
 
 [使用官网的](https://archive.apache.org/dist/maven/maven-3/)，或者用我上传的
 
@@ -615,7 +615,7 @@ jre8]# chmod +x entrypoint.sh
 jre8]# ll
 ~~~
 
-> **Dockerfile解析：**
+> **Dockerfile解析**：
 >
 > - RUN 把时区改成上海时区
 > - ADD 给一个监控
@@ -720,9 +720,9 @@ maven:          3.6.1-8u232
 # 注意看脚注，点击Build进行构建，等待构建完成。
 ~~~
 
-> **git_repo：**注意的地址是写你的地址
+> **git_repo**：注意的地址是写你的地址
 >
-> **add_tag：**写现在的日期
+> **add_tag**：写现在的日期
 
 [^dubbo-service包]: dubbo-service包在我上传的文件夹里面，你下载后拉到你新建的git仓库里面（公开），然后配上你的地址（记得之前的web是配了公钥的，否则找不到，公钥的方法在上面的章节），目录结构长这个样子
 
@@ -956,11 +956,11 @@ zookeeper]# bin/zkCli.sh -server localhost:2181
 
 ![1583133397745](assets/1583133397745.png)
 
-> **一般dockerfile是由谁写：**有一些公司是运维用Jenkins写，也有些公司是开发自己写的
+> **一般dockerfile是由谁写**：有一些公司是运维用Jenkins写，也有些公司是开发自己写的
 
 ![1583132650158](assets/1583132650158.png)
 
-> **Jenkins流水线构建就这五步：**拉取代码——>编译代码——>到指定目录打包jar——>构建镜像
+> **Jenkins流水线构建就这五步**：拉取代码——>编译代码——>到指定目录打包jar——>构建镜像
 
 此时提供者已经在harbor里，我们还需要把它发到我们的k8s里（还有消费者还没操作）
 
@@ -970,7 +970,7 @@ zookeeper]# bin/zkCli.sh -server localhost:2181
 
 ### 交付dubbo-monitor到k8s集群：
 
-> **WHAT：**上面已经讲到，注册到zk里的时候不能总是打开机器进去查看，我们得有个图形化界面
+> **WHAT**上面已经讲到，注册到zk里的时候不能总是打开机器进去查看，我们得有个图形化界面
 
 ~~~
 # 200机器，下载包：
@@ -1332,7 +1332,7 @@ http://demo.od.com/hello?name=ben1234560
 
 ### 实现dubbo集群的日常维护
 
-> **WHAT：**日常中肯定有代码迭代的情况，开发更新了代码，我们迭代App
+> **WHAT**：日常中肯定有代码迭代的情况，开发更新了代码，我们迭代App
 
 我们改了下面红框内的一些内容，模拟开发代码的迭代
 
@@ -1396,7 +1396,7 @@ http://demo.od.com/hello?name=ben1234560
 
 ### 实战K8S集群毁灭性测试
 
-> **WHAT：**生产中总会遇到突然宕机等情况，我们需要来模拟一下
+> **WHAT**：生产中总会遇到突然宕机等情况，我们需要来模拟一下
 
 生产上，保证服务都是起两份以上，所有我们给consumer和service都起两份
 
