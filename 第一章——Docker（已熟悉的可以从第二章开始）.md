@@ -14,10 +14,7 @@
 >
 > **WHY**：docker的一个核心就是容器（沙箱），在开发环境开发的代码，到测试环境需要调整，到预生产环境也需要调整，到生产环境更加需要调整，而我们想要的是一次部署到处运行，这就是为什么使用docker。
 >
-> **原理/源码解析：**
->
-> - [容器是怎么隔离的](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E5%AE%B9%E5%99%A8%E6%98%AF%E6%80%8E%E4%B9%88%E9%9A%94%E7%A6%BB%E7%9A%84)
-> - [关于namespace](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E5%85%B3%E4%BA%8Enamespace)
+> **原理/源码解析**：[容器是怎么隔离的](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E5%AE%B9%E5%99%A8%E6%98%AF%E6%80%8E%E4%B9%88%E9%9A%94%E7%A6%BB%E7%9A%84)
 >
 > 推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
 
