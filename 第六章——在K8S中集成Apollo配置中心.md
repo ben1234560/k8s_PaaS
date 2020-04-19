@@ -1,8 +1,8 @@
 ## 第六章——在K8S中集成Apollo配置中心
 
-> **前言：**
+> **前言**：
 >
-> **运维八荣八耻：**
+> **运维八荣八耻**：
 >
 > - 以可配置为荣，以硬编码为耻
 > - 以互备为荣，以单点为耻
@@ -15,7 +15,7 @@
 >
 > **目前我们交付进K8S集群的两个dubbo微服务和monitor，它们的配置都是写死在容器里的**
 >
-> **配置管理的现状：**
+> **配置管理的现状**：
 >
 > - 配置散乱格式不标准（XML、ini、conf、yaml...）
 > - 主要采用本地静态配置，应用多副本集下配置修改麻烦
@@ -23,7 +23,7 @@
 > - 配置缺乏安全审计和版本控制功能（config review）
 > - 不同环境的应用，配置不同，造成多次打包，测试失败
 >
-> **配置中心是什么？：**
+> **配置中心是什么？**：
 >
 > - 顾名思义，就是集中管理应用程序配置的“中心”
 
@@ -42,9 +42,9 @@
 
 ### configmap使用详解
 
-> **WHAT：**就是为了让镜像 和 配置文件解耦，以便实现镜像的可移植性和可复用性，因为一个configMap其实就是一系列配置信息的集合，将来可直接注入到Pod中的容器使用
+> **WHAT**：就是为了让镜像 和 配置文件解耦，以便实现镜像的可移植性和可复用性，因为一个configMap其实就是一系列配置信息的集合，将来可直接注入到Pod中的容器使用
 >
-> **WHY：**为了配合Apollo使用
+> **WHY**：为了配合Apollo使用
 
 使用configmap管理应用配置，需要先拆分环境，拆分未test和pro环境来模拟实际工作
 
@@ -75,7 +75,7 @@ cd ../logs/
 logs]# rm -fr ./*
 ~~~
 
-> **kill -9：**强制杀死该进程
+> **kill -9**：强制杀死该进程
 
 ![1581059149533](assets/1581059149533.png)
 
@@ -182,7 +182,7 @@ dubbo-monitor]# vimdiff dp.yaml dp2.yaml
 #:qall 退出
 ~~~
 
-> **vimdiff ：**编辑同一文件的不同历史版本，对各文件的内容进行比对与调整
+> **vimdiff **：编辑同一文件的不同历史版本，对各文件的内容进行比对与调整
 >
 > 没有vimdiff 的下载 yum install vim -y
 
@@ -196,7 +196,7 @@ dubbo-monitor]# mv dp.yaml /tmp/
 dubbo-monitor]# mv dp2.yaml dp.yaml
 ~~~
 
-> **mv：**如果mv后是目录，则是移动，如果是文件名，则是更改名字
+> **mv**：如果mv后是目录，则是移动，如果是文件名，则是更改名字
 
 ~~~
 # 应用资源配置清单，22机器：
@@ -289,7 +289,7 @@ conf]# kubectl create cm kubelet-cm --from-file=./kubelet.kubeconfig
 
 #### 官方Apollo框架：
 
-![img](https://raw.githubusercontent.com/ctripcorp/apollo/master/doc/images/overall-architecture.png)
+![1587274472834](assets/1587274472834.png)
 
 #### 简化Apollo框架：
 
