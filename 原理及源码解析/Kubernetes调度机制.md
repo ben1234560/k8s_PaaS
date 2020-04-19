@@ -2,7 +2,7 @@
 
 ### Kubernetes的资源模型与资源管理
 
-所有跟调度和资源管理相关的属性都是属于 Pod 对象的字段，其中最重要的部分，就是 Pod 的 CPU 和内存配置，如下所示：
+所有跟调度和资源管理相关的属性都是属于 Pod 对象的字段，其中最重要的部分，就是 Pod 的 CPU 和内存配置，如下所示
 
 ~~~
 apiVersion: v1
@@ -34,21 +34,21 @@ spec:
         cpu: "500m"
 ~~~
 
-> 在Kubernetes 中：
+> 在Kubernetes 中
 >
 > - CPU称为 “可压缩资源” ，可压缩资源不足时，Pod只会“饥饿”，不会退出
 > - 内存称为“不可压缩资源”，不可压缩资源不足时，Pod会因为OOM（Out-Of-Memory）被内核杀掉
 > -  Pod 可以由多个 Container 组成，所以 CPU 和内存资源的限额，是要配置在每个 Container 的定义上的，而Pod整体资源配置，就由这些 Container 的配置值累加得到
 
-**limits 和 requests** 的区别很简单：在调度的时候，kube-scheduler 只会按照 requests 的值进行计算。而在真正设置 Cgroups 限制的时候，kubelet 则会按照 limits 的值来进行设置。
+**limits 和 requests** 的区别很简单在调度的时候，kube-scheduler 只会按照 requests 的值进行计算。而在真正设置 Cgroups 限制的时候，kubelet 则会按照 limits 的值来进行设置。
 
 requests+limits 的做法，其实是Borg的思想，即，实际场景中，大多数作业使用到的资源其实远小宇它所请求的资源限额，基于这种假设，用户可以声明一个相对小的requests值供调度器使用，而Kubernetes 真正设置给容器 Cgroups 的，则是相对较大的 limits 值。
 
-#### QoS 模型：
+#### QoS 模型
 
 > 三个级别，衔接上面
 
-- **Guaranteed：**Pod 里的每一个 Container 都同时设置了 requests 和 limits，并且 requests 和 limits 值相等的时候，这个 Pod 就属于 Guaranteed 类别
+- **Guaranteed**：Pod 里的每一个 Container 都同时设置了 requests 和 limits，并且 requests 和 limits 值相等的时候，这个 Pod 就属于 Guaranteed 类别
 
 ~~~
 apiVersion: v1
@@ -69,7 +69,7 @@ spec:
         cpu: "700m"
 ~~~
 
-- **Burstable：**当 Pod 不满足 Guaranteed 的条件，但至少有一个 Container 设置了 requests。那么这个 Pod 就会被划分到 Burstable 类别
+- **Burstable**：当 Pod 不满足 Guaranteed 的条件，但至少有一个 Container 设置了 requests。那么这个 Pod 就会被划分到 Burstable 类别
 
 ~~~
 apiVersion: v1
@@ -88,7 +88,7 @@ spec:
         memory: "100Mi"
 ~~~
 
-- **BestEffort：**如果 Pod 既没有设置 requests，也没有设置 limits，那么它的 QoS 类别就是 BestEffort
+- **BestEffort**：如果 Pod 既没有设置 requests，也没有设置 limits，那么它的 QoS 类别就是 BestEffort
 
 ~~~
 apiVersion: v1
@@ -102,7 +102,7 @@ spec:
     image: nginx
 ~~~
 
-**QoS 划分的主要应用场景，是当宿主机资源紧张的时候，kubelet 对 Pod 进行 Eviction（即资源回收）时需要用到的。**当Eviction发生时，kubelet 具体会挑 Pod 进行删除操作，按如下级别：
+**QoS 划分的主要应用场景，是当宿主机资源紧张的时候，kubelet 对 Pod 进行 Eviction（即资源回收）时需要用到的。**当Eviction发生时，kubelet 具体会挑 Pod 进行删除操作，按如下级别
 
 **BestEffort < Burstable < Guaranteed**
 
@@ -114,12 +114,12 @@ spec:
 >
 > 在使用容器时，可以通过设置 cpuset 把容器绑定到某个 CPU 的核上，而不是像 cpushare 那样共享 CPU 的计算能力，这样CPU之间进行上下文切换的次数大大减少，容器里应用的性能会得到大幅提升
 
-实现方法：
+实现方法
 
 -  Pod 必须是 Guaranteed 的 QoS 类型
 - 将 Pod 的 CPU 资源的 requests 和 limits 设置为同一个相等的整数值
 
-如下例子：
+如下例子
 
 ~~~
 spec:
@@ -147,20 +147,20 @@ spec:
 
 > 调度机制的工作原理示意图
 
-**默认的几种调度策略：**
+**默认的几种调度策略**
 
-1. **第一种类型，GeneralPredicates：**这一组过滤规则，负责的是最基础的调度策略，计算的就是宿主机的 CPU 和内存资源等是否够用。
-2. **第二种类型，与 Volume 相关的过滤规则：**这一组过滤规则，负责的是跟容器持久化 Volume 相关的调度策略。
-3. **第三种类型，是宿主机相关的过滤规则：**这一组规则，主要考察待调度 Pod 是否满足 Node 本身的某些条件。比如，PodToleratesNodeTaints，负责检查的就是我们前面经常用到的 Node 的“污点”机制。
-4. **第四种类型，是 Pod 相关的过滤规则：**这一组规则，跟 GeneralPredicates 大多数是重合的。而比较特殊的，是 PodAffinityPredicate。这个规则的作用，是检查待调度 Pod 与 Node 上的已有 Pod 之间的亲密（affinity）和反亲密（anti-affinity）关系
+1. **第一种类型，GeneralPredicates**：这一组过滤规则，负责的是最基础的调度策略，计算的就是宿主机的 CPU 和内存资源等是否够用。
+2. **第二种类型，与 Volume 相关的过滤规则**：这一组过滤规则，负责的是跟容器持久化 Volume 相关的调度策略。
+3. **第三种类型，是宿主机相关的过滤规则**：这一组规则，主要考察待调度 Pod 是否满足 Node 本身的某些条件。比如，PodToleratesNodeTaints，负责检查的就是我们前面经常用到的 Node 的“污点”机制。
+4. **第四种类型，是 Pod 相关的过滤规则**：这一组规则，跟 GeneralPredicates 大多数是重合的。而比较特殊的，是 PodAffinityPredicate。这个规则的作用，是检查待调度 Pod 与 Node 上的已有 Pod 之间的亲密（affinity）和反亲密（anti-affinity）关系
 
 **在具体执行的时候， 当开始调度一个 Pod 时，Kubernetes 调度器会同时启动 16 个 Goroutine，来并发地为集群里的所有 Node 计算 Predicates，最后返回可以运行这个 Pod 的宿主机列表。**
 
-> **Goroutine：**go语言的“线程”，比传统线程对资源的占用更合理
+> **Goroutine**go语言的“线程”，比传统线程对资源的占用更合理
 
 在 Predicates 阶段完成了节点的“过滤”之后，Priorities 阶段的工作就是为这些节点打分。这里打分的范围是 0-10 分，得分最高的节点就是最后被 Pod 绑定的最佳节点。
 
-Priorities 里最常用到的一个打分规则，是 LeastRequestedPriority。它的计算方法，可以简单地总结为如下所示的公式：
+Priorities 里最常用到的一个打分规则，是 LeastRequestedPriority。它的计算方法，可以简单地总结为如下所示的公式
 
 ~~~
 score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(requested))10/capacity))/2
@@ -168,13 +168,13 @@ score = (cpu((capacity-sum(requested))10/capacity) + memory((capacity-sum(reques
 
 这个算法实际上就是在选择空闲资源（CPU 和 Memory）最多的宿主机。
 
-与 LeastRequestedPriority 一起发挥作用的，还有 BalancedResourceAllocation。它的计算公式如下所示：
+与 LeastRequestedPriority 一起发挥作用的，还有 BalancedResourceAllocation。它的计算公式如下所示
 
 ~~~
 score = 10 - variance(cpuFraction,memoryFraction,volumeFraction)*10
 ~~~
 
-每种资源的 Fraction 的定义是 ：Pod 请求的资源 / 节点上的可用资源。而 variance 算法的作用，则是计算每两种资源 Fraction 之间的“距离”。而最后选择的，则是资源 Fraction 差距最小的节点。
+每种资源的 Fraction 的定义是 Pod 请求的资源 / 节点上的可用资源。而 variance 算法的作用，则是计算每两种资源 Fraction 之间的“距离”。而最后选择的，则是资源 Fraction 差距最小的节点。
 
 **也就是调度完成后，所有节点里各种资源分配最均衡的那个节点，从而避免一个节点上 CPU 被大量分配、而 Memory 大量剩余的情况**
 
@@ -186,7 +186,7 @@ score = 10 - variance(cpuFraction,memoryFraction,volumeFraction)*10
 
 工作中我们也需要一些Pod有优先级和抢占机制，比如Pod调度失败后，会被“搁置”，知道Pod被更新或集群状态发生变化，调度器才会对Pod进行重新调度，我们希望高优先级的Pod调度失败后不被搁置，而“挤走”某些低优先级的。
 
-1.11版本后这个特性已经是Beta，用法如下：
+1.11版本后这个特性已经是Beta，用法如下
 
 先在Kubernetes里提交一个PriorityClass，如下:
 
@@ -200,13 +200,13 @@ globalDefault: false
 description: "This priority class should be used for high priority service pods only."
 ~~~
 
-> 这个YAML文件名为：high-priority
+> 这个YAML文件名为high-priority
 >
-> **value：**值越大代表优先级越高（最大1000000000/10亿）
+> **value**：值越大代表优先级越高（最大1000000000/10亿）
 >
-> **globalDefault：**声明使用该PriorityClass的Pod拥有值为1000000 的优先级，没有声明则为0。 true 的话，那就意味着这个 PriorityClass 的值会成为系统的默认值
+> **globalDefault**：声明使用该PriorityClass的Pod拥有值为1000000 的优先级，没有声明则为0。 true 的话，那就意味着这个 PriorityClass 的值会成为系统的默认值
 
-然后我们在Pod就可以声明使用，如下：
+然后我们在Pod就可以声明使用，如下
 
 ~~~
 apiVersion: v1
