@@ -38,27 +38,27 @@
 - 通过服务发现或静态配置发现目标
 - 支持作为数据源接入Grafana
 
-##### 我们将使用的架构图
+##### 我们将使用的官方架构图
 
 ![1582697010557](assets/1582697010557.png)
 
-> **Prometheus Server：**服务核心组件，通过pull metrics从 Exporter 拉取和存储监控数据,并提供一套灵活的查询语言（PromQL）。
+> **Prometheus Server**：服务核心组件，通过pull metrics从 Exporter 拉取和存储监控数据,并提供一套灵活的查询语言（PromQL）。
 >
-> **pushgateway：**类似一个中转站，Prometheus的server端只会使用pull方式拉取数据，但是某些节点因为某些原因只能使用push方式推送数据，那么它就是用来接收push而来的数据并暴露给Prometheus的server拉取的中转站，这里我们不做它。
+> **pushgateway**：类似一个中转站，Prometheus的server端只会使用pull方式拉取数据，但是某些节点因为某些原因只能使用push方式推送数据，那么它就是用来接收push而来的数据并暴露给Prometheus的server拉取的中转站，这里我们不做它。
 >
-> **Exporters/Jobs：**负责收集目标对象（host, container…）的性能数据，并通过 HTTP 接口供 Prometheus Server 获取。
+> **Exporters/Jobs**：负责收集目标对象（host, container…）的性能数据，并通过 HTTP 接口供 Prometheus Server 获取。
 >
-> **Service Discovery：**服务发现，Prometheus支持多种服务发现机制：文件，DNS，Consul,Kubernetes,OpenStack,EC2等等。基于服务发现的过程并不复杂，通过第三方提供的接口，Prometheus查询到需要监控的Target列表，然后轮训这些Target获取监控数据。
+> **Service Discovery**：服务发现，Prometheus支持多种服务发现机制：文件，DNS，Consul,Kubernetes,OpenStack,EC2等等。基于服务发现的过程并不复杂，通过第三方提供的接口，Prometheus查询到需要监控的Target列表，然后轮训这些Target获取监控数据。
 >
-> **Alertmanager：**从 Prometheus server 端接收到 alerts 后，会进行去除重复数据，分组，并路由到对方的接受方式，发出报警。常见的接收方式有：电子邮件，pagerduty 等。
+> **Alertmanager**：从 Prometheus server 端接收到 alerts 后，会进行去除重复数据，分组，并路由到对方的接受方式，发出报警。常见的接收方式有：电子邮件，pagerduty 等。
 >
-> **UI页面的三种方法：**
+> **UI页面的三种方法**：
 >
 > - Prometheus web UI：自带的（不怎么好用）
 > - Grafana：美观、强大的可视化监控指标展示工具 
 > - API clients：自己开发的监控展示工具
 >
-> **工作流程：**Prometheus Server定期从配置好的Exporters/Jobs中拉metrics，或者来着pushgateway发过来的metrics，或者其它的metrics，收集完后运行定义好的alert.rules（这个文件后面会讲到），记录时间序列或者向Alertmanager推送警报
+> **工作流程**：Prometheus Server定期从配置好的Exporters/Jobs中拉metrics，或者来着pushgateway发过来的metrics，或者其它的metrics，收集完后运行定义好的alert.rules（这个文件后面会讲到），记录时间序列或者向Alertmanager推送警报。更多了解<a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E7%9B%B8%E5%85%B3%E7%94%9F%E6%80%81.md#prometheusmetrics-server%E4%B8%8Ekubernetes%E7%9B%91%E6%8E%A7%E4%BD%93%E7%B3%BB">Prometheus、Metrics Server与Kubernetes监控体系</a>
 
 ##### 和zabbixc对比
 
@@ -83,7 +83,7 @@
 
 ### 交付kube-state-metric
 
-> **WHAT：**为prometheus采集k8s资源数据的exporter，能够采集绝大多数k8s内置资源的相关数据，例如pod、deploy、service等等。同时它也提供自己的数据，主要是资源采集个数和采集发生的异常次数统计
+> **WHAT**：为prometheus采集k8s资源数据的exporter，能够采集绝大多数k8s内置资源的相关数据，例如pod、deploy、service等等。同时它也提供自己的数据，主要是资源采集个数和采集发生的异常次数统计
 
 https://quay.io/repository/coreos/kube-state-metrics?tab=tags
 
@@ -351,7 +351,7 @@ spec:
 
 ### 交付cadvisor
 
-> **WHAT：** 用来监控容器内部使用资源的信息
+> **WHAT**： 用来监控容器内部使用资源的信息
 
 [cadvisor官方dockerhub镜像](https://hub.docker.com/r/google/cadvisor/tags)
 
@@ -461,11 +461,11 @@ spec:
 ~]# ls -l /sys/fs/cgroup/
 ~~~
 
-> **mount -o remount, rw /sys/fs/cgroup：**重新以可读可写的方式挂载为已经挂载/sys/fs/cgroup
+> **mount -o remount, rw /sys/fs/cgroup**：重新以可读可写的方式挂载为已经挂载/sys/fs/cgroup
 >
-> **ln -s：**创建对应的软链接
+> **ln -s**：创建对应的软链接
 >
-> **ls -l：**显示不隐藏的文件与文件夹的详细信息
+> **ls -l**：显示不隐藏的文件与文件夹的详细信息
 
 ![1583458181722](assets/1583458181722.png)
 
@@ -505,7 +505,7 @@ spec:
 
 ### 交付blackbox-exporter
 
-> **WHAT：**监控业务容器存活性
+> **WHAT**：监控业务容器存活性
 
 ~~~
 # 200机器，下载镜像
@@ -661,7 +661,7 @@ blackbox           A    10.4.7.10
 
 ### 安装部署Prometheus-server
 
-> **WHAT：**服务核心组件，通过pull metrics从 Exporter 拉取和存储监控数据,并提供一套灵活的查询语言（PromQL）
+> **WHAT**：服务核心组件，通过pull metrics从 Exporter 拉取和存储监控数据,并提供一套灵活的查询语言（PromQL）
 
 [prometheus-server官网docker地址](https://hub.docker.com/r/prom/prometheus)
 
@@ -1004,7 +1004,7 @@ scrape_configs:
     target_label: kubernetes_pod_name
 ~~~~
 
-> **cp -a：**在复制目录时使用，它保留链接、文件属性，并复制目录下的所有内容
+> **cp -a**：在复制目录时使用，它保留链接、文件属性，并复制目录下的所有内容
 
 ![1583461823355](assets/1583461823355.png)
 
@@ -1184,9 +1184,9 @@ UPDATE后，把scale改成1
 
 ### 安装部署配置Grafana
 
-> **WHAT：**美观、强大的可视化监控指标展示工具 
+> **WHAT**：美观、强大的可视化监控指标展示工具 
 >
-> **WHY：**用来代替prometheus原生UI界面
+> **WHY**：用来代替prometheus原生UI界面
 
 ~~~
 # 200机器，准备镜像、资源配置清单：
@@ -1587,9 +1587,9 @@ dubbo-consumer
 
 ### 安装部署alertmanager
 
-> **WHAT：** 从 Prometheus server 端接收到 alerts 后，会进行去除重复数据，分组，并路由到对方的接受方式，发出报警。常见的接收方式有：电子邮件，pagerduty 等。
+> **WHAT**： 从 Prometheus server 端接收到 alerts 后，会进行去除重复数据，分组，并路由到对方的接受方式，发出报警。常见的接收方式有：电子邮件，pagerduty 等。
 >
-> **WHY：**使得系统的警告随时让我们知道
+> **WHY**：使得系统的警告随时让我们知道
 
 ~~~
 # 200机器，准备镜像、资源清单：
@@ -1856,7 +1856,7 @@ rule_files:
 
 > ![1583545590235](assets/1583545590235.png)
 >
-> **rules.yml文件：**这个文件就是报警规则
+> **rules.yml文件**：这个文件就是报警规则
 >
 > 这时候可以重启Prometheus的pod，但生产商因为Prometheus太庞大，删掉容易拖垮集群，所以我们用另外一种方法，平滑加载（Prometheus支持）：
 
@@ -1929,14 +1929,14 @@ QQ邮箱收到报警
 
 ### 通过K8S部署dubbo微服务接入ELK架构
 
-> **WHAT：**ELK是三个开源软件的缩写，分别是：
+> **WHAT**：ELK是三个开源软件的缩写，分别是：
 >
 > - E——ElasticSearch：分布式搜索引擎，提供搜集、分析、存储数据三大功能。
 > - L——LogStash：对日志的搜集、分析、过滤日志的工具，支持大量的数据获取方式。
 > - K——Kibana：为 Logstash 和 ElasticSearch 提供的日志分析友好的 Web 界面，可以帮助汇总、分析和搜索重要数据日志。
-> - 还有新增的FileBeat（流式日志收集器）：轻量级的日志收集处理工具，占用资源少，适合于在各个服务器上搜集日志后传输给Logstash，官方也推荐此工具，用来替代部分原本Logstash的工作。
+> - 还有新增的FileBeat（流式日志收集器）：轻量级的日志收集处理工具，占用资源少，适合于在各个服务器上搜集日志后传输给Logstash，官方也推荐此工具，用来替代部分原本Logstash的工作。[收集日子的多种方式及原理](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E7%9B%B8%E5%85%B3%E7%94%9F%E6%80%81.md#%E6%97%A5%E5%BF%97%E6%94%B6%E9%9B%86%E4%B8%8E%E7%AE%A1%E7%90%86)
 >
-> **WHY：** 随着容器编排的进行，业务容器在不断的被创建、摧毁、迁移、扩容缩容等，面对如此海量的数据，又分布在各个不同的地方，我们不可能用传统的方法登录到每台机器看，所以我们需要建立一套集中的方法。我们需要这样一套日志手机、分析的系统：
+> **WHY**： 随着容器编排的进行，业务容器在不断的被创建、摧毁、迁移、扩容缩容等，面对如此海量的数据，又分布在各个不同的地方，我们不可能用传统的方法登录到每台机器看，所以我们需要建立一套集中的方法。我们需要这样一套日志手机、分析的系统：
 >
 > - 收集——采集多种来源的日志数据（流式日志收集器）
 > - 传输——稳定的把日志数据传输到中央系统（消息队列）
@@ -1950,19 +1950,19 @@ QQ邮箱收到报警
 
 ![1581729929995](assets/1581729929995.png)
 
-> **c1/c2：**container（容器）的缩写
+> **c1/c2**：container（容器）的缩写
 >
-> **filebeat：**收集业务容器的日志，把c和filebeat放在一个pod里让他们一起跑，这样耦合就紧了
+> **filebeat**：收集业务容器的日志，把c和filebeat放在一个pod里让他们一起跑，这样耦合就紧了
 >
-> **kafka：**高吞吐量的[分布式](https://baike.baidu.com/item/%E5%88%86%E5%B8%83%E5%BC%8F/19276232)发布订阅消息系统，它可以处理消费者在网站中的所有动作流数据。filebeat收集数据以Topic形式发布到kafka。
+> **kafka**：高吞吐量的[分布式](https://baike.baidu.com/item/%E5%88%86%E5%B8%83%E5%BC%8F/19276232)发布订阅消息系统，它可以处理消费者在网站中的所有动作流数据。filebeat收集数据以Topic形式发布到kafka。
 >
-> **Topic：**Kafka数据写入操作的基本单元
+> **Topic**：Kafka数据写入操作的基本单元
 >
-> **logstash：**取kafka里的topic，然后再往ElasticSearch上传（异步过程，即又取又传）
+> **logstash**：取kafka里的topic，然后再往ElasticSearch上传（异步过程，即又取又传）
 >
-> **index-pattern：**把数据按环境分（按prod和test分），并传到kibana
+> **index-pattern**：把数据按环境分（按prod和test分），并传到kibana
 >
-> **kibana：**展示数据
+> **kibana**：展示数据
 
 
 
@@ -2042,7 +2042,7 @@ tomcat]# docker build . -t harbor.od.com/base/tomcat:v8.5.51
 tomcat]# docker push harbor.od.com/base/tomcat:v8.5.51
 ~~~
 
-> **Dockerfile文件解析：**
+> **Dockerfile文件解析**：
 >
 > - FROM：镜像地址
 > - RUN：修改时区
@@ -2648,7 +2648,7 @@ spec:
 >
 > 因为你用的指纹不是自己的，或者版本没写对。
 >
-> **dp.yaml文件解析：**    spec-containers下有两个name，对应的两个容器，这就是编车模式
+> **dp.yaml文件解析**：    spec-containers下有两个name，对应的两个容器，这就是边车模式（sidecar）。
 
 ~~~
 # 22机器，应用资源清单：
