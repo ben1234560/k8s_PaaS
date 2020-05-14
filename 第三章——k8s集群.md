@@ -809,7 +809,7 @@ spec:
   - host: traefik.od.com
     http:
       paths:
-	  - path: /
+      - path: /
         backend:
           serviceName: traefik-ingress-service
           servicePort: 8080
