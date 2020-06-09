@@ -3,7 +3,7 @@
 
 [![image](https://img.shields.io/badge/used-docker-blue.svg)](https://www.docker.com/) [![image](https://img.shields.io/badge/used-Prometheus-red.svg)](https://prometheus.io/) [![image](https://img.shields.io/badge/used-etcd-blue.svg)](https://etcd.io/) [![image](https://img.shields.io/badge/used-Grafana-orange.svg)](https://grafana.com)
 
-如何基于K8S部署成PaaS（一套完整的软件研发和部署平台/DevOps）——教程/学习（实战代码/欢迎讨论/大量注释/操作配图），你将习得部署如：K8S、dashboard、Harbor、Jenkins、本地gitlab、Apollo框架、promtheus、grafana、spinnaker等。
+如何基于K8S部署成PaaS/DevOps（一套完整的软件研发和部署平台）——教程/学习（实战代码/欢迎讨论/大量注释/操作配图），你将习得部署如：K8S、dashboard、Harbor、Jenkins、本地gitlab、Apollo框架、promtheus、grafana、spinnaker等。
 
 注释及配图覆盖率达80%以上，旨在帮助快速入门。
 
