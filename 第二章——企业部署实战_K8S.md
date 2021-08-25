@@ -1240,7 +1240,7 @@ fi
 ~]# chmod +x /etc/keepalived/check_port.sh
 ~~~
 
-> 由于7443端口未监听，Nginx 启动报 [emerg] bind() failed的可以参考这个方法https://blog.csdn.net/RunSnail2018/article/details/81185138（感谢https://gitee.com/wangming91/）
+> 由于7443端口未监听，Nginx 启动报 [emerg] bind() failed的可以参考[这个方法](https://blog.csdn.net/RunSnail2018/article/details/81185138)（感谢https://gitee.com/wangming91/）
 >
 > **yum install -y**：安装并自动yes
 >
