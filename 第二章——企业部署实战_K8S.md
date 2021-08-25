@@ -1240,7 +1240,7 @@ fi
 ~]# chmod +x /etc/keepalived/check_port.sh
 ~~~
 
-> 7443如果没有开通的可以参考这个方法https://blog.csdn.net/RunSnail2018/article/details/81185138（由![img](file:///C:\Users\Administrator\AppData\Roaming\Tencent\QQTempSys\8LDO48C$8@[GWU0353$FOVS.png)https://gitee.com/wangming91/提供，附上他的Gitee）
+> 由于7443端口未监听，Nginx 启动报 [emerg] bind() failed的可以参考这个方法https://blog.csdn.net/RunSnail2018/article/details/81185138（感谢https://gitee.com/wangming91/）
 >
 > **yum install -y**：安装并自动yes
 >
