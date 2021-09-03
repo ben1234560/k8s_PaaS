@@ -554,7 +554,7 @@ maven-3.6.1-8u232]# vi conf/settings.xml
       <id>nexus-aliyun</id>
       <mirrorOf>*</mirrorOf>
       <name>Nexus aliyun</name>
-      <url>http://maven.allyun.com/nexus/content/groups/public</url>
+      <url>https://maven.aliyun.com/repository/public</url>
     </mirror>
 ~~~
 
