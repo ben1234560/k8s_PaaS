@@ -555,7 +555,7 @@ maven-3.6.1-8u232]# vi conf/settings.xml
       <mirrorOf>*</mirrorOf>
       <name>Nexus aliyun</name>
       <url>https://maven.aliyun.com/repository/public</url>
-      <!-- 旧的地址：http://maven.allyun.com/nexus/content/groups/public --> 
+      <!-- 旧地址：http://maven.allyun.com/nexus/content/groups/public --> 
     </mirror>
 ~~~
 
