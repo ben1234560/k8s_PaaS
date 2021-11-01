@@ -555,6 +555,14 @@ location: /data/harbor/logs
 200 harbor]# ./install.sh
 ~~~
 
+> **提示**：harbor v2.3.3版本安装也需要将https相关的配置注释掉
+>
+> 如图#https:
+>
+> ![1635775214057](assets/1635775214057.png)
+>
+> 感谢@https://github.com/xinzhuxiansheng
+>
 > **mv**：为文件或目录改名、或将文件或目录移入其它位置。
 >
 > - 这里的命令是有斜杠的，所以是移动到某个目录下
