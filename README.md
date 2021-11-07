@@ -118,19 +118,20 @@
       <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E5%AE%B6%E5%BA%94%E7%94%A8.md#%E8%AF%A6%E8%A7%A3kibana%E7%94%9F%E4%BA%A7%E5%AE%9E%E8%B7%B5%E6%96%B9%E6%B3%95">详解Kibana生产实践方法</a>
     </ul>
   </li>
-  <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md">第八章——spinaker部署与应用</a>
+  <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md">第八章——spinaker部署与应用</a>
     <ul>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E9%83%A8%E7%BD%B2spinnaker%E7%9A%84amory%E5%8F%91%E8%A1%8C%E7%89%88">部署Spinnaker的Amory发行版</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2redis">安装部署redis</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2clouddriver">安装部署clouddriver</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2spinnaker%E5%85%B6%E4%BD%99%E7%BB%84%E4%BB%B6">安装部署spinnaker其余组件</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E7%BB%93%E5%90%88jenkins%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F">使用spinnaker结合Jenkins构建镜像</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E9%85%8D%E7%BD%AEdubbo%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E5%8F%91%E5%B8%83%E8%87%B3k8s">使用spinnaker配置dubbo服务提供者发布至K8S</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E9%85%8D%E7%BD%AEdubbo%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%B0k8s">使用spinnaker配置dubbo服务消费者到K8S</a>
-      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E6%A8%A1%E6%8B%9F%E7%94%9F%E4%BA%A7%E4%B8%8A%E4%BB%A3%E7%A0%81%E8%BF%AD%E4%BB%A3">模拟生产上代码迭代</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E9%83%A8%E7%BD%B2spinnaker%E7%9A%84amory%E5%8F%91%E8%A1%8C%E7%89%88">部署Spinnaker的Amory发行版</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2redis">安装部署redis</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2clouddriver">安装部署clouddriver</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E5%AE%89%E8%A3%85%E9%83%A8%E7%BD%B2spinnaker%E5%85%B6%E4%BD%99%E7%BB%84%E4%BB%B6">安装部署spinnaker其余组件</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E7%BB%93%E5%90%88jenkins%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F">使用spinnaker结合Jenkins构建镜像</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E9%85%8D%E7%BD%AEdubbo%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E5%8F%91%E5%B8%83%E8%87%B3k8s">使用spinnaker配置dubbo服务提供者发布至K8S</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E4%BD%BF%E7%94%A8spinnaker%E9%85%8D%E7%BD%AEdubbo%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E5%88%B0k8s">使用spinnaker配置dubbo服务消费者到K8S</a>
+      <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AB%E7%AB%A0%E2%80%94%E2%80%94spinnaker%E9%83%A8%E7%BD%B2%E4%B8%8E%E5%BA%94%E7%94%A8.md#%E6%A8%A1%E6%8B%9F%E7%94%9F%E4%BA%A7%E4%B8%8A%E4%BB%A3%E7%A0%81%E8%BF%AD%E4%BB%A3">模拟生产上代码迭代</a>
     </ul>
   </li>
 </ul>
+
 
 
 ##### 资料参考：
