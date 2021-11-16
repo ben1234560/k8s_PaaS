@@ -144,6 +144,10 @@
 
 QQ群号：676040917（创建日期：2021/08/26）
 
+<div align='left'>
+    <img src="assets/1637049717005.png" alt="qq_group" style="max-width: 100%;">
+</div>
+
 群内禁止一切广告，只为解决问题而存在。
 
 ## 说明
