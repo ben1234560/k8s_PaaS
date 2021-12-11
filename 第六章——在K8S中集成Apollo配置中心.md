@@ -289,9 +289,34 @@ conf]# kubectl create cm kubelet-cm --from-file=./kubelet.kubeconfig
 
 #### 官方Apollo框架：
 
+> **WHAT**：请参考[官方总体设计](https://www.apolloconfig.com/#/zh/design/apollo-design)，Apollo框架的特性也已经在上面跟Spring Cloud做了对比。更多的解释可以参考[官方特性文档](https://github.com/apolloconfig/apollo#features)
+>
+> **WHY**：用该框架实现比Spring Cloud更优的能力，更多对比可参考[Nacos、Apollo、Spring Cloud Config微服务配置中心对比](https://www.jianshu.com/p/2f0ae9c7f2e1)
+
 ![1587274472834](assets/1587274472834.png)
 
 #### 简化Apollo框架：
+
+> **WHY**：
+>
+> 参考[官方微服务架构](https://mp.weixin.qq.com/s/-hUaQPzfsl9Lm3IqQW3VDQ)使用Apollo架构V1
+>
+> Meta Server：
+>
+> - Portal通过域名访问MetaServer获取AdminService的地址列表
+> - Client通过域名访问MetaServer获取ConfigService的地址列表
+> - 相当于一个Eureka Proxy
+> - 逻辑角色，和ConfigService住在一起部署
+>
+> Eureka：
+>
+> - 用于服务发现和注册
+> - Config/AdminService注册实例并定期报心跳
+> - 和ConfigService住在一起部署
+>
+> 可以看到Eureka和Zookeeper是一样的功能，所以不再搭建重复的功能服务。
+>
+> 而为什么使用Zookeeper，总得来说Eureka基于AP保证高可用，遇到问题，时可以牺牲其一致性来保证系统服务的**高可用性**，既返回旧数据。Zookeeper基于CP，追求**数据一致性**。实际业务使用什么要基于业务考量。
 
 ![1584698746125](assets/1584698746125.png)
 
@@ -309,7 +334,7 @@ conf]# kubectl create cm kubelet-cm --from-file=./kubelet.kubeconfig
 
 [官网https://github.com/ctripcorp/apollo/](https://github.com/ctripcorp/apollo/)
 
-##### 安装部署MySQL数据库
+##### 安装部署MySQL数据库（作为`ConfigDB`/`PortalDB`）
 
 ~~~~
 # 更新yum源，11机器：
@@ -853,9 +878,7 @@ apollo-adminservice]# docker push harbor.od.com/infra/apollo-adminservice:v1.5.1
 
 ![1583208050305](assets/1583208050305.png)
 
-##### 重新复习一下交付过程：
-
-##### 搞定镜像-搞定资源配置清单-应用资源配置清单
+##### 重新复习一下交付过程：搞定镜像-搞定资源配置清单-应用资源配置清单
 
 ~~~
 # 200机器，制作资源配置清单：
@@ -1317,7 +1340,7 @@ AppId:dubbo-demo-service
 
 首先我们在git新建一个Apollo分支，以下是操作方法
 
-##### git创建分支并上传代码（或者直接fork我），注意，下图配的是gitlab里面web的，现在你要操作的是自己git的service，因为service没截图，所以我用web的替代
+**git创建分支并上传代码（或者直接fork我），注意，下图配的是gitlab里面web的，现在你要操作的是自己git的service，因为service没截图，所以我用web的替代**
 
 1. 切换身份
 
