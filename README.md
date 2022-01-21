@@ -155,7 +155,7 @@ QQ群号：676040917（创建日期：2021/08/26）
 
 欢迎参与贡献和完善内容，贡献方法参考[CONTRIBUTING](https://github.com/ben1234560/k8s_PaaS/blob/master/CONTRIBUTING.md)。感谢所有的贡献者，贡献列表见[contributors](https://github.com/ben1234560/k8s_PaaS/graphs/contributors)。
 
-另外，感谢一直在群里提供建议和解答的伙伴们，感谢大家的无上的开源精神👍👍👍
+另外，感谢一直在群里提供建议和解答的伙伴们，感谢大家无私的开源精神👍👍👍
 
 
 
