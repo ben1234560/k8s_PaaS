@@ -1211,9 +1211,13 @@ bin]# supervisorctl status
 
 ![1584701103579](assets/1584701103579.png)
 
+安装nginx时另一个注意事项 <a href="https://github.com/ben1234560/k8s_PaaS/issues/16">点击链接  </a>
+
+（感谢 https://github.com/nangongchengfeng/）
+
 ~~~
 # 11/12机器
-~]# yum install nginx -y
+~]# yum install nginx nginx-mod-stream -y
 # 添加在最下面
 ~]# vi /etc/nginx/nginx.conf
 stream {
