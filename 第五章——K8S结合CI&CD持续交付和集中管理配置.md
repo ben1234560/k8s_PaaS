@@ -238,6 +238,7 @@ FROM harbor.od.com/public/jenkins:v2.176.2
 ~~~
 # 200机器:
 jenkins]# docker build . -t harbor.od.com/infra/jenkins:v2.176.2
+jenkins]# docker tag 编译镜像的id harbor.od.com/infra/jenkins:v2.190.3
 jenkins]# docker push harbor.od.com/infra/jenkins:v2.190.3
 jenkins]# docker run --rm harbor.od.com/infra/jenkins:v2.190.3 ssh -T git@gitee.com
 ~~~
