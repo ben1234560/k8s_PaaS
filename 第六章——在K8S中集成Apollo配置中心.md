@@ -838,6 +838,16 @@ then
 fi
 
 tail -f /dev/null
+
+
+
+
+# 200机器，修改账户密码：
+config]# cd /data/dockerfile/apollo-adminservice/config
+config]# vi application-github.properties
+spring.datasource.url = jdbc:mysql://mysql.od.com:3306/ApolloConfigDB?characterEncoding=utf8
+spring.datasource.username = apolloconfig
+spring.datasource.password = 123456
 ~~~
 
 > [startup.sh官方地址](https://github.com/ctripcorp/apollo/blob/1.5.1/scripts/apollo-on-kubernetes/apollo-admin-server/scripts/startup-kubernetes.sh)
@@ -847,6 +857,10 @@ tail -f /dev/null
 > SERVER_PORT=8080  # 因为docker网络空间是互相隔离，用8080即可
 >
 > APOLLO_ADMIN_SERVICE_NAME=$(hostname -i)
+
+此处由 “**南宫乘风**”  补充配置修改 ：https://github.com/nangongchengfeng
+
+
 
 ~~~
 # 200机器，制作dockerfile：
@@ -1007,6 +1021,12 @@ apollo-portal]# rm -f scripts/shutdown.sh
 
 [sql官网网址-需要raw](https://github.com/ctripcorp/apollo/blob/master/scripts/apollo-on-kubernetes/db/portal-db/apolloportaldb.sql)
 
+**注意：**这个数据库地址已经404
+
+可以尝试使用这个数据库地址：https://github.com/apolloconfig/apollo/blob/master/scripts/sql/apolloportaldb.sql
+
+相关资料：https://www.apolloconfig.com/#/zh/deployment/distributed-deployment-guide?id=_21-%e5%88%9b%e5%bb%ba%e6%95%b0%e6%8d%ae%e5%ba%93
+
 ~~~
 # 11机器，数据库初始化：
 ~]# wget https://raw.githubusercontent.com/ctripcorp/apollo/master/scripts/apollo-on-kubernetes/db/portal-db/apolloportaldb.sql -O apolloportal.sql
@@ -1112,6 +1132,16 @@ then
 fi
 
 tail -f /dev/null
+
+
+# 200机器，修改账户密码：
+config]# cd /data/dockerfile/apollo-portal/config
+config]# vi application-github.properties
+spring.datasource.url = jdbc:mysql://mysql.od.com:3306/ApolloPortalDB?characterEncoding=utf8
+spring.datasource.username = apolloportal
+spring.datasource.password = 123456
+
+
 ~~~
 
 > [portal_startup官网地址](https://github.com/ctripcorp/apollo/blob/1.5.1/scripts/apollo-on-kubernetes/apollo-portal-server/scripts/startup-kubernetes.sh)
@@ -1120,6 +1150,10 @@ tail -f /dev/null
 >
 > SERVER_PORT=8080
 > APOLLO_PORTAL_SERVICE_NAME=$(hostname -i)
+
+此处由 “**南宫乘风**”  补充配置修改 ：https://github.com/nangongchengfeng
+
+
 
 ~~~
 # 200机器，制作dockerfile：
@@ -1340,6 +1374,8 @@ AppId:dubbo-demo-service
 
 首先我们在git新建一个Apollo分支，以下是操作方法
 
+建议直接使用公网的 https://gitee.com/benjas/dubbo-demo-service.git 或者拷贝一份
+
 **git创建分支并上传代码（或者直接fork我），注意，下图配的是gitlab里面web的，现在你要操作的是自己git的service，因为service没截图，所以我用web的替代**
 
 1. 切换身份
@@ -1378,7 +1414,9 @@ AppId:dubbo-demo-service
 
 #### 继续主线
 
-在Apollo portal里创建相应两个配置项
+建议直接使用公网的 https://gitee.com/benjas/dubbo-demo-service.git 或者拷贝一份
+
+在Apollo portal里创建相应两个配置项（注意看清位置，是 ：resources 下的）
 
 ![1582680643369](assets/1582680643369.png)
 
@@ -1395,6 +1433,8 @@ AppId:dubbo-demo-service
 ![1583223190037](assets/1583223190037.png)
 
 我们已经配置好了，然后需要用Jenkins制作镜像
+
+建议直接使用公网的 https://gitee.com/benjas/dubbo-demo-service.git 或者拷贝一份
 
 ~~~
 # 填入对应参数
@@ -1552,7 +1592,7 @@ base_image: base/jre8:8u112
 # 200机器，修改配置：
 cd /data/k8s-yaml/dubbo-demo-consumer/
 dubbo-demo-consumer]# vi dp.yaml
-        image: harbor.od.com/app/dubbo-demo-service:apollo_200304_1040
+        image: harbor.od.com/app/dubbo-demo-consumer:apollo_200304_1040
         ports:
         - containerPort: 8080
           protocol: TCP
@@ -1623,7 +1663,7 @@ base_image: base/jre8:8u112
 # 200机器修改使用的镜像：
 cd /data/k8s-yaml/dubbo-demo-consumer/
 dubbo-demo-consumer]# vi dp.yaml
-image: harbor.od.com/app/dubbo-demo-service:apollo_191208_1640
+image: harbor.od.com/app/dubbo-demo-consumer:apollo_200304_1145
 ~~~
 
 
@@ -1940,6 +1980,12 @@ ApolloProtalDB]> truncate table AppNamespace;
 使用查询功能查询下
 
 ![1583305255615](assets/1583305255615.png)
+
+```bash
+apollo.portal.envs
+```
+
+
 
 ![1583305298870](assets/1583305298870.png)
 
