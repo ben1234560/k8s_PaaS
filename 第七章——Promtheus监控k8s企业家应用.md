@@ -1978,7 +1978,7 @@ QQ邮箱收到报警
 # 200 机器：
 cd /opt/src/
 # 你也可以直接用我上传的，因为版本一直在变，之前的版本你是下载不下来的，如何查看新版本如上图
-src]# wget http://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.51/bin/apache-tomcat-8.5.51.tar.gz
+src]# wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.51/bin/apache-tomcat-8.5.51.tar.gz
 src]# mkdir /data/dockerfile/tomcat
 src]# tar xfv  apache-tomcat-8.5.51.tar.gz -C /data/dockerfile/tomcat
 src]# cd /data/dockerfile/tomcat
