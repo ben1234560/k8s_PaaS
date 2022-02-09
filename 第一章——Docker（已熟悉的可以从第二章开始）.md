@@ -439,5 +439,5 @@ dockerfile]# docker run --rm -p80:80 909336740/nginx:baidu
 > - [虚拟机和容器的对比图](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%92%8C%E5%AE%B9%E5%99%A8%E7%9A%84%E5%AF%B9%E6%AF%94%E5%9B%BE)
 > - [深入理解容器镜像](https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Docker%E5%9F%BA%E7%A1%80.md#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F)
 
-恭喜你已经完成了docker的部分，当然你也许还是云里雾里，不用担心，后续我们会继续用到这些内容，如果你对docker的历史、源码等解析有兴趣，推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
+恭喜你已经完成了docker的部分，当然，你也许还是云里雾里，不用担心，后续我们会继续用到这些内容，如果你对docker的历史、源码等解析有兴趣，推荐书籍：深入剖析kubernetes（书籍），你也可以去下载免费的https://pan.baidu.com/s/1gWAQUVsqs1AdMPvRuaEtNA 提取码：q0ht
 
