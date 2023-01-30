@@ -240,7 +240,7 @@ docker.io/library/alipine:3.10.1
 # 过滤出全部已经退出的容器并删掉
 ~]# for i in `docker ps -a|grep -i exit|awk '{print $1}'`;do docker rm -f $i;done
 # 查看日志，-f：跟踪日志输出，即是夯住，可以按ctrl+c
-~]# docker log -f <容器id>
+~]# docker logs -f <容器id>
 ~~~
 
 > **Ctrl+c:** 强制中断程序的执行
