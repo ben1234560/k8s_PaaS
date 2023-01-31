@@ -212,7 +212,7 @@ docker.io/library/alipine:3.10.1
 # docker pull 909336740/alpine 拉取自己远程仓库镜像
 ~~~
 
-> **docker rmi**：删除本地一个或多少镜像
+> **docker rmi**：删除本地一个或多个镜像
 >
 > - **-f**：强制删除
 
