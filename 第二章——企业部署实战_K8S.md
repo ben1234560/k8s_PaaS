@@ -123,6 +123,8 @@
 
 > 7.6镜像网上资源少，这里提供一个：https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h 。注意：镜像包的network是ens33，我用的是eth0，下面你就知道在哪用了，你也可以改成跟我一样，这是百度经验https://jingyan.baidu.com/article/17bd8e524c76a285ab2bb8ff.html
 
+> virtualbox 也是可以的, 网络模式不仅仅限于nat, 本人试过桥接模式, 也是可以的, 并且宿主机可以把DNS指定为自己的虚拟机11地址,这样在宿主机访问harbor的时候就不用写hosts文件了
+
 ![1583025768982](assets/1583025768982.png)
 
 ![1578645849482](assets/1578645849482.png)
@@ -672,6 +674,13 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 
 
 ### 安装部署主控节点服务etcd
+
+> 注意, 一定要同步每个虚拟机的时间, 时区和时间要保持一致, 可以通过以下的命令来操作, 最好所有的虚拟机都执行一次, 最好的方法是写进`/etc/rc.local`中
+
+  ```bash
+  timedatectl set-timezone Asia/Shanghai
+  timedatectl set-ntp true
+  ```
 
 > **WHAT**：一个高可用强一致性的服务发现存储仓库，关于服务发现，其本质就是知道了集群中是否有进程在监听udp和tcp端口（如上面部署的harbor就是监听180端口），并且通过名字就可以查找和连接。
 >
