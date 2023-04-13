@@ -1134,6 +1134,19 @@ dubbo-monitor      A    10.4.7.10
 
 ![1580955553025](assets/1580955553025.png)
 
+> 相关报错：pod提示CrashLoopBackOff
+>
+> 排查思路：log或者kubectl get event报错信息如下
+>
+> ![1681349321605](assets/1681349321605.png)
+>
+> 进入容器内执行start.sh报错read-only file system。
+>
+> 解决方法：参考Issues（作者@stringguai）https://github.com/ben1234560/k8s_PaaS/issues/33）：
+>
+> 1、dubbo-monitor 启动报 read-only file system的错，修改bin/start.sh，注释第一行"cp xxxxx"，手动cp dubbo_origin.properties dubbo.properties，在进行镜像的构建
+> 2、pod起不来的问题，修改bin/start.sh, 将nohup java $JAVA_OPTS那一行最后的重定向和后台运行符& 去掉 ，即去掉“2>&1 &”
+
 [访问网站 http://dubbo-monitor.od.com](http://dubbo-monitor.od.com)
 
 ![1583139242622](assets/1583139242622.png)
