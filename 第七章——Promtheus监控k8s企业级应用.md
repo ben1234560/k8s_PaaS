@@ -2291,7 +2291,9 @@ kafka]# ll
 # 11机器，配置：
 kafka]# mkdir -pv /data/kafka/logs
 # 修改以下配置，其中zk是不变的，最下面两行则新增到尾部
+# listeners这个配置建议写成IP:9092,有些老版本的kafa不写默认是localhost,会导致filebeat识别kafka地址错误
 kafka]# vi config/server.properties
+listeners=PLAINTEXT://10.4.7.11:9092
 log.dirs=/data/kafka/logs
 zookeeper.connect=localhost:2181
 log.flush.interval.messages=10000
