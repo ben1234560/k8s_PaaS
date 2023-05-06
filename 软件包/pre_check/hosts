@@ -1,0 +1,11 @@
+[all]
+k8s_11 ansible_host=172.16.0.38
+k8s_12 ansible_host=172.16.0.25
+k8s_21 ansible_host=172.16.0.15
+k8s_22 ansible_host=172.16.0.27
+k8s_200 ansible_host=172.16.0.42
+
+[all:vars]
+ansible_ssh_pass=Root123..123
+ansible_ssh_port=22
+ansible_ssh_user=root

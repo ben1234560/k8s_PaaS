@@ -1,0 +1,184 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: 创建检查报告归档目录
+      file:
+        path: ../log/inspector
+        state: directory
+        mode: '0755'
+
+    - name: 获取当前日期后缀
+      shell: date "+%y%m%d%H%M"
+      register: date_time
+
+- name: 检查防火墙状态 Check if firewalld is disabled on each IP
+  hosts: all
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Check firewalld status
+      ansible.builtin.command: systemctl is-active firewalld
+      register: firewalld_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: Fail if firewalld is active
+      ansible.builtin.fail:
+        msg: "Error: firewalld is active on {{ inventory_hostname }}"
+      when: firewalld_status.stdout == 'active'
+
+- name: K8S前置准备工作——bind9安装部署（DNS服务）Check named.conf
+  hosts: k8s_11
+  gather_facts: no
+  tasks:
+    - name: Gather internal IP address
+      ansible.builtin.setup:
+        filter: ansible_default_ipv4
+
+    - name: Read /etc/named.conf
+      ansible.builtin.slurp:
+        src: /etc/named.conf
+      register: named_conf_content
+
+    - name: Check the content of /etc/named.conf
+      ansible.builtin.assert:
+        that:
+          - "'listen-on port 53 { {{ ansible_default_ipv4.address }}; };' in named_conf_content.content | b64decode"
+          - "'allow-query     { any; };' in named_conf_content.content | b64decode"
+          - "'forwarders' in named_conf_content.content | b64decode"
+          - "'dnssec-enable no;' in named_conf_content.content | b64decode"
+          - "'dnssec-validation no;' in named_conf_content.content | b64decode"
+          - "'listen-on-v6 port 53 { ::1; };' not in named_conf_content.content | b64decode"
+        fail_msg: "Error: /etc/named.conf does not have the required content."
+        success_msg: "Success: /etc/named.conf has the required content."
+
+    - name: Run named-checkconf command
+      ansible.builtin.command:
+        cmd: named-checkconf
+      register: named_checkconf_result
+      ignore_errors: yes
+
+    - name: Check if named-checkconf has no output
+      ansible.builtin.assert:
+        that:
+          - "named_checkconf_result.stdout == ''"
+          - "named_checkconf_result.stderr == ''"
+        fail_msg: "Error: named-checkconf returned output: {{ named_checkconf_result.stdout }} {{ named_checkconf_result.stderr }}"
+        success_msg: "Success: named-checkconf returned no output."
+
+    - name: Read /etc/named.rfc1912.zones
+      ansible.builtin.slurp:
+        src: /etc/named.rfc1912.zones
+      register: named_rfc1912_zones_content
+
+    - name: Check the content of /etc/named.rfc1912.zones
+      ansible.builtin.assert:
+        that:
+          - "'zone \"host.com\" IN {' in named_rfc1912_zones_content.content | b64decode"
+          - "'type  master;' in named_rfc1912_zones_content.content | b64decode"
+          - "'file  \"host.com.zone\";' in named_rfc1912_zones_content.content | b64decode"
+          - "'allow-update { {{ ansible_default_ipv4.address }}; };' in named_rfc1912_zones_content.content | b64decode"
+          - "'zone \"od.com\" IN {' in named_rfc1912_zones_content.content | b64decode"
+          - "'type  master;' in named_rfc1912_zones_content.content | b64decode"
+          - "'file  \"od.com.zone\";' in named_rfc1912_zones_content.content | b64decode"
+          - "'allow-update { {{ ansible_default_ipv4.address }}; };' in named_rfc1912_zones_content.content | b64decode"
+        fail_msg: "Error: /etc/named.rfc1912.zones does not have the required content."
+        success_msg: "Success: /etc/named.rfc1912.zones has the required content."
+
+    - name: Read /var/named/host.com.zone
+      ansible.builtin.slurp:
+        src: /var/named/host.com.zone
+      register: host_com_zone_content
+
+    - name: Check the content of /var/named/host.com.zone
+      ansible.builtin.assert:
+        that:
+          - "'$ORIGIN host.com.' in host_com_zone_content.content | b64decode"
+          - "'$TTL 600' in host_com_zone_content.content | b64decode"
+          - "'dns.host.com. dnsadmin.host.com. (' in host_com_zone_content.content | b64decode"
+          - "'10800' in host_com_zone_content.content | b64decode"
+          - "'900' in host_com_zone_content.content | b64decode"
+          - "'604800' in host_com_zone_content.content | b64decode"
+          - "'86400' in host_com_zone_content.content | b64decode"
+          - "')' in host_com_zone_content.content | b64decode"
+          - "'NS   dns.host.com.' in host_com_zone_content.content | b64decode"
+          - "'$TTL 60' in host_com_zone_content.content | b64decode"
+          - "'dns                A    {{ ansible_default_ipv4.address }}' in host_com_zone_content.content | b64decode"
+          - "'HDSS7-11           A    {{ ansible_default_ipv4.address }}' in host_com_zone_content.content | b64decode"
+        fail_msg: "Error: /var/named/host.com.zone does not have the required content."
+        success_msg: "Success: /var/named/host.com.zone has the required content."
+
+    - name: Read /var/named/od.com.zone
+      ansible.builtin.slurp:
+        src: /var/named/od.com.zone
+      register: od_com_zone_content
+
+    - name: Check the content of /var/named/od.com.zone
+      ansible.builtin.assert:
+        that:
+          - "'$ORIGIN od.com.' in od_com_zone_content.content | b64decode"
+          - "'$TTL 600' in od_com_zone_content.content | b64decode"
+          - "'dns.od.com. dnsadmin.od.com. (' in od_com_zone_content.content | b64decode"
+          - "'10800' in od_com_zone_content.content | b64decode"
+          - "'900' in od_com_zone_content.content | b64decode"
+          - "'604800' in od_com_zone_content.content | b64decode"
+          - "'86400' in od_com_zone_content.content | b64decode"
+          - "')' in od_com_zone_content.content | b64decode"
+          - "'NS   dns.od.com.' in od_com_zone_content.content | b64decode"
+          - "'$TTL 60' in od_com_zone_content.content | b64decode"
+          - "'dns                A    {{ ansible_default_ipv4.address }}' in od_com_zone_content.content | b64decode"
+        fail_msg: "Error: /var/named/od.com.zone does not have the required content."
+        success_msg: "Success: /var/named/od.com.zone has the required content."
+
+    - name: Run named-checkconf command
+      ansible.builtin.command:
+        cmd: named-checkconf
+      register: named_checkconf_result
+      ignore_errors: yes
+
+    - name: Check if named-checkconf has no output
+      ansible.builtin.assert:
+        that:
+          - "named_checkconf_result.stdout == ''"
+          - "named_checkconf_result.stderr == ''"
+        fail_msg: "Error: named-checkconf returned output: {{ named_checkconf_result.stdout }} {{ named_checkconf_result.stderr }}"
+        success_msg: "Success: named-checkconf returned no output.i"
+
+- name: Check ifcfg-eth0 for specific content
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Read /etc/sysconfig/network-scripts/ifcfg-eth0
+      ansible.builtin.slurp:
+        src: /etc/sysconfig/network-scripts/ifcfg-eth0
+      register: ifcfg_eth0_content
+
+    - name: Check if the content exists in ifcfg-eth0
+      ansible.builtin.assert:
+        that:
+          - "'DNS1={{ hostvars['k8s_11']['ansible_host'] }}' in ifcfg_eth0_content.content | b64decode"
+        fail_msg: "Error: DNS1={{ hostvars['k8s_11']['ansible_host'] }} not found in /etc/sysconfig/network-scripts/ifcfg-eth0."
+        success_msg: "Success: DNS1={{ hostvars['k8s_11']['ansible_host'] }} found in /etc/sysconfig/network-scripts/ifcfg-eth0."
+
+    - name: Read /etc/sysconfig/network-scripts/ifcfg-eth0
+      ansible.builtin.slurp:
+        src: /etc/sysconfig/network-scripts/ifcfg-eth0
+      register: ifcfg_eth0_content
+
+- name: Check /etc/resolv.conf for specific content
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Read /etc/resolv.conf
+      ansible.builtin.slurp:
+        src: /etc/resolv.conf
+      register: resolv_conf_content
+
+    - name: Check if the content exists in /etc/resolv.conf
+      ansible.builtin.assert:
+        that:
+          - "'search host.com' in resolv_conf_content.content | b64decode"
+        fail_msg: "Error: 'search host.com' not found in /etc/resolv.conf."
+        success_msg: "Success: 'search host.com' found in /etc/resolv.conf."
+
