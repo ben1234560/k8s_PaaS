@@ -489,7 +489,7 @@ certs]# cat ca.pem
 # # 注意，172.7.21.1，这里得21是指在hdss7-21得机器，如果是22得机器，就是172.7.22.1，共一处需要改机器名："bip": "172.7.21.1/24"
 ~]# vi /etc/docker/daemon.json
 {
-  "graph": "/data/docker",
+  "data-root": "/data/docker",
   "storage-driver": "overlay2",
   "insecure-registries": ["registry.access.redhat.com","quay.io","harbor.od.com"],
   "registry-mirrors": ["https://q2gr04ke.mirror.aliyuncs.com"],
