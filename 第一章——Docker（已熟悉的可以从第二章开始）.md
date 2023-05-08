@@ -84,7 +84,7 @@
 ~]# systemctl start docker
 ~]# vi /etc/docker/daemon.json
 {
-  "graph": "/data/docker",
+  "data-root": "/data/docker",
   "storage-driver": "overlay2",
   "insecure-registries": ["registry.access.redhat.com","quay.io"],
   "registry-mirrors": ["https://q2gr04ke.mirror.aliyuncs.com"],
