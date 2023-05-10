@@ -145,4 +145,94 @@
 
 ![image-20230510100913556](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100913556.png)
 
+购买完成后的内容，建议给每个实例设置节点含义，如下图的k8s_11、k8s_12
+
 ![image-20230510101304296](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510101304296.png)
+
+如下是我的内网及节点对应情况
+
+> |        | 11机器         | 12机器         | 21机器         | 22机器         | 200机器        |
+> | ------ | -------------- | -------------- | -------------- | -------------- | -------------- |
+> | 内网ip | 172.29.238.166 | 172.29.238.164 | 172.29.238.165 | 172.29.238.163 | 172.29.238.162 |
+>
+> 可以看到网段在172.29.238.0/254
+
+### 机器前期准备
+
+使用xshell或者自选的shell连接工具，[xshell下载](https://xshell.en.softonic.com/download)
+
+> 当然我也有提供软件包：https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h 。里面还有Xftp，是用来进行本地电脑和虚拟机的文件传输
+
+~~~
+# 全部机器，设置名字，11是hdss7-11,12是hdss7-12,以此类推
+~]# hostnamectl set-hostname hdss7-11.host.com
+~]# exit
+# 下面的修改，11机器对应11机器的内网ip，12对应12机器的内网ip，以此类推共两处：IPADDR、GATEWAY
+~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+DEVICE=eth0
+BOOTPROTO=dhcp
+ONBOOT=yes
+IPADDR=172.29.238.166
+GATEWAY=172.29.238.254
+NETMASK=255.255.255.0
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=eth0
+DEVICE=eth0
+IPV6_PEERNDS=yes
+IPV6_PEERROUTES=yes
+IPV6_PRIUACY=no
+
+~]# systemctl restart network
+~]# ping baidu.com
+~~~
+
+> **ifcfg-eth0**：有些人的机器可能是ifcfg-esn33。使用ifconfig查看，命令输出中每个网卡接口都有一个名称，例如 "eth0"、"ens33" 等
+>
+> **systemctl restart**：重启某个服务
+>
+> **ping**：用于测试网络连接量的程序
+>
+> 公有云（阿里）的ifcfg-eth0原内容如下：
+>
+> DEVICE=eth0
+> BOOTPROTO=dhcp
+> ONBOOT=yes
+
+![image-20230510102500398](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510102500398.png)
+
+
+
+~~~
+# 查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
+~]# getforce
+# 查看内核版本，确保在3.8以上版本
+~]# uname -a
+# 关闭firewalld
+~]# systemctl stop firewalld
+# 安装epel源及相关工具
+~]# yum install epel-release -y
+~]# yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
+~~~
+
+> **uname**:显示系统信息
+>
+> - **-a/-all**：显示全部
+>
+> **yum**：提供了查找、安装、删除某一个、一组甚至全部软件包的命令
+>
+> - **install**：安装
+> - **-y**：当安装过程提示选择全部为"yes"
+
+![image-20230510104702344](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510104702344.png)
+
+
+
