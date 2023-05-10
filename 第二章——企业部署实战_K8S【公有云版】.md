@@ -1,6 +1,6 @@
 ## 第二章——企业部署实战_K8S【公有云版】
 
-### 前言：
+### 前言（推荐使用标准版，即非公有云版）：
 
 注：公有云版未测试是否适配第三章往后内容，理论上是完全可行的。
 
@@ -387,3 +387,103 @@ DNS1=172.29.238.166
 > 让其它机器的DNS全部改成11机器的好处是，全部的机器访问外网就只有通过11端口，更好控制
 
 机器准备工作完成:tada:
+
+
+
+### K8S前置工作——准备签发证书环境
+
+> **WHAT**： 证书，可以用来审计也可以保障安全，k8S组件启动的时候，则需要有对应的证书，证书的详解你也可以在网上搜到，这里就不细细说明了
+>
+> **WHY**：当然是为了让我们的组件能正常运行
+
+~~~
+# cfssl方式做证书，需要三个软件（如果网络无法连通，则参考下面我已下载好的软件包），按照我们的架构图，我们部署在200机器:
+200 ~]# wget https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 -O /usr/bin/cfssl
+200 ~]# wget https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 -O /usr/bin/cfssl-json
+200 ~]# wget https://pkg.cfssl.org/R1.2/cfssl-certinfo_linux-amd64 -O /usr/bin/cfssl-certinfo
+200 ~]# chmod +x /usr/bin/cfssl*
+200 ~]# which cfssl
+200 ~]# which cfssl-json
+200 ~]# which cfssl-certinfo
+~~~
+
+> **wget**：从网络上自动下载文件的自由工具
+>
+> **chmod**：给对应的文件添加权限（[菜鸟教程](https://www.runoob.com/linux/linux-comm-chmod.html)）
+>
+> - **+x**：给当前用户增加可执行该文件的权限
+>
+> **which**：查看相应的东西在哪里
+
+##### 报错：wget报错网络问题
+
+~~~
+# 针对下载cfssl网络无法连通的情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1。找到名为”第二章涉及的软件包“中的cfssl的3个文件，上传到/root目录下
+200 ~]# cp cfssl_linux-amd64 /usr/bin/cfssl
+200 ~]# cp cfssljson_linux-amd64 /usr/bin/cfssl-json
+200 ~]# cp cfssl-certinfo_linux-amd64 /usr/bin/cfssl-certinfo
+200 ~]# chmod +x /usr/bin/cfssl*
+200 ~]# which cfssl
+200 ~]# which cfssl-json
+200 ~]# which cfssl-certinfo
+~~~
+
+![image-20230510133419709](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510133419709.png)
+
+
+
+~~~
+200 ~]# mkdir /opt/certs
+200 ~]# cd /opt/certs
+certs]# vi ca-csr.json
+{
+    "CN": "ben123123",
+    "hosts": [
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ],
+    "ca": {
+        "expiry": "1752000h"
+    }
+}
+certs]# cfssl gencert -initca ca-csr.json | cfssl-json -bare ca
+certs]# cat ca.pem
+# 如果你这时候显示段错误或者json错误，就是之前克隆虚拟机的时候200机器地址和别的机器地址重叠冲突了，需要重建200虚拟机
+~~~
+
+> **cd **：切换当前工作目录到 dirName
+>
+> - 语法：cd [dirName]
+>
+> **mkdir**：建立名称为 dirName 之子目录
+>
+> - 语法：mkdir [-p] dirName
+> - **-p:** 确保目录存在，不存在则建一个，如mkdir empty/empty1/empty2
+>
+> **cfssl**：证书工具
+>
+> - gencert：生成的意思
+>
+> **ca-csr.json解析：**
+>
+> - CN：Common Name，浏览器使用该字段验证网址是否合法，一般写域名，非常重要
+> - ST：State，省
+> - L：Locality，地区
+> - O：Organization Name，组织名称
+> - OU：Organization Unit Name，组织单位名称
+>
+> <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E4%B8%AD%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E5%AD%97%E6%AE%B5%E7%9A%84%E5%90%AB%E4%B9%89%E5%92%8C%E7%94%A8%E6%B3%95">Pod中几个重要字段的含义和用法</a>
+
+![image-20230510133747012](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510133747012.png)
+
