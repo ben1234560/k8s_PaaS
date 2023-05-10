@@ -1330,7 +1330,7 @@ vrrp_script chk_nginx {
 }
 vrrp_instance VI_1 {
 	state BACKUP
-	interface ens33
+	interface eth0
 	virtual_router_id 251
 	mcast_src_ip 10.4.7.12
 	priority 90
