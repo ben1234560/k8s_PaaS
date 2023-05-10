@@ -487,3 +487,71 @@ certs]# cat ca.pem
 
 ![image-20230510133747012](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510133747012.png)
 
+
+
+### K8S前置工作——部署docker环境
+
+> **WHAT**：是一个开源的应用容器引擎，让开发者可以打包他们的应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。
+>
+> **WHY**：Pod里面就是由数个docker容器组成，Pod是豌豆荚，docker容器是里面的豆子。
+
+~~~
+# 如我们架构图所示，运算节点是21/22机器（没有docker则无法运行pod），运维主机是200机器（没有docker则没办法下载docker存入私有仓库），所以在三台机器安装（21/22/200）
+~]# curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+# 上面的下载可能网络有问题，需要多试几次，这些部署我已经不同机器试过很多次了，实在不行的使用下面提供的报错解决方法。
+~]# mkdir -p /data/docker /etc/docker
+# # 注意，172.7.21.1，这里得21是指在hdss7-21得机器，如果是22得机器，就是172.7.22.1，共一处需要改机器名："bip": "172.7.21.1/24"
+~]# vi /etc/docker/daemon.json
+{
+  "data-root": "/data/docker",
+  "storage-driver": "overlay2",
+  "insecure-registries": ["registry.access.redhat.com","quay.io","harbor.od.com"],
+  "registry-mirrors": ["https://q2gr04ke.mirror.aliyuncs.com"],
+  "bip": "172.7.21.1/24",
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "live-restore": true
+}
+
+~]# systemctl start docker
+~]# docker version
+~]# docker ps -a
+~~~
+
+> **mkdir -p：**前面有讲到过（上一级目录没有则创建），而这次后面带了两个目录，意思是同时创建两个目录
+>
+> **daemon.json：**为什么配aliyuncs的环境，是因为默认是连接到外网的，速度比较慢，所以我们可以直接使用国内的阿里云镜像源，当然还有腾讯云等
+>
+> **docker version：**查看docker的版本
+>
+> **daemon.json解析：**重点说一下这个为什么10.4.7.21机器对应着172.7.21.1/24，这里可以看到10的21对应得是172的21，这样做的好处就是，当你的pod出现问题时，你可以马上定位到是在哪台机器出现的问题，是21还是22还是其它的，这点在生产上非常重要，有时候你的dashboard（后面会安装）宕掉了，你没办法只能去机器找，而这时候你又找不到的时候，你老板会拿你祭天的
+
+##### 报错：curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+
+报错信息：
+
+http://mirrors.cloud.aliyuncs.com/centos/7/updates/x86_64/Packages/libxml2-2.9.1-6.el7_9.6.x86_64.rpm: [Errno 14] curl#6 - "Could not resolve host: mirrors.cloud.aliyuncs.com; Unknown error"
+Trying other mirror.
+
+Error downloading packages:
+  libxml2-2.9.1-6.el7_9.6.x86_64: [Errno 256] No more mirrors to try.
+  python-kitchen-1.1.1-5.el7.noarch: [Errno 256] No more mirrors to try.
+  yum-utils-1.1.31-54.el7_8.noarch: [Errno 256] No more mirrors to try.
+  python-chardet-2.2.1-3.el7.noarch: [Errno 256] No more mirrors to try.
+  libxml2-python-2.9.1-6.el7_9.6.x86_64: [Errno 256] No more mirrors to try.
+
+原因：yum源出现问题
+
+解决方法：
+
+~~~
+mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.bak
+curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo  # 这一步必须成功，没成功的再执行一遍即可
+yum update -y  # 这一步耗时较长
+yum install epel-release -y
+yum install -y yum-utils
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+yum install -y docker-ce
+~~~
+
+![image-20230510141020872](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510141020872.png)
+
