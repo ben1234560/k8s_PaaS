@@ -106,7 +106,7 @@
 >
 > 这样控节点有两个，运算节点有两个，就是小型的分布式，现在你可能没办法理解这些内容，我们接着做下去，慢慢的，你就理解了
 >
-> 这是理论上的架构，考虑到公有云对网络的限制等问题，21、22机器也会追加反向代理。
+> 这是理论上的架构，考虑到公有云对网络的限制等问题（如ipv6不能随意增加），21、22机器也会追加反向代理。
 
 ### 实验机器安装详解
 
@@ -155,7 +155,7 @@
 > | ------ | -------------- | -------------- | -------------- | -------------- | -------------- |
 > | 内网ip | 172.29.238.166 | 172.29.238.164 | 172.29.238.165 | 172.29.238.163 | 172.29.238.162 |
 >
-> 可以看到网段在172.29.238.0/254
+> 可以看到网段在172.29.238.0/254，我的11机器内网ip是172.29.238.166，后续将会持续用到，你需要填成你自己的11机器内网ip
 
 ### 机器前期准备
 
@@ -236,3 +236,154 @@ IPV6_PRIUACY=no
 
 
 
+### K8S前置准备工作——bind9安装部署（DNS服务）
+
+> **WHAT**：DNS（域名系统）说白了，就是把一个域和IP地址做了一下绑定，如你在里机器里面输入 nslookup www.qq.com，出来的Address是一堆IP，IP是不容易记的，所以DNS让IP和域名做一下绑定，这样你输入域名就可以了
+>
+> **WHY**：我们要用ingress，在K8S里要做7层调度，而且无论如何都要用域名（如之前的那个百度页面的域名，那个是host的方式），但是问题是我们怎么给K8S里的容器绑host，所以我们必须做一个DNS，然后容器服从我们的DNS解析调度
+
+~~~
+# 在11机器：
+~]# yum install bind -y
+~]# rpm -qa bind
+# out: bind-9.11.4-9.P2.el7.x86_64
+# 配置主配置文件，11机器
+~]# vi /etc/named.conf
+listen-on port 53 { 172.29.238.166; };  # 原本是127.0.0.1，我的11内网ip是172.29.238.166，你填你的11内网ip
+# listen-on-v6 port 53 { ::1; };  # 需要删掉
+allow-query     { any; };  # 原本是locall
+forwarders      { 172.29.238.254; };  #另外添加的
+dnssec-enable no;  # 原本是yes
+dnssec-validation no;  # 原本是yes
+
+# 检查修改情况，没有报错即可（即没有信息）
+~]# named-checkconf
+~~~
+
+> **rpm**：软件包管理器
+>
+> - **-qa**：查看已安装的所有软件包
+>
+> **rpm和yum安装的区别**：前者不检查相依性问题，后者检查（即相关依赖包）
+>
+> **named.conf文件内容解析：**
+>
+> - **listen-on**：监听端口，改为监听在内网，这样其它机器也可以用
+> - **allow-query**：哪些客户端能通过自建的DNS查
+> - **forwarders**：上级DNS是什么
+
+![image-20230510105344849](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510105344849.png)
+
+~~~
+# 11机器，经验：主机域一定得跟业务是一点关系都没有，如host.com，而业务用的是od.com，因为业务随时可能变
+# 区域配置文件，加在最下面，需要修改两处：allow-update
+~]# vi /etc/named.rfc1912.zones
+zone "host.com" IN {
+        type  master;
+        file  "host.com.zone";
+        allow-update { 172.29.238.166; };
+};
+
+zone "od.com" IN {
+        type  master;
+        file  "od.com.zone";
+        allow-update { 172.29.238.166; };
+};
+
+~~~
+
+<img src="/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510105858429.png" alt="image-20230510105858429" style="zoom: 50%;" />
+
+> **注意：**当配置11机器内网ip后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
+
+~~~
+# 11机器：
+# 注意serial行的时间，代表今天的时间+第一条记录：20230510+01，需要修改serial、各个ip、
+7-11 ~]# vi /var/named/host.com.zone
+$ORIGIN host.com.
+$TTL 600	; 10 minutes
+@       IN SOA	dns.host.com. dnsadmin.host.com. (
+				2023051001 ; serial
+				10800      ; refresh (3 hours)
+				900        ; retry (15 minutes)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+			NS   dns.host.com.
+$TTL 60	; 1 minute
+dns                A    172.29.238.166
+HDSS7-11           A    172.29.238.166
+HDSS7-12           A    172.29.238.164
+HDSS7-21           A    172.29.238.165
+HDSS7-22           A    172.29.238.163
+HDSS7-200          A    172.29.238.162
+
+7-11 ~]# vi /var/named/od.com.zone
+$ORIGIN od.com.
+$TTL 600	; 10 minutes
+@   		IN SOA	dns.od.com. dnsadmin.od.com. (
+				2023051001 ; serial
+				10800      ; refresh (3 hours)
+				900        ; retry (15 minutes)
+				604800     ; expire (1 week)
+				86400      ; minimum (1 day)
+				)
+				NS   dns.od.com.
+$TTL 60	; 1 minute
+dns                A    172.29.238.166
+
+# 看一下有没有报错
+7-11 ~]# named-checkconf
+7-11 ~]# systemctl start named
+7-11 ~]# netstat -luntp|grep 53
+~~~
+
+> **TTL 600**：指定IP包被路由器丢弃之前允许通过的最大网段数量
+>
+> - **10 minutes**：过期时间10分钟
+>
+> **SOA**：一个域权威记录的相关信息，后面有5组参数分别设定了该域相关部分
+>
+> - **dnsadmin.od.com.**  一个假的邮箱
+> - **serial**：记录的时间
+>
+> **$ORIGIN**：即下列的域名自动补充od.com，如dns，外面看来是dns.od.com
+>
+> **netstat -luntp**：显示 tcp,udp 的端口和进程等相关情况
+
+![image-20230510110314995](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510110314995.png)
+
+~~~
+# 11机器，检查主机域是否解析
+7-11 ~]# dig -t A hdss7-21.host.com @172.29.238.166 +short
+# 配置服务器能使用这个配置，在最下面追加11机器的内网ip
+7-11 ~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+DNS1=172.29.238.166
+7-11 ~]# systemctl restart network
+# 重启网络后，马上ping可能无法连接，需要等个十秒钟
+7-11 ~]# ping www.baidu.com
+7-11 ~]# ping hdss7-21.host.com
+~~~
+
+> **dig -t A**：指的是找DNS里标记为A的相关记录，而后面会带上相关的域，如上面的hdss7-21.host.com，为什么外面配了HDSS7-21后面还会自动接上.host.com就是因为$ORIGIN，后面则是对应的IP
+>
+> - **+short**：表示只返回IP
+
+![image-20230510110840167](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510110840167.png)
+
+~~~
+# 在非11机器上，最下面追加dns1=11机器内网ip
+~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
+DNS1=172.29.238.166
+
+~]# systemctl restart network
+# 试下网络是否正常
+~]# ping baidu.com
+# 其它机器尝试ping7-11机器或200机器等任意机器，这时候短域名是可以使用了
+7-12 ~]# ping hdss7-11.host.com
+7-12 ~]# ping hdss7-200.host.com
+~~~
+
+> 让其它机器的DNS全部改成11机器的好处是，全部的机器访问外网就只有通过11端口，更好控制
+
+机器准备工作完成:tada:
