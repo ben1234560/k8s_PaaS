@@ -440,7 +440,7 @@ certs]# vi ca-csr.json
         }
     ],
     "ca": {
-        "expiry": "175200h"
+        "expiry": "1752000h"
     }
 }
 certs]# cfssl gencert -initca ca-csr.json | cfssl-json -bare ca
@@ -705,11 +705,11 @@ certs]# vi /opt/certs/ca-config.json
 {
     "signing": {
         "default": {
-            "expiry": "175200h"
+            "expiry": "1752000h"
         },
         "profiles": {
             "server": {
-                "expiry": "175200h",
+                "expiry": "1752000h",
                 "usages": [
                     "signing",
                     "key encipherment",
@@ -717,7 +717,7 @@ certs]# vi /opt/certs/ca-config.json
                 ]
             },
             "client": {
-                "expiry": "175200h",
+                "expiry": "1752000h",
                 "usages": [
                     "signing",
                     "key encipherment",
@@ -725,7 +725,7 @@ certs]# vi /opt/certs/ca-config.json
                 ]
             },
             "peer": {
-                "expiry": "175200h",
+                "expiry": "1752000h",
                 "usages": [
                     "signing",
                     "key encipherment",
@@ -769,7 +769,7 @@ certs]# ll
 >
 > **ca-config.json解析：**
 >
-> - expiry：有效期为20年
+> - expiry：有效期为200年
 > - profiles-server：启动server的时候需要配置证书
 > - profiles-client：client去连接server的时候需要证书
 > - profiles-peer：双向证书，服务端找客户端需要证书，客户端找服务端需要证书
