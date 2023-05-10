@@ -121,6 +121,28 @@
 
 ### 如何购买公有云机器（以阿里云为例）
 
+> 注：未选的则是默认选项。
 
+如下图，选择“自定义购买”、“抢占式实例”（这里使用抢占式即可/省钱，担心被回收的可以选择按量付费）、“新加坡”或其它外网服务器地域（外网服务器，方便后续使用网站等时不需要备案/最好准备个梯子，作为一个程序员梯子是必备的）、“可用区”（必须选择其中一个如我选的可用区A，不能随机分配，否则多台机器的内网ip不一致）
 
 ![image-20230510093039761](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510093039761.png)
+
+选择“共享型”（也可以选择通用型，共享型会更便宜）、选择2核8G内存的配置，
+
+![image-20230510100214922](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100214922.png)
+
+选择CentOS，7.6版本
+
+![image-20230510100559866](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100559866.png)
+
+网络分配公网IPv4地址，默认选择，其它不变，这样创建下来的服务器是公用同一安全组配置
+
+选择“自定义密码“，建议设置相对复杂的密码，如包含大小写，否则容易被攻破使用
+
+![image-20230510100759504](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100759504.png)
+
+最终订单内容
+
+![image-20230510100913556](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100913556.png)
+
+![image-20230510101304296](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510101304296.png)
