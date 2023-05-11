@@ -137,39 +137,41 @@
 
 如下图，选择“自定义购买”、“抢占式实例”（这里使用抢占式即可/省钱，担心被回收的可以选择按量付费）、“新加坡”或其它外网服务器地域（外网服务器，方便后续使用网站等时不需要备案/最好准备个梯子，作为一个程序员梯子是必备的）、“可用区”（必须选择其中一个如我选的可用区B，不能随机分配，否则多台机器的内网ip不一致）
 
-![image-20230510093039761](assets/WX20230511-144757@2x.png)
+![image-购买云服务器](assets/WX20230511-144757@2x.png)
 
-> **WHY：**为什么选新加坡，因为我的梯子可以到新加坡
+> **WHY：**为什么选新加坡，因为我的梯子可以到新加坡，你选你能代理的外网地址即可
+>
+> <img src="assets/WX20230511-150425@2x.png" alt="image-梯子代理地址" style="zoom:33%;" align="left"/>
 
 选择“共享型”（也可以选择通用型，共享型会更便宜）、选择2核8G内存的配置，
 
-![image-20230510100214922](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100214922.png)
+![image-选择机器配置](assets/WX20230511-150009@2x.png)
 
 选择CentOS，7.6版本
 
-![image-20230510100559866](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100559866.png)
+![image-选择系统版本](assets/WX20230511-150553@2x.png)
 
 网络分配公网IPv4地址，默认选择，其它不变，这样创建下来的服务器是公用同一安全组配置
 
 选择“自定义密码“，建议设置相对复杂的密码，如包含大小写，否则容易被攻破使用
 
-![image-20230510100759504](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100759504.png)
+![image-自定义密码](assets/WX20230511-150737@2x.png)
 
-最终订单内容
+最终订单内容，注意是5台2C8G，一小时仅需0.2
 
-![image-20230510100913556](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510100913556.png)
+![image-结算页面](assets/WX20230511-150820@2x.png)
 
 购买完成后的内容，建议给每个实例设置节点含义，如下图的k8s_11、k8s_12
 
-![image-20230510101304296](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510101304296.png)
+![image-实例列表](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/WX20230511-151455@2x.png)
 
 如下是我的内网及节点对应情况
 
 > |        | 11机器         | 12机器         | 21机器         | 22机器         | 200机器        |
 > | ------ | -------------- | -------------- | -------------- | -------------- | -------------- |
-> | 内网ip | 172.29.238.166 | 172.29.238.164 | 172.29.238.165 | 172.29.238.163 | 172.29.238.162 |
+> | 内网ip | 172.27.139.122 | 172.27.139.119 | 172.27.139.118 | 172.27.139.120 | 172.27.139.121 |
 >
-> 可以看到网段在172.29.238.0/254，我的11机器内网ip是172.29.238.166，后续将会持续用到，你需要填成你自己的11机器内网ip
+> 可以看到网段在172.27.139.0/254，我的11机器内网ip是172.27.139.122，后续将会持续用到，你需要填成你自己的11机器内网ip
 
 ### 机器前期准备
 
@@ -186,8 +188,8 @@
 DEVICE=eth0
 BOOTPROTO=dhcp
 ONBOOT=yes
-IPADDR=172.29.238.166
-GATEWAY=172.29.238.254
+IPADDR=172.27.139.122
+GATEWAY=172.27.139.254
 NETMASK=255.255.255.0
 TYPE=Ethernet
 PROXY_METHOD=none
@@ -221,12 +223,12 @@ IPV6_PRIUACY=no
 > BOOTPROTO=dhcp
 > ONBOOT=yes
 
-![image-20230510102500398](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510102500398.png)
+<img src="assets/WX20230511-152352@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
 
 
 
 ~~~
-# 查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
+# 全部机器，查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
 ~]# getforce
 # 查看内核版本，确保在3.8以上版本
 ~]# uname -a
@@ -246,7 +248,14 @@ IPV6_PRIUACY=no
 > - **install**：安装
 > - **-y**：当安装过程提示选择全部为"yes"
 
-![image-20230510104702344](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510104702344.png)
+<img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
+
+
+
+~~~
+# 全部机器，安装后续需要的服务工具
+yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived -y
+~~~
 
 
 
@@ -263,10 +272,10 @@ IPV6_PRIUACY=no
 # out: bind-9.11.4-9.P2.el7.x86_64
 # 配置主配置文件，11机器
 ~]# vi /etc/named.conf
-listen-on port 53 { 172.29.238.166; };  # 原本是127.0.0.1，我的11内网ip是172.29.238.166，你填你的11内网ip
+listen-on port 53 { 172.27.139.122; };  # 原本是127.0.0.1，我的11内网ip是172.29.238.166，你填你的11内网ip
 # listen-on-v6 port 53 { ::1; };  # 需要删掉
-allow-query     { any; };  # 原本是locall
-forwarders      { 172.29.238.254; };  #另外添加的
+allow-query     { any; };  # 原本是localhost
+forwarders      { 172.27.139.254; };  #另外添加的
 dnssec-enable no;  # 原本是yes
 dnssec-validation no;  # 原本是yes
 
@@ -286,7 +295,7 @@ dnssec-validation no;  # 原本是yes
 > - **allow-query**：哪些客户端能通过自建的DNS查
 > - **forwarders**：上级DNS是什么
 
-![image-20230510105344849](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510105344849.png)
+<img src="assets/WX20230511-153237@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 11机器，经验：主机域一定得跟业务是一点关系都没有，如host.com，而业务用的是od.com，因为业务随时可能变
@@ -295,29 +304,29 @@ dnssec-validation no;  # 原本是yes
 zone "host.com" IN {
         type  master;
         file  "host.com.zone";
-        allow-update { 172.29.238.166; };
+        allow-update { 172.27.139.122; };
 };
 
 zone "od.com" IN {
         type  master;
         file  "od.com.zone";
-        allow-update { 172.29.238.166; };
+        allow-update { 172.27.139.122; };
 };
 
 ~~~
 
-<img src="/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510105858429.png" alt="image-20230510105858429" style="zoom: 50%;" />
+<img src="assets/WX20230511-153512@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 > **注意：**当配置11机器内网ip后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
 
 ~~~
 # 11机器：
-# 注意serial行的时间，代表今天的时间+第一条记录：20230510+01，需要修改serial、各个ip、
+# 注意serial行的时间，代表今天的时间+第一条记录：20230511+01，需要修改serial、各个ip、
 7-11 ~]# vi /var/named/host.com.zone
 $ORIGIN host.com.
 $TTL 600	; 10 minutes
 @       IN SOA	dns.host.com. dnsadmin.host.com. (
-				2023051001 ; serial
+				2023051101 ; serial
 				10800      ; refresh (3 hours)
 				900        ; retry (15 minutes)
 				604800     ; expire (1 week)
@@ -325,18 +334,18 @@ $TTL 600	; 10 minutes
 				)
 			NS   dns.host.com.
 $TTL 60	; 1 minute
-dns                A    172.29.238.166
-HDSS7-11           A    172.29.238.166
-HDSS7-12           A    172.29.238.164
-HDSS7-21           A    172.29.238.165
-HDSS7-22           A    172.29.238.163
-HDSS7-200          A    172.29.238.162
+dns                A    172.27.139.122
+HDSS7-11           A    172.27.139.122
+HDSS7-12           A    172.27.139.119
+HDSS7-21           A    172.27.139.118
+HDSS7-22           A    172.27.139.120
+HDSS7-200          A    172.27.139.121
 
 7-11 ~]# vi /var/named/od.com.zone
 $ORIGIN od.com.
 $TTL 600	; 10 minutes
 @   		IN SOA	dns.od.com. dnsadmin.od.com. (
-				2023051001 ; serial
+				2023051101 ; serial
 				10800      ; refresh (3 hours)
 				900        ; retry (15 minutes)
 				604800     ; expire (1 week)
@@ -344,7 +353,7 @@ $TTL 600	; 10 minutes
 				)
 				NS   dns.od.com.
 $TTL 60	; 1 minute
-dns                A    172.29.238.166
+dns                A    172.27.139.122
 
 # 看一下有没有报错
 7-11 ~]# named-checkconf
@@ -365,17 +374,18 @@ dns                A    172.29.238.166
 >
 > **netstat -luntp**：显示 tcp,udp 的端口和进程等相关情况
 
-![image-20230510110314995](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510110314995.png)
+<img src="assets/WX20230511-153817@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 11机器，检查主机域是否解析
-7-11 ~]# dig -t A hdss7-21.host.com @172.29.238.166 +short
+7-11 ~]# dig -t A hdss7-21.host.com @172.27.139.122 +short
+# out: 172.27.139.118
 # 配置服务器能使用这个配置，在最下面追加11机器的内网ip
 7-11 ~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
-DNS1=172.29.238.166
+DNS1=172.27.139.122
 7-11 ~]# systemctl restart network
 # 重启网络后，马上ping可能无法连接，需要等个十秒钟
-7-11 ~]# ping www.baidu.com
+7-11 ~]# ping baidu.com
 7-11 ~]# ping hdss7-21.host.com
 ~~~
 
@@ -383,12 +393,12 @@ DNS1=172.29.238.166
 >
 > - **+short**：表示只返回IP
 
-![image-20230510110840167](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510110840167.png)
+<img src="assets/WX20230511-154100@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 在非11机器上，最下面追加dns1=11机器内网ip
 ~]# vi /etc/sysconfig/network-scripts/ifcfg-eth0
-DNS1=172.29.238.166
+DNS1=172.27.139.122
 
 ~]# systemctl restart network
 # 试下网络是否正常
@@ -399,6 +409,8 @@ DNS1=172.29.238.166
 ~~~
 
 > 让其它机器的DNS全部改成11机器的好处是，全部的机器访问外网就只有通过11端口，更好控制
+
+<img src="assets/WX20230511-154412@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 机器准备工作完成:tada:
 
@@ -442,7 +454,7 @@ DNS1=172.29.238.166
 200 ~]# which cfssl-certinfo
 ~~~
 
-![image-20230510133419709](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510133419709.png)
+<img src="assets/WX20230511-155452@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 
 
@@ -499,7 +511,7 @@ certs]# cat ca.pem
 >
 > <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E4%B8%AD%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E5%AD%97%E6%AE%B5%E7%9A%84%E5%90%AB%E4%B9%89%E5%92%8C%E7%94%A8%E6%B3%95">Pod中几个重要字段的含义和用法</a>
 
-![image-20230510133747012](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510133747012.png)
+<img src="assets/WX20230511-155653@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 
 
@@ -567,7 +579,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 yum install -y docker-ce
 ~~~
 
-![image-20230510141020872](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510141020872.png)
+<img src="assets/WX20230511-162032@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 
 
@@ -583,7 +595,6 @@ yum install -y docker-ce
 # 可以去这个地址下载，也可以直接用我用的软件包
 https://github.com/goharbor/harbor/releases/tag/v1.8.3
 200 src]# wget https://storage.googleapis.com/harbor-releases/release-1.8.0/harbor-offline-installer-v1.8.3.tgz
-# 或者用较新的包（未测试后面的适配情况）wget https://github.com/goharbor/harbor/releases/download/v2.8.0/harbor-offline-installer-v2.8.0.tgz
 7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/
 ~~~
 
@@ -646,7 +657,7 @@ location: /data/harbor/logs
 
 使用我提供的官方软件包（放在百度网盘），放到harbor路径下
 
-~~~
+~~~sh
 200 harbor]# sudo cp docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
 200 harbor]# sudo chmod +x /usr/local/bin/docker-compose
 200 harbor]# docker-compose --version
@@ -654,11 +665,11 @@ location: /data/harbor/logs
 200 harbor]# ./install.sh
 ~~~
 
-![image-20230510143719007](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510143719007.png)
+<img src="assets/WX20230511-165532@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
-![image-20230510143950978](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510143950978.png)
+<img src="assets/WX20230511-165640@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
-> 这张图是2.8.0版本的，1.8.3版本是测试过能正常适配的
+
 
 ~~~
 # 200机器：
@@ -734,13 +745,13 @@ server {
 ~]# vi /var/named/od.com.zone
 # 注意serial前滚一个序号
 # 最下面添加域名
-harbor             A    172.29.238.162
+harbor             A    172.27.139.121
 ~]# systemctl restart named
 ~]# dig -t A harbor.od.com +short
 # out:172.29.238.162
 ~~~
 
-![image-20230510171927368](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510171927368.png)
+<img src="assets/WX20230511-163252@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 200机器上curl：
@@ -754,27 +765,29 @@ harbor]# curl harbor.od.com
 > 永久关闭，改配置文件 vi /etc/selinux/config
 > SELINUX=disabled
 
-![image-20230510171956492](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510171956492.png)
+<img src="assets/WX20230511-163549@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
-公有云的安全组添加tcp 180端口权限![image-20230508143611983](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230508143611983.png)
+公有云的安全组添加tcp 180端口权限
 
-在本机（window/mac）hosts，在文件末尾添加新的 DNS 域名解析，如：
+<img src="assets/WX20230511-164140@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+在本机（window/mac）hosts，在文件末尾添加新的 DNS 域名解析（确保能telnet通），如：
 
 ~~~
 公网ip harbo.od.com  # 公网ip对应200机器的公网ip
 ~~~
 
-[访问harbo.od.com](harbor.od.com)
+[访问harbo.od.com:180](harbor.od.com:180)
 
-![1578831134362](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578831134362.png)
+<img src="assets/WX20230511-190408@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 账号：admin
 密码：Harbor12345
-新建一个public公开项目
+新建一个public公开项目，登陆报错请参考下面的报错解决方法，一般是网络问题
 ~~~
 
-![1578831458247](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578831458247.png)
+![1578831458247](assets/1578831458247.png)
 
 ~~~
 # 200机器，尝试下是否能push成功到harbor仓库
@@ -788,7 +801,291 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 # 报错：如果发现登录不上去了，过一阵子再登录即可，大约5分钟左右
 ~~~
 
-![1578832524891](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578832524891.png)
+<img src="assets/WX20230511-192138@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+![1578832524891](assets/1578832524891.png)
+
+##### 报错：用正确的admin及密码仍提示密码错误
+
+排查：cat /data/harbor/logs/* |grep -i erro
+
+重新安装一次harbor或直接用命令行操作创建public
+
+~~~
+# 针对1.8.2版本，新版本需要新版本的操作指令
+# 创建public
+~]curl -u "admin:Harbor12345" -X POST "http://harbor.od.com/api/projects" -H "Content-Type: application/json" -d '{"project_name":"public","metadata":{"public":"true"}}'
+# 确认是否创建成功
+~]curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/projects"
+~~~
+
+<img src="assets/WX20230511-191809@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+检查推送nginx是否成功
+
+~~~
+# 必须已经下载好jq了，yum install jq -y
+# 获取public的id，一般是2
+curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/projects?name=public" | jq '.[0].project_id'
+# 使用id=2进行api接口的调用
+curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/repositories?project_id=2" | jq '.[].name'
+~~~
 
 成功，此时你已成功建立了自己的本地私有仓库
+
+
+
+### 安装部署主控节点服务etcd
+
+> 注意, 一定要同步每个虚拟机的时间, 时区和时间要保持一致, 可以通过以下的命令来操作, 最好所有的虚拟机都执行一次, 最好的方法是写进`/etc/rc.local`中
+
+  ```bash
+timedatectl set-timezone Asia/Shanghai
+timedatectl set-ntp true
+  ```
+
+> **WHAT**：一个高可用强一致性的服务发现存储仓库，关于服务发现，其本质就是知道了集群中是否有进程在监听udp和tcp端口（如上面部署的harbor就是监听180端口），并且通过名字就可以查找和连接。
+>
+> - **一个强一致性、高可用的服务存储目录**：基于Raft算法的etcd天生就是这样
+> - **一种注册服务和监控服务健康状态的机制**：在etcd中注册服务，并且对注册的服务设置`key TTL`（TTL上面有讲到），定时保持服务的心跳以达到监控健康状态的效果
+> - **一种查找和连接服务的机制**：通过在etcd指定的主题下注册的服务也能在对应的主题下查找到，为了确保连接，我们可以在每个服务机器上都部署一个Proxy模式的etcd，这样就可以确保能访问etcd集群的服务都能互相连接
+>
+> **WHY**：我们需要让服务快速透明地接入到计算集群中，让共享配置信息快速被集群中的所有机器发现
+
+看我们的结构图，可以看到我们在12/21/22机器都部署了etcd
+
+![1584701032598](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1584701032598.png)
+
+~~~
+# 我们开始制作证书，200机器：
+certs]# cd /opt/certs/
+certs]# vi /opt/certs/ca-config.json
+{
+    "signing": {
+        "default": {
+            "expiry": "1752000h"
+        },
+        "profiles": {
+            "server": {
+                "expiry": "1752000h",
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "server auth"
+                ]
+            },
+            "client": {
+                "expiry": "1752000h",
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "client auth"
+                ]
+            },
+            "peer": {
+                "expiry": "1752000h",
+                "usages": [
+                    "signing",
+                    "key encipherment",
+                    "server auth",
+                    "client auth"
+                ]
+            }
+        }
+    }
+}
+
+# 下面hosts添加11、12、21、22机器的内网ip
+certs]# vi etcd-peer-csr.json
+{
+    "CN": "k8s-etcd",
+    "hosts": [
+        "172.27.139.122",
+        "172.27.139.119",
+        "172.27.139.118",
+        "172.27.139.120"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ]
+}
+
+certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=peer etcd-peer-csr.json |cfssl-json -bare etcd-peer
+certs]# ll
+~~~
+
+> 关于这些json文件是怎么写出来的，答案：官网抄的然后修改，这些没什么重要的你也不需要太在意，后面重要的会说明是从哪里抄出来的
+>
+> **ca-config.json解析：**
+>
+> - expiry：有效期为200年
+> - profiles-server：启动server的时候需要配置证书
+> - profiles-client：client去连接server的时候需要证书
+> - profiles-peer：双向证书，服务端找客户端需要证书，客户端找服务端需要证书
+>
+> **etcd-peer-csr解析：**
+>
+> - hosts：etcd有可能部署到哪些组件的IP都要填进来
+>
+> **cfssl gencert**：生成证书
+
+![1578833436255](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578833436255.png)
+
+~~~
+# 12/21/22机器，安装etcd：
+~]# mkdir /opt/src
+~]# cd /opt/src/
+# 创建用户
+src]# useradd -s /sbin/nologin -M etcd
+src]# id etcd
+# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/tags，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+src]# 这里要有一部把etcd包拉进来的操作
+src]# tar xf etcd-v3.1.20-linux-amd64.tar.gz -C /opt
+src]# cd /opt
+opt]# mv etcd-v3.1.20-linux-amd64/ etcd-v3.1.20
+opt]# ln -s /opt/etcd-v3.1.20/ /opt/etcd
+opt]# cd etcd
+~~~
+
+> **tag**：可以加入，解开备份文件内的文件
+>
+> - **x**：解压
+> - **f** ：使用档案名字
+> - **-C**：切换到指定的目录
+> - 整条命令合起来就是，把tgz文件以tgz文件名为名字解压到opt目录下，并保存tgz文件原样
+>
+> **ln**：为某一个文件在另外一个位置建立一个同步的链接
+>
+> - `语法:ln [参数][源文件或目录][目标文件或目录]`
+> - **-s**：软连接，可以对整个目录进行链接
+>
+> **useradd**：建立用户帐号
+>
+> **-s**：指定用户登入后所使用的shell
+>
+> **-M**：不要自动建立用户的登入目录
+
+<img src="assets/WX20230511-194515@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 12/21/22机器：
+etcd]# mkdir -p /opt/etcd/certs /data/etcd /data/logs/etcd-server
+etcd]# cd certs/
+certs]# scp hdss7-200:/opt/certs/ca.pem .
+# 输入200虚机密码
+certs]# scp hdss7-200:/opt/certs/etcd-peer*.pem .
+certs]# cd ..
+# 3台机器，如果是21机器，这下面得12都得改成21，对应的ip换成21的内网ip，initial-cluster则是全部机器都有不需要改，一共5处：etcd-server-7-12、listen-peer-urls后、client-urls后、advertise-peer-urls后、advertise-client-urls后
+etcd]# vi /opt/etcd/etcd-server-startup.sh
+#!/bin/sh
+./etcd --name etcd-server-7-12 \
+       --data-dir /data/etcd/etcd-server \
+       --listen-peer-urls https://172.27.139.119:2380 \
+       --listen-client-urls https://172.27.139.119:2379,http://127.0.0.1:2379 \
+       --quota-backend-bytes 8000000000 \
+       --initial-advertise-peer-urls https://172.27.139.119:2380 \
+       --advertise-client-urls https://172.27.139.119:2379,http://127.0.0.1:2379 \
+       --initial-cluster  etcd-server-7-12=https://172.27.139.119:2380,etcd-server-7-21=https://172.27.139.118:2380,etcd-server-7-22=https://172.27.139.120:2380 \
+       --ca-file ./certs/ca.pem \
+       --cert-file ./certs/etcd-peer.pem \
+       --key-file ./certs/etcd-peer-key.pem \
+       --client-cert-auth  \
+       --trusted-ca-file ./certs/ca.pem \
+       --peer-ca-file ./certs/ca.pem \
+       --peer-cert-file ./certs/etcd-peer.pem \
+       --peer-key-file ./certs/etcd-peer-key.pem \
+       --peer-client-cert-auth \
+       --peer-trusted-ca-file ./certs/ca.pem \
+       --log-output stdout
+
+etcd]# chmod +x etcd-server-startup.sh
+etcd]# chown -R etcd.etcd /opt/etcd-v3.1.20/
+etcd]# chown -R etcd.etcd /data/etcd/
+etcd]# chown -R etcd.etcd /data/logs/etcd-server/
+etcd]# ll
+~~~
+
+> **scp**：用于 *Linux* 之间复制文件和目录
+>
+> **chmod**：添加权限
+>
+> - **+x**：给当前用户添加可执行该文件的权限权限
+>
+> **chown**：指定文件的拥有者改为指定的用户或组
+>
+> - **-R**：处理指定目录以及其子目录下的所有文件
+> - 这里即是把/opt/etcd...等的拥有者给etcd用户
+>
+> **ll**：列出权限、大小、名称等信息
+
+![1578834563843](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578834563843.png)
+
+~~~
+# 12/21/22机器，我们同时需要supervisor（守护进程工具）来确保etcd是启动的，后面还会不断用到：
+# 这个我们前面已经装了 yum install supervisor -y
+etcd]# systemctl start supervisord
+etcd]# systemctl enable supervisord
+# 注意修改下面得7-12，对应上机器，如21机器就是7-21，一共一处：[program:etcd-server-7-12]
+etcd]# vi /etc/supervisord.d/etcd-server.ini
+[program:etcd-server-7-12]
+command=/opt/etcd/etcd-server-startup.sh                        ; the program (relative uses PATH, can take args)
+numprocs=1                                                      ; number of processes copies to start (def 1)
+directory=/opt/etcd                                             ; directory to cwd to before exec (def no cwd)
+autostart=true                                                  ; start at supervisord start (default: true)
+autorestart=true                                                ; retstart at unexpected quit (default: true)
+startsecs=30                                                    ; number of secs prog must stay running (def. 1)
+startretries=3                                                  ; max # of serial start failures (default 3)
+exitcodes=0,2                                                   ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                 ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                 ; max num secs to wait b4 SIGKILL (default 10)
+user=etcd                                                       ; setuid to this UNIX account to run the program
+redirect_stderr=true                                            ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/etcd-server/etcd.stdout.log           ; stdout log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                    ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                        ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                     ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                     ; emit events on stdout writes (default false)
+
+etcd]# supervisorctl update
+# out：etcd-server-7-21: added process group
+etcd]# supervisorctl status
+# out: etcd-server-7-12                 RUNNING   pid 16582, uptime 0:00:59
+etcd]# netstat -luntp|grep etcd
+# 必须是监听了2379和2380这两个端口才算成功
+#out:etcd-server-7-12: added process group
+~~~
+
+> **systemctl enable**：开机启动
+>
+> **update**：更新
+>
+> **netstat -luntp：**查看端口和进程情况
+>
+> 现在你可以感觉到，supervisor守护进程也仅仅是你配好ini文件即可
+
+![1578834944148](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578834944148.png)
+
+~~~
+# 任意节点（12/21/22）检测集群健康状态的两种方法
+22 etcd]# ./etcdctl cluster-health
+22 etcd]# ./etcdctl member list
+~~~
+
+![1578836465329](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578836465329.png)
+
+> 这里你再哪个机器先update，哪个机器就是leader
+
+完成
+
+
 
