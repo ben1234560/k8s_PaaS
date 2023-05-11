@@ -4,7 +4,7 @@
 
 注：公有云版未测试是否适配第三章往后内容，理论上是完全可行的。
 
-**考虑到部分同学机器配置并无法满足多开VMware，这里推出公有云版本（以阿里云为例）**
+**考虑到部分同学机器配置并无法满足多开VMware，这里推出公有云版本（以阿里云为例），必须有梯子（vpn/翻墙）**
 
 
 
@@ -554,4 +554,227 @@ yum install -y docker-ce
 ~~~
 
 ![image-20230510141020872](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510141020872.png)
+
+
+
+### K8S前置工作——部署harbor仓库
+
+> **WHAT **：harbor仓库是可以部署到本地的私有仓库，也就是你可以把镜像推到这个仓库，然后需要用的时候再下载下来，这样的好处是：1、下载速度快，用到的时候能马上下载下来2、不用担心镜像改动或者下架等。
+>
+> **WHY**：因为我们的部署K8S涉及到很多镜像，制作相关包的时候如果网速问题会导致失败重来，而且我们在公司里也会建自己的仓库，所以必须按照harbor仓库
+
+~~~
+# 如架构图，我们安装在200机器：
+200 ~]# mkdir /opt/src  && cd /opt/src
+# 可以去这个地址下载，也可以直接用我用的软件包
+https://github.com/goharbor/harbor/releases/tag/v1.8.3
+200 src]# wget https://storage.googleapis.com/harbor-releases/release-1.8.0/harbor-offline-installer-v1.8.3.tgz
+# 或者用较新的包（未测试后面的适配情况）wget https://github.com/goharbor/harbor/releases/download/v2.8.0/harbor-offline-installer-v2.8.0.tgz
+7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/
+~~~
+
+> **tag**：可以加入，解开备份文件内的文件
+>
+> - **x**：解压
+> - **f**： 使用档案名字
+> - **-C**：切换到指定的目录
+> - 整条命令合起来就是，把tgz文件以tgz文件名为名字解压到opt目录下，并保存tgz文件原样
+>
+> **关于版本**：一般人都是喜欢用比较新的版本，我们当然也支持比较新的版本，但对于公司而已，稳定是最要紧的，v1.8.3是用的比较稳定的版本，而后续的各个组件也会有更加新的版本，你可以尝试新版本，但有些由于兼容问题不能用新的，后续那些不能用我会标记清楚。
+
+~~~
+# 200机器：
+200 src]# cd /opt/
+200 opt]# mv harbor/ harbor-v1.8.3
+200 opt]# ln -s /opt/harbor-v1.8.3/ /opt/harbor
+200 opt]# cd harbor
+200 harbor]# ll
+200 harbor]# vi harbor.yml  # 如果这里是用的2.8.0版本，则需要cp harbor.yml.tmpl harbor.yml
+hostname: harbor.od.com  # 原reg.mydomain.com
+http:
+  port: 180  # 原80
+data_volume: /data/harbor
+location: /data/harbor/logs
+
+200 harbor]# mkdir -p /data/harbor/logs
+200 harbor]# yum install docker-compose -y
+200 harbor]# rpm -qa docker-compose
+# out: docker-compose-1.18.0-4.el7.noarch
+# yum install docker-compose 包无法下载的，可以查看下面提供的报错解决方法
+200 harbor]# ./install.sh
+~~~
+
+> **提示**：harbor v2.3.3版本安装也需要将https相关的配置注释掉
+>
+> 如图#https:
+>
+> ![1635775214057](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1635775214057.png)
+>
+> 感谢@https://github.com/xinzhuxiansheng
+>
+> **mv**：为文件或目录改名、或将文件或目录移入其它位置。
+>
+> - 这里的命令是有斜杠的，所以是移动到某个目录下
+>
+> **ln**：为某一个文件在另外一个位置建立一个同步的链接
+>
+> - `语法:ln [参数][源文件或目录][目标文件或目录]`
+> - `**-s：**软连接，可以对整个目录进行链接`
+>
+> **harbor.yml解析：**
+>
+> - port为什么改成180：因为后面我们要装nginx，nginx用的80，所以要把它们错开
+> - data_volume：数据卷，即docker镜像放在哪里
+> - location：日志文件
+> - **./install.sh**：启动shell脚本
+
+##### 报错：yum install docker-compose -y报错No package docker-compose available.
+
+使用我提供的官方软件包（放在百度网盘），放到harbor路径下
+
+~~~
+200 harbor]# sudo cp docker-compose-Linux-x86_64 /usr/local/bin/docker-compose
+200 harbor]# sudo chmod +x /usr/local/bin/docker-compose
+200 harbor]# docker-compose --version
+# out: docker-compose version 1.29.2, build 5becea4c
+200 harbor]# ./install.sh
+~~~
+
+![image-20230510143719007](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510143719007.png)
+
+![image-20230510143950978](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510143950978.png)
+
+> 这张图是2.8.0版本的，1.8.3版本是测试过能正常适配的
+
+~~~
+# 200机器：
+200 harbor]# docker-compose ps
+200 harbor]# docker ps -a
+200 harbor]# yum install nginx -y  # 报错的参考下面报错对应的解决方法
+
+###相关报错问题：
+yum的时候报：/var/run/yum.pid 已被锁定，PID 为 1610 的另一个程序正在运行。
+另外一个程序锁定了 yum；等待它退出……
+网上统一的解决办法：直接在终端运行 rm -f /var/run/yum.pid 将该文件删除，然后再次运行yum。
+###
+~~~
+
+##### 报错：yum install nginx -y没有对应包
+
+~~~
+200 ~]# yum install nginx -y
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirrors.aliyun.com
+ * extras: mirrors.aliyun.com
+ * updates: mirrors.aliyun.com
+No package nginx available.
+Error: Nothing to do
+~~~
+
+解决方法
+
+~~~
+# 编写nginx.repo
+200 harbor]# sudo vi /etc/yum.repos.d/nginx.repo
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/7/$basearch/
+gpgcheck=0
+enabled=1
+
+# 保存退出后即可安装nginx了
+200 harbor]# sudo yum install nginx -y
+~~~
+
+
+
+解决完接着走
+
+~~~
+200 harbor]# vi /etc/nginx/conf.d/harbor.od.com.conf
+server {
+    listen       80;
+    server_name  harbor.od.com;
+
+    client_max_body_size 1000m;
+
+    location / {
+        proxy_pass http://127.0.0.1:180;
+    }
+}
+
+200 harbor]# nginx -t
+200 harbor]# systemctl start nginx
+200 harbor]# systemctl enable nginx
+~~~
+
+> **nginx -t**：测试*nginx*.conf配置文件中是否存在语法错误
+>
+> **systemctl enable nginx**：开机自动启动
+
+追加域名解析
+
+~~~
+# 在11机器解析域名：
+~]# vi /var/named/od.com.zone
+# 注意serial前滚一个序号
+# 最下面添加域名
+harbor             A    172.29.238.162
+~]# systemctl restart named
+~]# dig -t A harbor.od.com +short
+# out:172.29.238.162
+~~~
+
+![image-20230510171927368](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510171927368.png)
+
+~~~
+# 200机器上curl：
+harbor]# curl harbor.od.com
+~~~
+
+> 注意：
+>
+> getenforce得是关闭状态，而不是enforcing，否则会报502
+> 暂时关闭setenforce 0
+> 永久关闭，改配置文件 vi /etc/selinux/config
+> SELINUX=disabled
+
+![image-20230510171956492](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230510171956492.png)
+
+公有云的安全组添加tcp 180端口权限![image-20230508143611983](/Users/xueweiguo/Library/Application Support/typora-user-images/image-20230508143611983.png)
+
+在本机（window/mac）hosts，在文件末尾添加新的 DNS 域名解析，如：
+
+~~~
+公网ip harbo.od.com  # 公网ip对应200机器的公网ip
+~~~
+
+[访问harbo.od.com](harbor.od.com)
+
+![1578831134362](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578831134362.png)
+
+~~~
+账号：admin
+密码：Harbor12345
+新建一个public公开项目
+~~~
+
+![1578831458247](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578831458247.png)
+
+~~~
+# 200机器，尝试下是否能push成功到harbor仓库
+harbor]# docker pull nginx:1.7.9
+harbor]# docker images|grep 1.7.9
+harbor]# docker tag 84581e99d807 harbor.od.com/public/nginx:v1.7.9
+harbor]# docker login harbor.od.com
+账号：admin
+密码：Harbor12345
+harbor]# docker push harbor.od.com/public/nginx:v1.7.9
+# 报错：如果发现登录不上去了，过一阵子再登录即可，大约5分钟左右
+~~~
+
+![1578832524891](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578832524891.png)
+
+成功，此时你已成功建立了自己的本地私有仓库
 
