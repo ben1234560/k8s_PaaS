@@ -789,8 +789,9 @@ certs]# ll
 # 创建用户
 src]# useradd -s /sbin/nologin -M etcd
 src]# id etcd
-# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/tags，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
-src]# 这里要有一部把etcd包拉进来的操作
+
+# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/releases/tag/v3.1.20，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+src]# wget https://github.com/etcd-io/etcd/releases/download/v3.1.20/etcd-v3.1.20-linux-amd64.tar.gz
 src]# tar xf etcd-v3.1.20-linux-amd64.tar.gz -C /opt
 src]# cd /opt
 opt]# mv etcd-v3.1.20-linux-amd64/ etcd-v3.1.20
