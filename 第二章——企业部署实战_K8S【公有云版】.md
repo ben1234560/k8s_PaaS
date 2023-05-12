@@ -151,7 +151,7 @@
 
 ![image-选择系统版本](assets/WX20230511-150553@2x.png)
 
-网络分配公网IPv4地址，默认选择，其它不变，这样创建下来的服务器是公用同一安全组配置
+网络分配公网IPv4地址，默认选择，其它不变，这样创建下来的服务器是公用同一安全组配置，如果钱允许的话把网速开到最大
 
 选择“自定义密码“，建议设置相对复杂的密码，如包含大小写，否则容易被攻破使用
 
@@ -549,7 +549,7 @@ certs]# cat ca.pem
 
 ~~~
 # 如我们架构图所示，运算节点是21/22机器（没有docker则无法运行pod），运维主机是200机器（没有docker则没办法下载docker存入私有仓库），所以在三台机器安装（21/22/200）
-~]# curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+# 这个前面已经安装 curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
 # 上面的下载可能网络有问题，需要多试几次，这些部署我已经不同机器试过很多次了，实在不行的使用下面提供的报错解决方法。
 ~]# mkdir -p /data/docker /etc/docker
 # # 注意，172.7.21.1，这里得21是指在hdss7-21得机器，如果是22得机器，就是172.7.22.1，共一处需要改机器名："bip": "172.7.21.1/24"
@@ -640,6 +640,7 @@ https://github.com/goharbor/harbor/releases/tag/v1.8.3
 200 opt]# ln -s /opt/harbor-v1.8.3/ /opt/harbor
 200 opt]# cd harbor
 200 harbor]# ll
+# 修改域名、端口、挂载卷及日志存放地址
 200 harbor]# vi harbor.yml  # 如果这里是用的2.8.0版本，则需要cp harbor.yml.tmpl harbor.yml
 hostname: harbor.od.com  # 原reg.mydomain.com
 http:
@@ -648,7 +649,7 @@ data_volume: /data/harbor
 location: /data/harbor/logs
 
 200 harbor]# mkdir -p /data/harbor/logs
-200 harbor]# yum install docker-compose -y
+# 这个前面已经安装 yum install docker-compose -y
 200 harbor]# rpm -qa docker-compose
 # out: docker-compose-1.18.0-4.el7.noarch
 # yum install docker-compose 包无法下载的，可以查看下面提供的报错解决方法
@@ -700,8 +701,20 @@ location: /data/harbor/logs
 ~~~
 # 200机器：
 200 harbor]# docker-compose ps
+# out:
+      Name                     Command               State             Ports          
+--------------------------------------------------------------------------------------
+harbor-core         /harbor/start.sh                 Up                               
+harbor-db           /entrypoint.sh postgres          Up      5432/tcp                 
+harbor-jobservice   /harbor/start.sh                 Up                               
+harbor-log          /bin/sh -c /usr/local/bin/ ...   Up      127.0.0.1:1514->10514/tcp
+harbor-portal       nginx -g daemon off;             Up      80/tcp                   
+nginx               nginx -g daemon off;             Up      0.0.0.0:180->80/tcp      
+redis               docker-entrypoint.sh redis ...   Up      6379/tcp                 
+registry            /entrypoint.sh /etc/regist ...   Up      5000/tcp                 
+registryctl         /harbor/start.sh                 Up 
 200 harbor]# docker ps -a
-200 harbor]# yum install nginx -y  # 报错的参考下面报错对应的解决方法
+# 这个前面已经安装 yum install nginx -y  # 报错的参考下面报错对应的解决方法
 
 ###相关报错问题：
 yum的时候报：/var/run/yum.pid 已被锁定，PID 为 1610 的另一个程序正在运行。
@@ -803,14 +816,16 @@ harbor]# curl harbor.od.com
 公网ip harbo.od.com  # 公网ip对应200机器的公网ip
 ~~~
 
-[访问harbo.od.com:180](harbor.od.com:180)
+[访问harbor.od.com:180](harbor.od.com:180)
 
 <img src="assets/WX20230511-190408@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+<img src="assets/WX20230512-095227@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 账号：admin
 密码：Harbor12345
-新建一个public公开项目，登陆报错请参考下面的报错解决方法，一般是网络问题
+新建一个public公开项目，登陆报错请参考下面的报错解决方法，一般是网络问题，如果接口方式也无法解决，直接重装更快
 ~~~
 
 ![1578831458247](assets/1578831458247.png)
@@ -827,8 +842,6 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 # 报错：如果发现登录不上去了，过一阵子再登录即可，大约5分钟左右
 ~~~
 
-<img src="assets/WX20230511-192138@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
-
 ![1578832524891](assets/1578832524891.png)
 
 ##### 报错：用正确的admin及密码仍提示密码错误
@@ -838,7 +851,7 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 重新安装一次harbor或直接用命令行操作创建public
 
 ~~~
-# 针对1.8.2版本，新版本需要新版本的操作指令
+# 针对1.8.2版本，新版本需要新版本的操作指令，部署后api控制中心在这里http://harbor.od.com:180/devcenter
 # 创建public
 ~]curl -u "admin:Harbor12345" -X POST "http://harbor.od.com/api/projects" -H "Content-Type: application/json" -d '{"project_name":"public","metadata":{"public":"true"}}'
 # 确认是否创建成功
@@ -857,7 +870,7 @@ curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/projects?name=publi
 curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/repositories?project_id=2" | jq '.[].name'
 ~~~
 
-成功，此时你已成功建立了自己的本地私有仓库
+成功，此时你已成功建立了自己的本地私有仓库:tada:，或许你会考虑建立自己的独立站，enjoin!
 
 
 
