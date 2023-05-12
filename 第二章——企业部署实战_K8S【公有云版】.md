@@ -1695,3 +1695,217 @@ etcd-0               Healthy   {"health": "true"}
 
 
 
+### 安装部署运算节点服务（kubelet）
+
+~~~
+# 200机器，签发证书，将虚拟vip10，21、22、23等后续可能扩展的IP加入
+200 certs]# vi kubelet-csr.json
+{
+    "CN": "k8s-kubelet",
+    "hosts": [
+    "127.0.0.1",
+    "172.27.139.10",
+    "172.27.139.118",
+    "172.27.139.120",
+    "172.27.139.123",
+    "172.27.139.124",
+    "172.27.139.125",
+    "172.27.139.126",
+    "172.27.139.127",
+    "172.27.139.128"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ]
+}
+
+200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server kubelet-csr.json | cfssl-json -bare kubelet
+200 certs]#  ll |grep kubelet
+-rw-r--r-- 1 root root 1115 May 12 15:45 kubelet.csr
+-rw-r--r-- 1 root root  496 May 12 15:45 kubelet-csr.json
+-rw------- 1 root root 1679 May 12 15:45 kubelet-key.pem
+-rw-r--r-- 1 root root 1468 May 12 15:45 kubelet.pem
+~~~
+
+> **kubelet-csr-hosts**：把所有可能用到的IP都放进来
+
+~~~
+# 分发证书，21/22机器
+cert]# cd /opt/kubernetes/server/bin/cert/
+cert]# scp hdss7-200:/opt/certs/kubelet.pem .
+cert]# scp hdss7-200:/opt/certs/kubelet-key.pem .
+
+# 21机器，修改--server的ip为虚拟vip10：
+cert]# cd ../conf/
+conf]# kubectl config set-cluster myk8s \
+  --certificate-authority=/opt/kubernetes/server/bin/cert/ca.pem \
+  --embed-certs=true \
+  --server=https://172.27.139.10:7443 \
+  --kubeconfig=kubelet.kubeconfig
+
+# out: Cluster "myk8s" set.
+conf]# kubectl config set-credentials k8s-node \
+  --client-certificate=/opt/kubernetes/server/bin/cert/client.pem \
+  --client-key=/opt/kubernetes/server/bin/cert/client-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kubelet.kubeconfig 
+
+# out: User "k8s-node" set.
+conf]# kubectl config set-context myk8s-context \
+  --cluster=myk8s \
+  --user=k8s-node \
+  --kubeconfig=kubelet.kubeconfig
+
+out: Context "myk8s-context" created.
+conf]# kubectl config use-context myk8s-context --kubeconfig=kubelet.kubeconfig
+
+#out: Switched to context "myk8s-context".
+# 做权限授权，推荐文章https://www.jianshu.com/p/9991f189495f
+conf]# vi k8s-node.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: k8s-node
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:node
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: k8s-node
+  
+conf]# kubectl create -f k8s-node.yaml
+# out: clusterrolebinding.rbac.authorization.k8s.io/k8s-node created
+conf]# kubectl get clusterrolebinding k8s-node -o yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: "2023-05-12T07:50:58Z"
+  name: k8s-node
+  resourceVersion: "2709"
+  selfLink: /apis/rbac.authorization.k8s.io/v1/clusterrolebindings/k8s-node
+  uid: 704e0b50-857e-48d7-a028-ff46682d2761
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:node
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: k8s-node
+
+# 22机器，复制21机器即可
+cert]# cd ../conf/
+conf]# scp hdss7-21:/opt/kubernetes/server/bin/conf/kubelet.kubeconfig .
+~~~
+
+> **scp**：用于 *Linux* 之间复制文件和目录
+>
+> **kubectl create -f**  ：通过配置文件名或stdin创建一个集群资源对象
+>
+> **kubectl get ... -o ...**  ：列出Pod以及运行Pod节点信息（你可以试下不加-o和加-o的区别）
+
+~~~
+# 准备pause基础镜像，200机器：
+certs]# docker pull kubernetes/pause
+certs]# docker images|grep pause
+# out: kubernetes/pause                latest                     f9d5de079539   8 years ago   240kB
+certs]# docker tag f9d5de079539 harbor.od.com/public/pause:latest
+certs]# docker push harbor.od.com/public/pause:latest
+~~~
+
+> **docker pull**：下载镜像
+>
+> **docker images**：列出所有的镜像
+>
+> - 这里加上|grep 管道符是为了过滤出来pause镜像
+>
+> **docker tag**：给镜像打名字
+>
+> **docker push**：将镜像推送到指定的仓库
+
+~~~
+# 21/21机器，注意修改主机名，有一处hostname-override需要改：hdss7-21
+bin]# vi /opt/kubernetes/server/bin/kubelet.sh
+#!/bin/sh
+./kubelet \
+  --anonymous-auth=false \
+  --cgroup-driver systemd \
+  --cluster-dns 192.168.0.2 \
+  --cluster-domain cluster.local \
+  --runtime-cgroups=/systemd/system.slice \
+  --kubelet-cgroups=/systemd/system.slice \
+  --fail-swap-on="false" \
+  --client-ca-file ./cert/ca.pem \
+  --tls-cert-file ./cert/kubelet.pem \
+  --tls-private-key-file ./cert/kubelet-key.pem \
+  --hostname-override hdss7-21.host.com \
+  --image-gc-high-threshold 20 \
+  --image-gc-low-threshold 10 \
+  --kubeconfig ./conf/kubelet.kubeconfig \
+  --log-dir /data/logs/kubernetes/kube-kubelet \
+  --pod-infra-container-image harbor.od.com/public/pause:latest \
+  --root-dir /data/kubelet
+  
+conf]# cd /opt/kubernetes/server/bin
+bin]# mkdir -p /data/logs/kubernetes/kube-kubelet /data/kubelet
+bin]# chmod +x kubelet.sh
+# 有一处要修改主机名：kube-kubelet-7-21
+bin]# vi /etc/supervisord.d/kube-kubelet.ini
+[program:kube-kubelet-7-21]
+command=/opt/kubernetes/server/bin/kubelet.sh     ; the program (relative uses PATH, can take args)
+numprocs=1                                        ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin              ; directory to cwd to before exec (def no cwd)
+autostart=true                                    ; start at supervisord start (default: true)
+autorestart=true              		          ; retstart at unexpected quit (default: true)
+startsecs=30                                      ; number of secs prog must stay running (def. 1)
+startretries=3                                    ; max # of serial start failures (default 3)
+exitcodes=0,2                                     ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                   ; signal used to kill process (default TERM)
+stopwaitsecs=10                                   ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                         ; setuid to this UNIX account to run the program
+redirect_stderr=true                              ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-kubelet/kubelet.stdout.log   ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                      ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                          ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                       ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                       ; emit events on stdout writes (default false)
+
+bin]# supervisorctl update
+bin]# supervisorctl status
+etcd-server-7-21                 RUNNING   pid 14765, uptime 5:02:11
+kube-apiserver-7-21              RUNNING   pid 16088, uptime 1:24:58
+kube-controller-manager-7-21     RUNNING   pid 18734, uptime 0:33:39
+kube-kubelet-7-21                RUNNING   pid 24802, uptime 0:00:53
+kube-scheduler-7-21              RUNNING   pid 18958, uptime 0:32:30
+
+bin]# kubectl get nodes
+NAME                STATUS   ROLES    AGE   VERSION
+hdss7-21.host.com   Ready    <none>   54s   v1.15.2
+hdss7-22.host.com   Ready    <none>   53s   v1.15.2
+
+# 给标签,21/22都给上master,node
+bin]# kubectl label node hdss7-21.host.com node-role.kubernetes.io/master=
+bin]# kubectl label node hdss7-21.host.com node-role.kubernetes.io/node=
+bin]# kubectl label node hdss7-22.host.com node-role.kubernetes.io/master=
+bin]# kubectl label node hdss7-22.host.com node-role.kubernetes.io/node=
+bin]# kubectl get nodes
+~~~
+
+<img src="assets/WX20230512-155833@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+
+
+完成
+
