@@ -235,8 +235,21 @@ IPV6_PRIUACY=no
 # 关闭firewalld
 ~]# systemctl stop firewalld
 # 安装epel源及相关工具
-~]# yum install epel-release -y
-~]# yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
+~]# yum install epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils -y
+# 检查是否安装成功
+~]# rpm -q epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils
+# out:
+epel-release-7-14.noarch
+wget-1.14-18.el7_6.1.x86_64
+net-tools-2.0-0.25.20131004git.el7.x86_64
+telnet-0.17-66.el7.x86_64
+tree-1.6.0-10.el7.x86_64
+nmap-6.40-19.el7.x86_64
+sysstat-10.1.5-20.el7_9.x86_64
+lrzsz-0.12.20-36.el7.x86_64
+dos2unix-6.0.3-7.el7.x86_64
+bind-utils-9.11.4-26.P2.el7_9.13.x86_64
+yum-utils-1.1.31-54.el7_8.noarch
 ~~~
 
 > **uname**:显示系统信息
@@ -250,11 +263,24 @@ IPV6_PRIUACY=no
 
 <img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
 
-
-
 ~~~
-# 全部机器，安装后续需要的服务工具
-yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived -y
+# 全部机器，安装后续需要的服务工具（我就不区分每个机器所需的了，后面会看到）
+# 追加docker的repo源
+~]# yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+# 安装后续所需的软件包
+~]# yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived deltarpm docker-ce -y
+# 检查安装情况
+~]# rpm -q supervisor docker-compose nginx nginx-mod-stream 
+# out:
+supervisor keepalived deltarpm docker-ce
+supervisor-3.4.0-1.el7.noarch
+docker-compose-1.18.0-4.el7.noarch
+nginx-1.20.1-10.el7.x86_64
+nginx-mod-stream-1.20.1-10.el7.x86_64
+supervisor-3.4.0-1.el7.noarch
+keepalived-1.3.5-19.el7.x86_64
+deltarpm-3.6-3.el7.x86_64
+docker-ce-23.0.6-1.el7.x86_64
 ~~~
 
 
