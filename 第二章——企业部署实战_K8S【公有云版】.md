@@ -893,7 +893,7 @@ timedatectl set-ntp true
 
 看我们的结构图，可以看到我们在12/21/22机器都部署了etcd
 
-![1584701032598](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1584701032598.png)
+![1584701032598](assets/1584701032598.png)
 
 ~~~
 # 我们开始制作证书，200机器：
@@ -1137,7 +1137,7 @@ etcd]# netstat -luntp|grep etcd
 
 根据架构图，我们把运算节点部署在21和22机器
 
-![1584701070750](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1584701070750.png)
+![1584701070750](assets/1584701070750.png)
 
 ~~~
 # 21/22机器
@@ -1239,6 +1239,8 @@ bin]# ll
 200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server apiserver-csr.json |cfssl-json -bare apiserver
 200 certs]# ll
 ~~~
+
+> 请确保作为虚拟vip172.27.139.10并不真实存在，ping 172.27.139.10应该是不通的
 
 <img src="assets/WX20230512-141539@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
@@ -1413,4 +1415,171 @@ bin]# supervisorctl status
 > <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81">Pod的几种状态</a>
 
 完成
+
+
+
+### 安装部署主控节点L4反代服务
+
+根据我们架构图，在11/12机器上做反代
+
+![1584701103579](assets/1584701103579.png)
+
+安装nginx时另一个注意事项 <a href="https://github.com/ben1234560/k8s_PaaS/issues/16">点击链接  </a>
+
+（感谢 https://github.com/nangongchengfeng/）
+
+~~~
+# 11/12机器及21/22机器（考虑到公有云的网络情况，我们将21/22机器同时也作为备反代节点）
+# 这个前面已经安装 yum install nginx nginx-mod-stream -y
+# 添加在最下面，server处需要改成自己的21、22机器IP
+~]# vi /etc/nginx/nginx.conf
+stream {
+    upstream kube-apiserver {
+        server 172.27.139.118:6443     max_fails=3 fail_timeout=30s;
+        server 172.27.139.120:6443     max_fails=3 fail_timeout=30s;
+    }
+    server {
+        listen 7443;
+        proxy_connect_timeout 2s;
+        proxy_timeout 900s;
+        proxy_pass kube-apiserver;
+    }
+}
+
+~]# nginx -t
+~]# systemctl start nginx
+~]# systemctl enable nginx
+
+# 这个前面已经安装 yum install keepalived -y
+# keepalived 监控端口脚本
+~]# vi /etc/keepalived/check_port.sh
+#!/bin/bash
+CHK_PORT=$1
+if [ -n "$CHK_PORT" ];then
+        PORT_PROCESS=`ss -lnt|grep $CHK_PORT|wc -l`
+        if [ $PORT_PROCESS -eq 0 ];then
+                echo "Port $CHK_PORT Is Not Used,End."
+                exit 1
+        fi
+else
+        echo "Check Port Cant Be Empty!"
+fi
+
+~]# chmod +x /etc/keepalived/check_port.sh
+~~~
+
+> 由于7443端口未监听，Nginx 启动报 [emerg] bind() failed的可以参考[这个方法](https://blog.csdn.net/RunSnail2018/article/details/81185138)（感谢https://gitee.com/wangming91/）
+>
+> 上述代码解析：`upstream` 块：定义了名为 `kube-apiserver` 的上游服务器组。在这个例子中，该组由两个服务器组成，指定了上游服务器的 IP 地址和端口。`server` 块：定义了一个代理服务器，它监听本地端口 `7443`，并将请求代理到上游服务器组 `kube-apiserver`
+>
+> 通过这个配置，当有请求发送到代理服务器的 `7443` 端口时，Nginx 将会将请求转发到 `kube-apiserver` 上游服务器组中的一个服务器上进行处理。这可以用于代理和负载均衡对 `kube-apiserver` 的请求。
+>
+> **yum install -y**：安装并自动yes
+>
+> **nginx -t**：确定nginx.conf有没有语法错误
+>
+> **systemctl start**：启动服务
+>
+> **systemctl enable**：开机自启
+
+~~~
+# 仅以下分主从操作：
+# 把原有内容都删掉，命令行快速按打出dG
+# 注意，下面的vrrp_instance下的interface，我的机器是eth0配置了网卡，有的版本是ens33配置网卡，可以用ifconfig查看，第一行就是，如果你是ens33，改这个interface ens33
+# keepalived 主（即11机器），修改router_id、mcast_src_ip两处为11机器的ip，修改virtual_ipaddress为虚拟vip 10:
+11 ~]# vi /etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+
+global_defs {
+   router_id 172.27.139.122
+
+}
+
+vrrp_script chk_nginx {
+    script "/etc/keepalived/check_port.sh 7443"
+    interval 2
+    weight -20
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 251
+    priority 100
+    advert_int 1
+    mcast_src_ip 172.27.139.122
+    nopreempt
+
+    authentication {
+        auth_type PASS
+        auth_pass 11111111
+    }
+    track_script {
+         chk_nginx
+    }
+    virtual_ipaddress {
+        172.27.139.10
+    }
+}
+
+# keepalived从（即12/21/22机器），修改router_id、mcast_src_ip两处为12或21或22机器的ip，修改virtual_ipaddress为虚拟vip 10:
+12/21/22 ~]# vi /etc/keepalived/keepalived.conf
+! Configuration File for keepalived
+global_defs {
+	router_id 172.27.139.119
+}
+vrrp_script chk_nginx {
+	script "/etc/keepalived/check_port.sh 7443"
+	interval 2
+	weight -20
+}
+vrrp_instance VI_1 {
+	state BACKUP
+	interface eth0
+	virtual_router_id 251
+	mcast_src_ip 172.27.139.119
+	priority 90
+	advert_int 1
+	authentication {
+		auth_type PASS
+		auth_pass 11111111
+	}
+	track_script {
+		chk_nginx
+	}
+	virtual_ipaddress {
+		172.27.139.10
+	}
+}
+~~~
+
+启动keepalived
+
+~~~
+# 11/12/21/22机器
+~]# systemctl start keepalived
+~]# systemctl enable keepalived
+# 在11/12/21/22机器
+11 ~]# ip add
+~~~
+
+<img src="assets/WX20230512-144506@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+确保21/22机器能够telnet通虚拟vip 10的7443端口
+
+~~~
+21 ~]# telnet 172.27.139.10 7443
+Trying 172.27.139.10...
+Connected to 172.27.139.10.
+Escape character is '^]'.
+
+22 ~]# telnet 172.27.139.10 7443
+Trying 172.27.139.10...
+Connected to 172.27.139.10.
+Escape character is '^]'.
+~~~
+
+完成
+
+
 
