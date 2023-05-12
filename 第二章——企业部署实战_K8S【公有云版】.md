@@ -208,6 +208,7 @@ IPV6_PEERROUTES=yes
 IPV6_PRIUACY=no
 
 ~]# systemctl restart network
+# 结束ping命令用ctrl+c(control+c)，用于发送中断信号给当前正在运行的进程
 ~]# ping baidu.com
 ~~~
 
@@ -1578,6 +1579,113 @@ Trying 172.27.139.10...
 Connected to 172.27.139.10.
 Escape character is '^]'.
 ~~~
+
+完成
+
+
+
+### 安装部署controller-manager（节点控制器/调度器服务）
+
+让我们再搬出我们的架构图
+
+![1584701137068](assets/1584701137068.png)
+
+~~~
+# 21/22机器：
+bin]# vi /opt/kubernetes/server/bin/kube-controller-manager.sh
+#!/bin/sh
+./kube-controller-manager \
+  --cluster-cidr 172.7.0.0/16 \
+  --leader-elect true \
+  --log-dir /data/logs/kubernetes/kube-controller-manager \
+  --master http://127.0.0.1:8080 \
+  --service-account-private-key-file ./cert/ca-key.pem \
+  --service-cluster-ip-range 192.168.0.0/16 \
+  --root-ca-file ./cert/ca.pem \
+  --v 2
+
+bin]# chmod +x /opt/kubernetes/server/bin/kube-controller-manager.sh
+bin]# mkdir -p /data/logs/kubernetes/kube-controller-manager
+# 注意22机器，下面要改成7-22，一处修改：manager-7-21]
+bin]# vi /etc/supervisord.d/kube-conntroller-manager.ini
+[program:kube-controller-manager-7-21]
+command=/opt/kubernetes/server/bin/kube-controller-manager.sh                     ; the program (relative uses PATH, can take args)
+numprocs=1                                                                        ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin                                              ; directory to cwd to before exec (def no cwd)
+autostart=true                                                                    ; start at supervisord start (default: true)
+autorestart=true                                                                  ; retstart at unexpected quit (default: true)
+startsecs=30                                                                      ; number of secs prog must stay running (def. 1)
+startretries=3                                                                    ; max # of serial start failures (default 3)
+exitcodes=0,2                                                                     ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                                   ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                                   ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                                                         ; setuid to this UNIX account to run the program
+redirect_stderr=true                                                              ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-controller-manager/controller.stdout.log  ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                                      ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                                          ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                                       ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                                       ; emit events on stdout writes (default false)
+
+bin]# supervisorctl update
+bin]# vi /opt/kubernetes/server/bin/kube-scheduler.sh
+#!/bin/sh
+./kube-scheduler \
+  --leader-elect  \
+  --log-dir /data/logs/kubernetes/kube-scheduler \
+  --master http://127.0.0.1:8080 \
+  --v 2
+  
+bin]# chmod +x /opt/kubernetes/server/bin/kube-scheduler.sh
+bin]# mkdir -p /data/logs/kubernetes/kube-scheduler
+# 注意改机器号，一处修改：scheduler-7-21]
+bin]# vi /etc/supervisord.d/kube-scheduler.ini
+[program:kube-scheduler-7-21]
+command=/opt/kubernetes/server/bin/kube-scheduler.sh                     ; the program (relative uses PATH, can take args)
+numprocs=1                                                               ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin                                     ; directory to cwd to before exec (def no cwd)
+autostart=true                                                           ; start at supervisord start (default: true)
+autorestart=true                                                         ; retstart at unexpected quit (default: true)
+startsecs=30                                                             ; number of secs prog must stay running (def. 1)
+startretries=3                                                           ; max # of serial start failures (default 3)
+exitcodes=0,2                                                            ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                          ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                          ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                                                ; setuid to this UNIX account to run the program
+redirect_stderr=true                                                     ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-scheduler/scheduler.stdout.log ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                             ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                                 ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                              ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                              ; emit events on stdout writes (default false)
+
+bin]# supervisorctl update
+bin]# supervisorctl status
+etcd-server-7-21                 RUNNING   pid 14765, uptime 4:30:28
+kube-apiserver-7-21              RUNNING   pid 16088, uptime 0:53:15
+kube-controller-manager-7-21     RUNNING   pid 18734, uptime 0:01:56
+kube-scheduler-7-21              RUNNING   pid 18958, uptime 0:00:47
+
+bin]# ln -s /opt/kubernetes/server/bin/kubectl /usr/bin/kubectl
+# 查看集群健康情况，21/22机器：
+bin]# kubectl get cs
+NAME                 STATUS    MESSAGE              ERROR
+scheduler            Healthy   ok                   
+controller-manager   Healthy   ok                   
+etcd-2               Healthy   {"health": "true"}   
+etcd-1               Healthy   {"health": "true"}   
+etcd-0               Healthy   {"health": "true"} 
+~~~
+
+> **ln -s**：建立软链接
+>
+> **supervisorctl status**：查看supervisor的情况
+>
+> **supervisorctl update**：更新supervisor
+>
+> **kubectl get**：获取列出一个或多个资源的信息
+>
+> - 上面一条命令的意思是：    列出所有cs信息
 
 完成
 
