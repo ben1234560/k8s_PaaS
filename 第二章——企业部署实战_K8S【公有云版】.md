@@ -324,6 +324,8 @@ dnssec-validation no;  # 原本是yes
 
 <img src="assets/WX20230511-153237@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
+
+
 ~~~
 # 11机器，经验：主机域一定得跟业务是一点关系都没有，如host.com，而业务用的是od.com，因为业务随时可能变
 # 区域配置文件，加在最下面，需要修改两处：allow-update
@@ -343,8 +345,6 @@ zone "od.com" IN {
 ~~~
 
 <img src="assets/WX20230511-153512@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
-
-
 
 > **注意：**当配置11机器内网ip后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
 
@@ -1109,7 +1109,9 @@ etcd]# supervisorctl status
 # out: etcd-server-7-12                 RUNNING   pid 16582, uptime 0:00:59
 etcd]# netstat -luntp|grep etcd
 # 必须是监听了2379和2380这两个端口才算成功
-#out:etcd-server-7-12: added process group
+tcp        0      0 172.27.139.119:2379     0.0.0.0:*               LISTEN      14903/./etcd        
+tcp        0      0 127.0.0.1:2379          0.0.0.0:*               LISTEN      14903/./etcd        
+tcp        0      0 172.27.139.119:2380     0.0.0.0:*               LISTEN      14903/./etcd 
 ~~~
 
 > **systemctl enable**：开机启动
@@ -1120,15 +1122,13 @@ etcd]# netstat -luntp|grep etcd
 >
 > 现在你可以感觉到，supervisor守护进程也仅仅是你配好ini文件即可
 
-![1578834944148](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578834944148.png)
-
 ~~~
 # 任意节点（12/21/22）检测集群健康状态的两种方法
 22 etcd]# ./etcdctl cluster-health
 22 etcd]# ./etcdctl member list
 ~~~
 
-![1578836465329](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578836465329.png)
+<img src="assets/WX20230512-154055@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 > 这里你再哪个机器先update，哪个机器就是leader
 
