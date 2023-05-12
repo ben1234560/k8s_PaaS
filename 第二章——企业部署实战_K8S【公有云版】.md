@@ -344,6 +344,8 @@ zone "od.com" IN {
 
 <img src="assets/WX20230511-153512@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
+
+
 > **注意：**当配置11机器内网ip后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
 
 配置域名解析的相关信息
