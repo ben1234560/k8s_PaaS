@@ -264,14 +264,16 @@ yum-utils-1.1.31-54.el7_8.noarch
 
 <img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
 
+后续代理后，yum安装会出现网络等问题，为了减少处理的时间，我们提前下载
+
 ~~~
 # 全部机器，安装后续需要的服务工具（我就不区分每个机器所需的了，后面会看到）
 # 追加docker的repo源
 ~]# yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
 # 安装后续所需的软件包
-~]# yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived deltarpm docker-ce -y
+~]# yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived deltarpm docker-ce ipvsadm -y
 # 检查安装情况
-~]# rpm -q supervisor docker-compose nginx nginx-mod-stream 
+~]# rpm -q supervisor docker-compose nginx nginx-mod-stream ipvsadm 
 # out:
 supervisor keepalived deltarpm docker-ce
 supervisor-3.4.0-1.el7.noarch
@@ -282,6 +284,24 @@ supervisor-3.4.0-1.el7.noarch
 keepalived-1.3.5-19.el7.x86_64
 deltarpm-3.6-3.el7.x86_64
 docker-ce-23.0.6-1.el7.x86_64
+~~~
+
+后续章节需要用到的（可后续再装）
+
+~~~
+# 全部机器
+# 第三章
+~]# yum install -y iptables-services
+# 第四章
+~]# yum install -y openssl
+# 第五章
+~]# yum install -y java-1.8.0-openjdk*
+~]# yum install curl policycoreutils openssh-server openssh-clients policycoreutils-python -y
+
+# 全部一起下载
+~]# yum install -y iptables-services openssl policycoreutils openssh-server openssh-clients policycoreutils-python java-1.8.0-openjdk*
+# 检查安装情况
+~]# rpm -q iptables-services openssl java-1.8.0-openjdk-javadoc-zip java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel java-1.8.0-openjdk-src java-1.8.0-openjdk-accessibility java-1.8.0-openjdk-demo java-1.8.0-openjdk java-1.8.0-openjdk-javadoc curl policycoreutils openssh-server openssh-clients policycoreutils-python
 ~~~
 
 
@@ -1905,7 +1925,217 @@ bin]# kubectl get nodes
 
 <img src="assets/WX20230512-155833@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
-
-
 完成
+
+
+
+### 安装部署运算节点服务（kube-proxy）
+
+~~~
+# 200机器，签发证书请求文件：
+200 certs]# vi kube-proxy-csr.json
+{
+    "CN": "system:kube-proxy",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ]
+}
+
+200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client kube-proxy-csr.json |cfssl-json -bare kube-proxy-client
+200 certs]# ll |grep proxy
+-rw-r--r-- 1 root root 1005 May 12 16:04 kube-proxy-client.csr
+-rw------- 1 root root 1675 May 12 16:04 kube-proxy-client-key.pem
+-rw-r--r-- 1 root root 1379 May 12 16:04 kube-proxy-client.pem
+-rw-r--r-- 1 root root  267 May 12 16:04 kube-proxy-csr.json
+~~~
+
+
+
+~~~
+# 分发证书，21/22机器：
+cd /opt/kubernetes/server/bin/cert
+cert]# scp hdss7-200:/opt/certs/kube-proxy-client.pem .
+cert]# scp hdss7-200:/opt/certs/kube-proxy-client-key.pem .
+cert]# cd ../conf/
+
+# 21机器，--serverd的IP改成虚拟vip 10：
+conf]# kubectl config set-cluster myk8s \
+  --certificate-authority=/opt/kubernetes/server/bin/cert/ca.pem \
+  --embed-certs=true \
+  --server=https://172.27.139.10:7443 \
+  --kubeconfig=kube-proxy.kubeconfig
+
+# out: Cluster "myk8s" set.
+conf]# kubectl config set-credentials kube-proxy \
+  --client-certificate=/opt/kubernetes/server/bin/cert/kube-proxy-client.pem \
+  --client-key=/opt/kubernetes/server/bin/cert/kube-proxy-client-key.pem \
+  --embed-certs=true \
+  --kubeconfig=kube-proxy.kubeconfig
+
+# out: User "kube-proxy" set.
+conf]# kubectl config set-context myk8s-context \
+  --cluster=myk8s \
+  --user=kube-proxy \
+  --kubeconfig=kube-proxy.kubeconfig
+
+# out: Context "myk8s-context" created.
+conf]# kubectl config use-context myk8s-context --kubeconfig=kube-proxy.kubeconfig
+
+# out: Switched to context "myk8s-context".
+# 22机器
+conf]# scp hdss7-21:/opt/kubernetes/server/bin/conf/kube-proxy.kubeconfig .
+
+
+# 21/22机器：
+cd
+~]# lsmod |grep ip_vs
+ip_vs                 145497  0 
+nf_conntrack          137239  7 ip_vs,nf_nat,nf_nat_ipv4,xt_conntrack,nf_nat_masquerade_ipv4,nf_conntrack_netlink,nf_conntrack_ipv4
+libcrc32c              12644  3 ip_vs,nf_nat,nf_conntrack
+
+~]# vi ipvs.sh
+#!/bin/bash
+ipvs_mods_dir="/usr/lib/modules/$(uname -r)/kernel/net/netfilter/ipvs"
+for i in $(ls $ipvs_mods_dir|grep -o "^[^.]*")
+do
+  /sbin/modinfo -F filename $i &>/dev/null
+  if [ $? -eq 0 ];then
+    /sbin/modprobe $i
+  fi
+done
+
+~]# chmod +x ipvs.sh
+~]# ./ipvs.sh
+~]# lsmod |grep ip_vs
+~~~
+
+> **lsmod**：显示已载入系统的模块
+>
+> - 后面带的管道符则是过滤出ip_vs来
+>
+> **chmod +x**：给文件添加执行权限
+>
+> **./ipvs.sh**：运行文件
+
+<img src="assets/WX20230512-161204@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 21/22机器：
+~]# cd /opt/kubernetes/server/bin/
+# 注意修改对应的机器ip，有一处hostname-override修改：hdss7-21
+bin]# vi /opt/kubernetes/server/bin/kube-proxy.sh
+#!/bin/sh
+./kube-proxy \
+  --cluster-cidr 172.7.0.0/16 \
+  --hostname-override hdss7-21.host.com \
+  --proxy-mode=ipvs \
+  --ipvs-scheduler=nq \
+  --kubeconfig ./conf/kube-proxy.kubeconfig
+  
+bin]# chmod +x kube-proxy.sh
+bin]# mkdir -p /data/logs/kubernetes/kube-proxy
+# 注意机器IP，有一处修改：kube-proxy-7-21]
+bin]# vi /etc/supervisord.d/kube-proxy.ini
+[program:kube-proxy-7-21]
+command=/opt/kubernetes/server/bin/kube-proxy.sh                     ; the program (relative uses PATH, can take args)
+numprocs=1                                                           ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin                                 ; directory to cwd to before exec (def no cwd)
+autostart=true                                                       ; start at supervisord start (default: true)
+autorestart=true                                                     ; retstart at unexpected quit (default: true)
+startsecs=30                                                         ; number of secs prog must stay running (def. 1)
+startretries=3                                                       ; max # of serial start failures (default 3)
+exitcodes=0,2                                                        ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                      ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                      ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                                            ; setuid to this UNIX account to run the program
+redirect_stderr=true                                                 ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-proxy/proxy.stdout.log     ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                         ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                             ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                          ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                          ; emit events on stdout writes (default false)
+
+bin]# supervisorctl update
+bin]# supervisorctl status
+etcd-server-7-21                 RUNNING   pid 14765, uptime 5:21:04
+kube-apiserver-7-21              RUNNING   pid 16088, uptime 1:43:51
+kube-controller-manager-7-21     RUNNING   pid 18734, uptime 0:52:32
+kube-kubelet-7-21                RUNNING   pid 24802, uptime 0:19:46
+kube-proxy-7-21                  RUNNING   pid 32354, uptime 0:00:37
+kube-scheduler-7-21              RUNNING   pid 18958, uptime 0:51:23
+
+# 这个前面已经安装 yum install ipvsadm -y
+bin]# ipvsadm -Ln
+IP Virtual Server version 1.2.1 (size=4096)
+Prot LocalAddress:Port Scheduler Flags
+  -> RemoteAddress:Port           Forward Weight ActiveConn InActConn
+TCP  192.168.0.1:443 nq
+  -> 172.27.139.118:6443          Masq    1      0          0         
+  -> 172.27.139.120:6443          Masq    1      0          0  
+
+bin]# kubectl get svc
+NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   192.168.0.1   <none>        443/TCP   154m
+~~~
+
+> **ipvsadm**：用于设置、维护和检查Linux内核中虚拟服务器列表的*命令*
+>
+> **ipvsadm -Ln** ：查看当前配置的虚拟服务和各个RS的权重
+
+<img src="assets/WX20230512-170820@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 验证一下集群，21机器(在任意节点机器，我选的是21)：
+cd
+~]# vi /root/nginx-ds.yaml
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: nginx-ds
+spec:
+  template:
+    metadata:
+      labels:
+        app: nginx-ds
+    spec:
+      containers:
+      - name: my-nginx
+        image: harbor.od.com/public/nginx:v1.7.9
+        ports:
+        - containerPort: 80
+        
+~]# kubectl create -f nginx-ds.yaml
+# out：daemonset.extensions/nginx-ds created
+~]# kubectl get pods -o wide
+NAME             READY   STATUS    RESTARTS   AGE   IP           NODE                NOMINATED NODE   READINESS GATES
+nginx-ds-rp8j5   1/1     Running   0          13s   172.7.22.2   hdss7-22.host.com   <none>           <none>
+nginx-ds-tv6dk   1/1     Running   0          13s   172.7.21.2   hdss7-21.host.com   <none>           <none>
+# 以上是成功的状态，在21/22机器都可以查到
+~~~
+
+> **注意，如果你的pod的wide22的也在21上或者类似情况，那就是你的vi /etc/docker/daemon.json没改好机器名，需要重新做过全部机器**
+>
+> **kubectl create -f**  ：通过配置文件名或stdin创建一个集群资源对象
+>
+> **kubectl get ... -o wide**：显示网络情况
+>
+> **nginx-ds.yaml解析：**
+>
+> - 可以参考这篇文章[点击跳转](https://www.baidu.com/link?url=tFECOG31lKlcqDWeAZGF1VyjhzVAN9vUKHKEKKw5G8y0AC8MKpJxSZeL647MIFdw&wd=&eqid=dafe84b80019e4a3000000065e51d2e2)，这里的nginx-ds.yaml建议自己手敲一遍，敲的同时要知道自己敲的是什么，记住，yaml语法不允许使用Tab键，只允许空格
+
+<img src="assets/WX20230512-171106@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+恭喜:tada::tada::tada:
+
+此时你已经部署好K8S集群！当然只有集群还远远不够，我们还需要更多的东西才能组成我们的PaaS服务，休息一下继续享受它:smiley:
 
