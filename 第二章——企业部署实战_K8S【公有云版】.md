@@ -978,7 +978,7 @@ certs]# ll
 >
 > **cfssl gencert**：生成证书
 
-![1578833436255](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578833436255.png)
+<img src="assets/WX20230512-100209@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 12/21/22机器，安装etcd：
@@ -987,8 +987,9 @@ certs]# ll
 # 创建用户
 src]# useradd -s /sbin/nologin -M etcd
 src]# id etcd
-# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/tags，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
-src]# 这里要有一部把etcd包拉进来的操作
+
+# 到GitHub下载或者直接用我给得安装包 https://github.com/etcd-io/etcd/releases/tag/v3.1.20，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+src]# wget https://github.com/etcd-io/etcd/releases/download/v3.1.20/etcd-v3.1.20-linux-amd64.tar.gz
 src]# tar xf etcd-v3.1.20-linux-amd64.tar.gz -C /opt
 src]# cd /opt
 opt]# mv etcd-v3.1.20-linux-amd64/ etcd-v3.1.20
@@ -1024,7 +1025,7 @@ certs]# scp hdss7-200:/opt/certs/ca.pem .
 # 输入200虚机密码
 certs]# scp hdss7-200:/opt/certs/etcd-peer*.pem .
 certs]# cd ..
-# 3台机器，如果是21机器，这下面得12都得改成21，对应的ip换成21的内网ip，initial-cluster则是全部机器都有不需要改，一共5处：etcd-server-7-12、listen-peer-urls后、client-urls后、advertise-peer-urls后、advertise-client-urls后
+# 3台机器，如果是21机器，这下面得12都得改成21，对应的ip换成21的内网ip，initial-cluster则是全部机器都有不需要改，一共5处：etcd-server-7-12、listen-peer-urls后、client-urls后、advertise-peer-urls后、advertise-client-urls后，可以用:%s/旧ip/新ip/g命令进行批量更换(退出insert后粘贴)
 etcd]# vi /opt/etcd/etcd-server-startup.sh
 #!/bin/sh
 ./etcd --name etcd-server-7-12 \
@@ -1067,7 +1068,7 @@ etcd]# ll
 >
 > **ll**：列出权限、大小、名称等信息
 
-![1578834563843](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1578834563843.png)
+<img src="assets/WX20230512-105320@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
 
 ~~~
 # 12/21/22机器，我们同时需要supervisor（守护进程工具）来确保etcd是启动的，后面还会不断用到：
