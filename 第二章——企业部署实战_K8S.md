@@ -934,11 +934,7 @@ etcd]# netstat -luntp|grep etcd
 
 ### 部署API-server集群
 
-[kubernetes官网](https://github.com/kubernetes/kubernetes/tags?after=v1.14.9-beta.0)
-
-网址的页面坏了进不去没办法截图，你们就直接用我的包吧
-
-百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+[kubernetes官网](https://github.com/kubernetes/kubernetes)
 
 根据架构图，我们把运算节点部署在21和22机器
 
@@ -947,7 +943,10 @@ etcd]# netstat -luntp|grep etcd
 ~~~
 # 21/22机器
 etcd]# cd /opt/src/
-# 可以去官网下载也可以用我的包
+# 可以去官网下载也可以用我的包，百度云盘https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+src]# wget https://dl.k8s.io/v1.15.2/kubernetes-server-linux-amd64.tar.gz
+src]# mv kubernetes-server-linux-amd64.tar.gz kubernetes-server-linux-amd64-v1.15.2.tar.gz
+
 src]# tar xf kubernetes-server-linux-amd64-v1.15.2.tar.gz -C /opt/
 src]# cd /opt
 opt]# mv kubernetes/ kubernetes-v1.15.2
