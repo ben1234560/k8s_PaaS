@@ -905,7 +905,6 @@ etcd]# supervisorctl status
 # out: etcd-server-7-12                 RUNNING   pid 16582, uptime 0:00:59
 etcd]# netstat -luntp|grep etcd
 # 必须是监听了2379和2380这两个端口才算成功
-#out:etcd-server-7-12: added process group
 ~~~
 
 > **systemctl enable**：开机启动
