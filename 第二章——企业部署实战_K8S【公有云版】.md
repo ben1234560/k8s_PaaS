@@ -1057,6 +1057,8 @@ etcd]# ll
 
 > **scp**：用于 *Linux* 之间复制文件和目录
 >
+> **带***：表示模糊匹配任意内容
+>
 > **chmod**：添加权限
 >
 > - **+x**：给当前用户添加可执行该文件的权限权限
@@ -1128,4 +1130,287 @@ etcd]# netstat -luntp|grep etcd
 完成
 
 
+
+### 部署API-server集群
+
+[kubernetes官网](https://github.com/kubernetes/kubernetes)
+
+根据架构图，我们把运算节点部署在21和22机器
+
+![1584701070750](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1584701070750.png)
+
+~~~
+# 21/22机器
+etcd]# cd /opt/src/
+# 可以去官网下载也可以用我的包，百度云盘https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1
+src]# wget https://dl.k8s.io/v1.15.2/kubernetes-server-linux-amd64.tar.gz
+src]# mv kubernetes-server-linux-amd64.tar.gz kubernetes-server-linux-amd64-v1.15.2.tar.gz
+
+src]# tar xf kubernetes-server-linux-amd64-v1.15.2.tar.gz -C /opt/
+src]# cd /opt
+opt]# mv kubernetes/ kubernetes-v1.15.2
+opt]# ln -s /opt/kubernetes-v1.15.2/ /opt/kubernetes
+opt]# cd kubernetes
+# 删掉不需要的文件
+kubernetes]# rm -rf kubernetes-src.tar.gz
+kubernetes]# cd server/bin
+bin]# rm -f *.tar
+bin]# rm -f *_tag
+bin]# ll
+~~~
+
+> **tar xf -C**：解压到某个文件夹
+>
+> **mv**：移动到哪里
+>
+> **ln -s**：建立软连接
+>
+> **rm**：删除一个文件或者目录
+>
+> - **-r**：将目录及以下之档案亦逐一删除
+> - **-f**：直接删除，无需逐一确认（你可以试试先不加-f去删除）
+> - 加起来就是强制删除
+>
+> ***.tar**： 这里的*的意思是模糊法，即只要你的结尾是.tar的都匹配上加上rm，就是把所有.tar结尾的文件都删除
+
+<img src="assets/WX20230512-113733@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 200机器，签发client证书：
+200 ~]# cd /opt/certs/
+200 certs]# vi client-csr.json
+{
+    "CN": "k8s-node",
+    "hosts": [
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ]
+}
+
+200 certs]#  cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=client client-csr.json |cfssl-json -bare client
+200 certs]# ll
+~~~
+
+<img src="assets/WX20230512-133747@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 200机器，给API-server做证书，其中"127.0.0.1"和"192.168.0.1"不变，下面4个ip分别是当前网段.10做虚拟vip、21机器ip、22机器ip以及预留的23机器ip（后续如果需要则扩容，也可以不填）
+200 certs]# vi apiserver-csr.json
+{
+    "CN": "k8s-apiserver",
+    "hosts": [
+        "127.0.0.1",
+        "192.168.0.1",
+        "kubernetes.default",
+        "kubernetes.default.svc",
+        "kubernetes.default.svc.cluster",
+        "kubernetes.default.svc.cluster.local",
+        "172.27.139.10",
+        "172.27.139.118",
+        "172.27.139.120",
+        "172.27.139.123"
+    ],
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [
+        {
+            "C": "CN",
+            "ST": "beijing",
+            "L": "beijing",
+            "O": "od",
+            "OU": "ops"
+        }
+    ]
+}
+
+200 certs]# cfssl gencert -ca=ca.pem -ca-key=ca-key.pem -config=ca-config.json -profile=server apiserver-csr.json |cfssl-json -bare apiserver
+200 certs]# ll
+~~~
+
+<img src="assets/WX20230512-141539@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+~~~
+# 21/22机器：
+cd /opt/kubernetes/server/bin
+bin]# mkdir cert
+bin]# cd cert/
+# 把证书考过来，一共6个
+cert]# scp hdss7-200:/opt/certs/c*.pem .
+cert]# scp hdss7-200:/opt/certs/apiserver*.pem .
+~~~
+
+> **scp**：用于 *Linux* 之间复制文件和目录
+>
+> **带***：表示模糊匹配任意内容
+
+~~~
+# 21/22机器：
+cert]# ll
+total 24
+-rw------- 1 root root 1675 May 12 14:22 apiserver-key.pem
+-rw-r--r-- 1 root root 1602 May 12 14:22 apiserver.pem
+-rw------- 1 root root 1679 May 12 14:24 ca-key.pem
+-rw-r--r-- 1 root root 1346 May 12 14:24 ca.pem
+-rw------- 1 root root 1675 May 12 14:24 client-key.pem
+-rw-r--r-- 1 root root 1367 May 12 14:24 client.pem
+cert]# pwd
+/opt/kubernetes/server/bin/cert
+~~~
+
+~~~
+# 21/22机器：
+cd /opt/kubernetes/server/bin
+bin]# mkdir conf
+bin]# cd conf/
+conf]# vi audit.yaml
+apiVersion: audit.k8s.io/v1beta1 # This is required.
+kind: Policy
+# Don't generate audit events for all requests in RequestReceived stage.
+omitStages:
+  - "RequestReceived"
+rules:
+  # Log pod changes at RequestResponse level
+  - level: RequestResponse
+    resources:
+    - group: ""
+      # Resource "pods" doesn't match requests to any subresource of pods,
+      # which is consistent with the RBAC policy.
+      resources: ["pods"]
+  # Log "pods/log", "pods/status" at Metadata level
+  - level: Metadata
+    resources:
+    - group: ""
+      resources: ["pods/log", "pods/status"]
+
+  # Don't log requests to a configmap called "controller-leader"
+  - level: None
+    resources:
+    - group: ""
+      resources: ["configmaps"]
+      resourceNames: ["controller-leader"]
+
+  # Don't log watch requests by the "system:kube-proxy" on endpoints or services
+  - level: None
+    users: ["system:kube-proxy"]
+    verbs: ["watch"]
+    resources:
+    - group: "" # core API group
+      resources: ["endpoints", "services"]
+
+  # Don't log authenticated requests to certain non-resource URL paths.
+  - level: None
+    userGroups: ["system:authenticated"]
+    nonResourceURLs:
+    - "/api*" # Wildcard matching.
+    - "/version"
+
+  # Log the request body of configmap changes in kube-system.
+  - level: Request
+    resources:
+    - group: "" # core API group
+      resources: ["configmaps"]
+    # This rule only applies to resources in the "kube-system" namespace.
+    # The empty string "" can be used to select non-namespaced resources.
+    namespaces: ["kube-system"]
+
+  # Log configmap and secret changes in all other namespaces at the Metadata level.
+  - level: Metadata
+    resources:
+    - group: "" # core API group
+      resources: ["secrets", "configmaps"]
+
+  # Log all other resources in core and extensions at the Request level.
+  - level: Request
+    resources:
+    - group: "" # core API group
+    - group: "extensions" # Version of group should NOT be included.
+
+  # A catch-all rule to log all other requests at the Metadata level.
+  - level: Metadata
+    # Long-running requests like watches that fall under this rule will not
+    # generate an audit event in RequestReceived.
+    omitStages:
+      - "RequestReceived"
+      
+conf]# cd ..
+# 下面有3处ip需要改，--etcd-servers分别改成12、21、22机器的IP
+bin]# vi /opt/kubernetes/server/bin/kube-apiserver.sh
+#!/bin/bash
+./kube-apiserver \
+  --apiserver-count 2 \
+  --audit-log-path /data/logs/kubernetes/kube-apiserver/audit-log \
+  --audit-policy-file ./conf/audit.yaml \
+  --authorization-mode RBAC \
+  --client-ca-file ./cert/ca.pem \
+  --requestheader-client-ca-file ./cert/ca.pem \
+  --enable-admission-plugins NamespaceLifecycle,LimitRanger,ServiceAccount,DefaultStorageClass,DefaultTolerationSeconds,MutatingAdmissionWebhook,ValidatingAdmissionWebhook,ResourceQuota \
+  --etcd-cafile ./cert/ca.pem \
+  --etcd-certfile ./cert/client.pem \
+  --etcd-keyfile ./cert/client-key.pem \
+  --etcd-servers https://172.27.139.119:2379,https://172.27.139.118:2379,https://172.27.139.120:2379 \
+  --service-account-key-file ./cert/ca-key.pem \
+  --service-cluster-ip-range 192.168.0.0/16 \
+  --service-node-port-range 3000-29999 \
+  --target-ram-mb=1024 \
+  --kubelet-client-certificate ./cert/client.pem \
+  --kubelet-client-key ./cert/client-key.pem \
+  --log-dir  /data/logs/kubernetes/kube-apiserver \
+  --tls-cert-file ./cert/apiserver.pem \
+  --tls-private-key-file ./cert/apiserver-key.pem \
+  --v 2
+  
+bin]# chmod +x kube-apiserver.sh
+# 一处修改：[program:kube-apiserver-7-21]，22机器则改成7-22
+bin]# vi /etc/supervisord.d/kube-apiserver.ini
+[program:kube-apiserver-7-21]
+command=/opt/kubernetes/server/bin/kube-apiserver.sh            ; the program (relative uses PATH, can take args)
+numprocs=1                                                      ; number of processes copies to start (def 1)
+directory=/opt/kubernetes/server/bin                            ; directory to cwd to before exec (def no cwd)
+autostart=true                                                  ; start at supervisord start (default: true)
+autorestart=true                                                ; retstart at unexpected quit (default: true)
+startsecs=30                                                    ; number of secs prog must stay running (def. 1)
+startretries=3                                                  ; max # of serial start failures (default 3)
+exitcodes=0,2                                                   ; 'expected' exit codes for process (default 0,2)
+stopsignal=QUIT                                                 ; signal used to kill process (default TERM)
+stopwaitsecs=10                                                 ; max num secs to wait b4 SIGKILL (default 10)
+user=root                                                       ; setuid to this UNIX account to run the program
+redirect_stderr=true                                            ; redirect proc stderr to stdout (default false)
+stdout_logfile=/data/logs/kubernetes/kube-apiserver/apiserver.stdout.log        ; stderr log path, NONE for none; default AUTO
+stdout_logfile_maxbytes=64MB                                    ; max # logfile bytes b4 rotation (default 50MB)
+stdout_logfile_backups=4                                        ; # of stdout logfile backups (default 10)
+stdout_capture_maxbytes=1MB                                     ; number of bytes in 'capturemode' (default 0)
+stdout_events_enabled=false                                     ; emit events on stdout writes (default false)
+
+bin]# mkdir -p /data/logs/kubernetes/kube-apiserver
+bin]# supervisorctl update
+# 查看21/22两台机器是否跑起来了，可能比较慢在STARTING，等10秒
+bin]# supervisorctl status
+~~~
+
+> **mkdir -p**：创建目录，没有上一级目录则创建
+>
+> **supervisorctl update**：更新supervisorctl
+>
+> **audit.yaml解析：**
+>
+> - 可以参考这篇文章[点击跳转](https://www.baidu.com/link?url=tFECOG31lKlcqDWeAZGF1VyjhzVAN9vUKHKEKKw5G8y0AC8MKpJxSZeL647MIFdw&wd=&eqid=dafe84b80019e4a3000000065e51d2e2)，当然这里的audit.yaml可能会有些不一样，但是我们后面用到的yaml文件就很相似了
+
+<img src="assets/WX20230512-143347@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+
+> <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81">Pod的几种状态</a>
+
+完成
 
