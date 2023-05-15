@@ -895,7 +895,7 @@ curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/projects?name=publi
 curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/repositories?project_id=2" | jq '.[].name'
 ~~~
 
-成功，此时你已成功建立了自己的本地私有仓库:tada:，或许你会考虑建立自己的独立站，enjoin!
+成功，此时你已成功建立了自己的本地私有仓库:tada:，或许你会考虑建立自己的独立站，enjoy!
 
 
 
