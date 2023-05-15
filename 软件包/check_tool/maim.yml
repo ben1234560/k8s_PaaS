@@ -1,0 +1,26 @@
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: 创建检查报告归档目录
+      file:
+        path: ../log/inspector
+        state: directory
+        mode: '0755'
+
+    - name: 获取当前日期后缀
+      shell: date "+%y%m%d%H%M"
+      register: date_time
+
+
+- import_playbook: playbooks/pre_check.yml
+- import_playbook: playbooks/pre_before_k8s.yml
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: 检查结果总结, 待定
+      shell: ls ../log/inspector/
+    - name: 生成二维码脚本
+      shell: ls ../log/inspector/
+    - name: 生成检查二维码，并输出
+      shell: ls ../log/inspector/ 

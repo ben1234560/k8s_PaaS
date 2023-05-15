@@ -1,0 +1,122 @@
+---
+- name: 检查虚拟机最低配置 Check virtual machine minimum configurations
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Check memory
+      assert:
+        that:
+          - ansible_memory_mb >= 2048
+        fail_msg: "Memory should be greater than or equal to 2GB."
+        success_msg: "Memory is sufficient."
+
+    - name: Print success message
+      debug:
+        msg: "Configuration check passed."
+
+- name: 检查主控+计算节点标配 Check master_node virtual machine configurations
+  hosts: master_node
+  gather_facts: true
+  tasks:
+    - name: Check if memory is greater than 16GB
+      assert:
+        that:
+          - "ansible_memtotal_mb > 15000"
+        fail_msg: "Warning: Memory is less than 16GB."
+        success_msg: "Success: Memory is greater than 16GB."
+      ignore_errors: true
+
+- name: 检查时间同步
+  hosts: all
+  gather_facts: true
+  tasks:
+    - name: 检查时间同步状态
+      command: systemctl is-active ntpd
+      register: ntp_sync_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: 报错如果时间未同步
+      assert:
+        that: ntp_sync_status.stdout == "active"
+        fail_msg: "时间未同步"
+        success_msg: "时间已同步"
+      ignore_errors: true
+
+    - name: 显示主机时间
+      debug:
+        msg: "主机 {{ inventory_hostname }} 的当前时间是 {{ ansible_date_time.date }} {{ ansible_date_time.time }}"
+
+- name: 检查防火墙状态 Check firewall status
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check firewall status
+      shell: "systemctl is-active --quiet firewalld && echo 'active' || echo 'inactive'"
+      register: firewall_status
+      changed_when: false
+
+    - name: show firewall status
+      debug:
+        msg: "主机 {{ inventory_hostname }} 的防火墙状态为 {{ firewall_status.stdout }}"
+
+- name: 检查SELinux配置
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: 读取SELinux配置
+      shell: cat /etc/selinux/config | grep "^SELINUX="
+      register: selinux_config
+      changed_when: false
+
+    - name: 检查SELinux配置是否为disabled
+      assert:
+        that: selinux_config.stdout == "SELINUX=disabled"
+        fail_msg: "/etc/selinux/config文件中SELINUX未设置为disabled"
+        success_msg: "/etc/selinux/config文件中SELINUX已设置为disabled"
+
+- name: 检查主机名是否已修改 Check if the hostname has been modified
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: get hostname
+      command: hostname
+      register: hostname_output
+      changed_when: false
+
+    - name: Check if the hostname contains the host.com
+      assert:
+        that: "'host.com' in hostname_output.stdout"
+        fail_msg: "主机名未修改为 xxx.host.com"
+        success_msg: "主机名已修改 {{ hostname_output.stdout }}"
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: Check if the hostname contains the number
+      assert:
+        that: " ip_number.stdout in hostname_output.stdout"
+        fail_msg: "主机名未修改成功, 机器类型为{{ ip_number.stdout }}节点，主机名为 {{ hostname_output.stdout }}"
+        success_msg: "主机名已修改 {{ hostname_output.stdout }}"
+
+
+- name: 检查连接互联网 Check internet connection
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: 检查Ping连接 Check Ping Connection
+      command: ping -c 1 baidu.com
+      register: ping_result
+      changed_when: false
+      failed_when: ping_result.rc != 0
+
+    - name: 检查Ping连接结果 Check the result of Ping Connection
+      assert:
+        that: ping_result.rc == 0
+        fail_msg: "无法Ping通 baidu.com"
+        success_msg: "成功Ping通 baidu.com"
+
+

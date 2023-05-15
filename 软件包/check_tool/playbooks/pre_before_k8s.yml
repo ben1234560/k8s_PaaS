@@ -1,33 +1,4 @@
 ---
-- hosts: localhost
-  gather_facts: no
-  tasks:
-    - name: 创建检查报告归档目录
-      file:
-        path: ../log/inspector
-        state: directory
-        mode: '0755'
-
-    - name: 获取当前日期后缀
-      shell: date "+%y%m%d%H%M"
-      register: date_time
-
-- name: 检查防火墙状态 Check if firewalld is disabled on each IP
-  hosts: all
-  become: yes
-  gather_facts: no
-  tasks:
-    - name: Check firewalld status
-      ansible.builtin.command: systemctl is-active firewalld
-      register: firewalld_status
-      changed_when: false
-      ignore_errors: true
-
-    - name: Fail if firewalld is active
-      ansible.builtin.fail:
-        msg: "Error: firewalld is active on {{ inventory_hostname }}"
-      when: firewalld_status.stdout == 'active'
-
 - name: K8S前置准备工作——bind9安装部署（DNS服务）Check named.conf
   hosts: k8s_11
   gather_facts: no
@@ -166,19 +137,129 @@
         src: /etc/sysconfig/network-scripts/ifcfg-eth0
       register: ifcfg_eth0_content
 
-- name: Check /etc/resolv.conf for specific content
-  hosts: all
-  gather_facts: no
+    - name: 检查互联网连接
+      command: ping -c 1 baidu.com
+      register: ping_result
+      changed_when: false
+      failed_when: ping_result.rc != 0
+
+    - name: 检查互联网连接结果
+      assert:
+        that: ping_result.rc == 0
+        fail_msg: "无法Ping通 baidu.com"
+        success_msg: "成功Ping通 baidu.com"
+
+- name: Check the /opt/certs/ca-csr.json of k8s_200
+  hosts: k8s_200
+  gather_facts: false
   tasks:
-    - name: Read /etc/resolv.conf
-      ansible.builtin.slurp:
-        src: /etc/resolv.conf
-      register: resolv_conf_content
+    - name: 读取文件内容
+      shell: cat /opt/certs/ca-csr.json
+      register: file_content
+      changed_when: false
 
-    - name: Check if the content exists in /etc/resolv.conf
-      ansible.builtin.assert:
+    - name: 检查文件内容中是否包含数字
+      assert:
+        that: "'1752000' in file_content.stdout"
+        fail_msg: "授权时间较短，请设置为1752000h"
+        success_msg: "授权时间合理，有200年年限"
+
+- name: K8S前置工作——部署docke环境
+  hosts: 
+    - k8s_21
+    - k8s_22
+    - k8s_200
+  gather_facts: false
+  tasks:
+    - name: 检查是否包含 /data/docker
+      command: grep -q '/data/docker' /etc/docker/daemon.json
+      register: contains_data_docker
+      changed_when: false
+      failed_when: contains_data_docker.rc != 0
+
+    - name: 检查是否包含 overlay2
+      command: grep -q 'overlay2' /etc/docker/daemon.json
+      register: contains_overlay2
+      changed_when: false
+      failed_when: contains_overlay2.rc != 0
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查是否包含 172.7.xx.1/24
+      command: grep -q '172.7.{{ ip_number.stdout }}.1/24' /etc/docker/daemon.json
+      register: contains_ip
+      changed_when: false
+      failed_when: contains_ip.rc != 0
+
+    - name: 检查文件内容
+      assert:
         that:
-          - "'search host.com' in resolv_conf_content.content | b64decode"
-        fail_msg: "Error: 'search host.com' not found in /etc/resolv.conf."
-        success_msg: "Success: 'search host.com' found in /etc/resolv.conf."
+          - contains_data_docker.rc == 0
+          - contains_overlay2.rc == 0
+          - contains_ip.rc == 0
+        fail_msg: "文件内容不符合要求"
+        success_msg: "文件内容符合要求"
 
+- name: K8S前置工作——部署harbor仓库
+  hosts: k8s_200
+  gather_facts: false
+  tasks:
+    - name: 检查文件内容
+      command: cat /opt/harbor/harbor.yml
+      register: file_content
+      changed_when: false
+
+    - name: 检查port配置是否正确
+      assert:
+        that: "'180' in file_content.stdout"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含180"
+        success_msg: "/opt/harbor/harbor.yml文件包含180"
+
+    - name: 检查data_volume配置是否正确
+      assert:
+        that: "'/data/harbor' in file_content.stdout"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor"
+        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor"
+
+    - name: 检查location配置是否正确
+      assert:
+        that: "'/data/harbor/logs' in file_content.stdout"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor/logs"
+        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor/logs"
+
+    - name: 读取文件内容
+      shell: cat /etc/nginx/conf.d/harbor.od.com.conf
+      register: file_content
+      changed_when: false
+
+    - name: 检查是否包含 listen 80
+      assert:
+        that: "'listen       80' in file_content.stdout"
+        fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 'listen       80'"
+        success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 'listen       80'"
+
+    - name: 检查是否包含 server_name harbor.od.com
+      assert:
+        that: "'server_name  harbor.od.com' in file_content.stdout"
+        fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 'server_name  harbor.od.com'"
+        success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 'server_name  harbor.od.com'"
+
+    - name: 检查是否包含 180
+      assert:
+        that: "'180' in file_content.stdout"
+        fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 '180'"
+        success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 '180'"
+
+    - name: 检查Nginx服务状态
+      command: systemctl is-enabled nginx
+      register: nginx_status
+      changed_when: false
+
+    - name: 检查是否启用了Nginx服务
+      assert:
+        that: nginx_status.stdout == 'enabled'
+        fail_msg: "Nginx服务未启用"
+        success_msg: "Nginx服务已启用"
