@@ -236,9 +236,9 @@ IPV6_PRIUACY=no
 # 关闭firewalld
 ~]# systemctl stop firewalld
 # 安装epel源及相关工具
-~]# yum install epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils -y
+~]# yum install epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd -y
 # 检查是否安装成功
-~]# rpm -q epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils
+~]# rpm -q epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd
 # out:
 epel-release-7-14.noarch
 wget-1.14-18.el7_6.1.x86_64
