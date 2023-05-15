@@ -527,11 +527,10 @@ certs]# cat ca.pem
 
 ~~~
 # 如架构图，我们安装在200机器：
-cd /opt
-200 opt]# mkdir src
-200 opt]# cd src/
+200 ~]# mkdir /opt/src  && cd /opt/src
 # 可以去这个地址下载，也可以直接用我用的软件包
 https://github.com/goharbor/harbor/releases/tag/v1.8.3
+200 src]# wget https://storage.googleapis.com/harbor-releases/release-1.8.0/harbor-offline-installer-v1.8.3.tgz
 7-200 src]# tar xf harbor-offline-installer-v1.8.3.tgz -C /opt/
 ~~~
 
