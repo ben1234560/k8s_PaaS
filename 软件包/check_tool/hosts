@@ -6,7 +6,7 @@ k8s_22 ansible_host=172.29.238.168
 k8s_200 ansible_host=172.29.238.170
 
 [all:vars]
-ansible_ssh_pass=Root123..123
+ansible_ssh_pass=xxx
 ansible_ssh_port=22
 ansible_ssh_user=root
 
