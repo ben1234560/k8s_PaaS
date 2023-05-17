@@ -1,0 +1,192 @@
+---
+- name: 检查ca-config.json文件
+  hosts: k8s_200
+  tasks:
+    - name: 检查文件中是否设置为1752000
+      shell: cat /opt/certs/ca-config.json | grep -c "1752000h"
+      register: grep_result
+      changed_when: false
+
+- name: 安装部署主控节点服务etcd-检查etcd-peer-csr.json文件
+  hosts: k8s_200
+  tasks:
+    - name: 检查文件中IP地址是否正确
+      shell: cat /opt/certs/etcd-peer-csr.json | grep -E "{{ hostvars['k8s_11']['ansible_host'] }}|{{ hostvars['k8s_12']['ansible_host'] }}|{{ hostvars['k8s_21']['ansible_host'] }}|{{ hostvars['k8s_22']['ansible_host'] }}"
+      register: grep_result
+      changed_when: false
+
+- name: 安装部署主控节点服务etcd-检查etcd用户组是否存在
+  hosts: k8s_12,k8s_21,k8s_22
+  tasks:
+    - name: 运行id etcd命令
+      shell: id etcd
+      register: id_output
+      changed_when: false
+
+- name: 安装部署主控节点服务etcd-检查etcd配置文件
+  hosts: k8s_12,k8s_21,k8s_22
+  tasks:
+    - name: 获取当前ip地址
+      shell: hostname -I
+      register: ip_output
+
+    - name: 检查IP地址数量
+      shell: grep -c -E {{ ip_output.stdout }} /opt/etcd/etcd-server-startup.sh
+      register: grep_result
+      changed_when: false
+
+    - name: 检查IP地址是否存在于文件中
+      fail:
+        msg: "etcd-server-startup.sh文件中没有5个{{ ip_output.stdout }}地址"
+      when: grep_result.stdout != "5"
+
+    - name: 检查IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_12']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      register: grep_12_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "etcd-server-startup.sh文件中12机器IP地址"
+      when: grep_12_result.rc != 0
+
+    - name: 检查IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      register: grep_21_result
+      changed_when: false
+
+    - name: 检查IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      register: grep_22_result
+      changed_when: false
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 统计字符串在文件中出现的次数
+      shell: grep -o -c "\-{{ ip_number.stdout }}" /opt/etcd/etcd-server-startup.sh
+      register: grep_result
+      changed_when: false
+
+    - name: 检查字符串出现的次数是否满足条件
+      fail:
+        msg: "etcd-server-startup.sh文件中没有出现两次指定的字符串"
+      when: grep_result.stdout | int != 2
+
+    - name: 检查结果并报告
+      fail:
+        msg: "etcd-server-startup.sh文件中22机器IP地址"
+      when: grep_22_result.rc != 0
+
+    - name: 检查结果并报告
+      fail:
+        msg: "etcd-server-startup.sh文件中21机器IP地址"
+      when: grep_21_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "etcd-server-startup.sh文件配置完成"
+
+- name: 安装部署主控节点服务etcd-检查etcd-server.ini文件中是否包含修改正确
+  hosts: k8s_12,k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/etcd-server.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "etcd-server.ini文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "etcd-server.ini文件中包含了指定的字符串"
+
+- name: 部署API-server集群-检查apiserver-csr.json文件中的IP地址
+  hosts: k8s_200
+  tasks:
+    - name: 检查虚拟IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_10']['ansible_host'] }}" /opt/certs/apiserver-csr.json
+      register: grep_result
+      changed_when: false
+
+    - name: 检查21机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/certs/apiserver-csr.json
+      register: grep_result
+      changed_when: false
+
+    - name: 检查22机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/certs/apiserver-csr.json
+      register: grep_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "apiserver-csr.json文件中没有包含指定的IP地址"
+      when: grep_result.stdout == ""
+
+    - name: 报告成功
+      debug:
+        msg: "apiserver-csr.json文件中包含了指定的IP地址"
+
+- name: 部署API-server集群-检查kube-apiserver.sh文件中的IP地址
+  hosts: k8s_21,k8s_22
+  tasks:
+    - name: 检查虚拟IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_12']['ansible_host'] }}" /opt/kubernetes/server/bin/kube-apiserver.sh
+      register: grep_result
+      changed_when: false
+
+    - name: 检查21机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/kubernetes/server/bin/kube-apiserver.sh
+      register: grep_result
+      changed_when: false
+
+    - name: 检查22机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/kubernetes/server/bin/kube-apiserver.sh
+      register: grep_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-apiserver.sh文件中没有包含指定的IP地址"
+      when: grep_result.stdout == ""
+
+    - name: 报告成功
+      debug:
+        msg: "kube-apiserver.sh文件中包含了指定的IP地址"
+
+- name: 部署API-server集群--检查kube-apiserver.ini文件中的命名
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -E "{{ ip_number.stdout }}" /etc/supervisord.d/kube-apiserver.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-apiserver.ini文件中没有包含指定的字符串"
+      when: grep_result.stdout == ""
+
+    - name: 报告成功
+      debug:
+        msg: "kube-apiserver.ini文件中包含了指定的字符串"
