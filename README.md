@@ -20,7 +20,7 @@
 ## <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/Features.md">Features</a>
 
 - 对做的事情进行说明是什么（WHAT），为什么要做（WHY）。
-- 对相关文件进行解析、指明哪部机器操作、配图，并在易出错点添加解决办法。
+- 对相关文件进行解析、指明哪部机器操作、配图，并在易出错点添加解决办法。第二章由于配置内容较多，建议配合[check_tool](https://github.com/ben1234560/k8s_PaaS/tree/master/%E8%BD%AF%E4%BB%B6%E5%8C%85/check_tool)使用。
 - 使用文件皆是官方文件，相关软件包有对应文件，避免被更新或其它问题导致无法下载等情况，百度云https://pan.baidu.com/s/1arE2LdtAbcR80gmIQtIELw 提取码：ouy1。
 - 无数前人遍历/建设代码，为代码完整性保驾护航，欢迎给我们提供你的建议、扩展、报错。
 - 整理了多人问的4个问题<a href="https://github.com/ben1234560/k8s_PaaS/blob/master/Features.md#qa">Q&A</a>：配置只有4核8G够吗，新手可以吗，找不到报错怎么办，做完看不懂怎么办
@@ -40,6 +40,7 @@
     </ul>
   </li>
     <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md">第二章——企业部署实战_K8S</a>
+      
     <ul>
       <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S.md#%E6%88%91%E4%BB%AC%E9%83%A8%E7%BD%B2%E7%9A%84%E6%9E%B6%E6%9E%84%E5%9B%BE%E6%88%91%E4%BB%AC%E9%83%A8%E7%BD%B2%E7%9A%84%E6%98%AF%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%9A%84paas%E6%9C%8D%E5%8A%A1">K8S前置准备工作——bind9安装部署（DNS服务）</a>
       <li><a href="">K8S前置工作——准备签发证书环境</a>
@@ -169,3 +170,4 @@ QQ群号：676040917（创建日期：2021/08/26）
 <p> 本人水平有限，文字代码难免有遗漏错误的地方，望不吝赐教，万分感谢。
 <p> Email：909336740@qq.com
 <p> PS：看到点赞很开心，谢谢😊
+
