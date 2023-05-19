@@ -2,9 +2,7 @@
 
 公有云版：[第二章——企业部署实战_K8S【公有云版】](https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%BA%8C%E7%AB%A0%E2%80%94%E2%80%94%E4%BC%81%E4%B8%9A%E9%83%A8%E7%BD%B2%E5%AE%9E%E6%88%98_K8S%E3%80%90%E5%85%AC%E6%9C%89%E4%BA%91%E7%89%88%E3%80%91.md)
 
-**由于第二章需要配置的内容较多，大部分新同学卡在这里。作者将于本月（2023年5月）开始，预计月底完成第二章的配置自动化检查脚本，来帮助大家更好的找到哪里配置错误并进行修正。**
-
-**当前已更新完“K8S前置工作”部分，最新进展可关注[软件包里的check_tool](https://github.com/ben1234560/k8s_PaaS/tree/master/%E8%BD%AF%E4%BB%B6%E5%8C%85/check_tool)**
+**由于第二章需要配置的内容较多，不少新同学卡在这里。建议配合使用[软件包里的check_tool](https://github.com/ben1234560/k8s_PaaS/tree/master/%E8%BD%AF%E4%BB%B6%E5%8C%85/check_tool)边检查，边部署**
 
 ##### 前言：如果你是新手，机器的名字及各种账户密码一定要和我的一样，先学一遍，再自己改
 
