@@ -1,122 +1,133 @@
 ---
-- name: 检查虚拟机最低配置 Check virtual machine minimum configurations
+- name: 检查虚拟机最低配置; Check virtual machine minimum configurations
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: true
-
   tasks:
-    - name: Check memory
+    - name: 获取CPU数量; Get the number of CPUs
+      command: grep -c '^processor' /proc/cpuinfo
+      register: cpu_count
+      changed_when: false
+
+    - name: 检查CPU数量; Check the number of CPUs
+      assert:
+        that:
+          - cpu_count.stdout|int >= 2
+        fail_msg: "CPU必须大于2C; CPU should be greater than or equal to 2C."
+        success_msg: "CPU配置满足; CPU is sufficient."
+
+    - name: 检查内存数量; Check the number of CPUs memories
       assert:
         that:
           - ansible_memory_mb >= 2048
-        fail_msg: "Memory should be greater than or equal to 2GB."
-        success_msg: "Memory is sufficient."
+        fail_msg: "内存必须大于2GB; Memory should be greater than or equal to 2GB."
+        success_msg: "内存配置满足; Memory is sufficient."
 
-    - name: Print success message
+    - name: 打印信息; Print success message
       debug:
-        msg: "Configuration check passed."
+        msg: "配置通过; Configuration check passed."
 
-- name: 检查主控+计算节点标配 Check master_node virtual machine configurations
+- name: 检查主控+计算节点标配; Check master_node virtual machine configurations
   hosts: k8s_21,k8s_22
   gather_facts: true
   tasks:
-    - name: Check if memory is greater than 16GB
+    - name: 检查内存是否大于16GB; Check if memory is greater than 16GB
       assert:
         that:
-          - "ansible_memtotal_mb > 15000"
-        fail_msg: "Warning: Memory is less than 16GB."
-        success_msg: "Success: Memory is greater than 16GB."
+          - "ansible_metotal_mb > 15000"
+        fail_msg: "警告: 内存小于16GB; Warning: Memory is less than 16GB."
+        success_msg: "成功: 内存大于16GB; Success: Memory is greater than 16GB."
       ignore_errors: true
 
-- name: 检查时间同步
+- name: 检查时间同步; Check time synchronization
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: true
   tasks:
-    - name: 检查时间同步状态
+    - name: 检查时间同步状态; Check time synchronization status
       command: systemctl is-active ntpd
       register: ntp_sync_status
       changed_when: false
       ignore_errors: true
 
-    - name: 报错如果时间未同步
+    - name: 报错如果时间未同步; Report an erro if the time is not synchronized
       assert:
         that: ntp_sync_status.stdout == "active"
-        fail_msg: "时间未同步"
-        success_msg: "时间已同步"
+        fail_msg: "时间可能未同步; Time may be out of sync"
+        success_msg: "时间已同步; Time synced"
       ignore_errors: true
 
-    - name: 显示主机时间
+    - name: 打印主机时间; Print host time
       debug:
         msg: "主机 {{ inventory_hostname }} 的当前时间是 {{ ansible_date_time.date }} {{ ansible_date_time.time }}"
 
-- name: 检查防火墙状态 Check firewall status
+- name: 检查防火墙状态; Check firewall status
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
-    - name: Check firewall status
+    - name: 检查防火墙状态; Check firewall status
       shell: "systemctl is-active --quiet firewalld && echo 'active' || echo 'inactive'"
       register: firewall_status
       changed_when: false
 
-    - name: show firewall status
+    - name: 展示防火墙状态; show firewall status
       debug:
         msg: "主机 {{ inventory_hostname }} 的防火墙状态为 {{ firewall_status.stdout }}"
 
-- name: 检查SELinux配置
+- name: 检查SELinux配置; Check SELinux configuration
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
-    - name: 读取SELinux配置
+    - name: 读取SELinux配置; Read SELinux configuration
       shell: cat /etc/selinux/config | grep "^SELINUX="
       register: selinux_config
       changed_when: false
 
-    - name: 检查SELinux配置是否为disabled
+    - name: 检查SELinux配置是否为disabled; Check if the SELinux configuration is disabled
       assert:
         that: selinux_config.stdout == "SELINUX=disabled"
-        fail_msg: "/etc/selinux/config文件中SELINUX未设置为disabled"
-        success_msg: "/etc/selinux/config文件中SELINUX已设置为disabled"
+        fail_msg: "/etc/selinux/config文件中SELINUX未设置为disabled; SELINUX is not set to disable in the /etc/selinux/config file"
+        success_msg: "/etc/selinux/config文件中SELINUX已设置为disabled; SELINUX has been set to disabled in the /etc/selinux/config file"
 
-- name: 检查主机名是否已修改 Check if the hostname has been modified
+- name: 检查主机名是否已修改;Check if the hostname has been modified
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
-    - name: get hostname
+    - name: 获取主机名; get hostname
       command: hostname
       register: hostname_output
       changed_when: false
 
-    - name: Check if the hostname contains the host.com
+    - name: 检查主机名是否包含host.com; Check if the hostname contains the host.com
       assert:
         that: "'host.com' in hostname_output.stdout"
-        fail_msg: "主机名未修改为 xxx.host.com"
-        success_msg: "主机名已修改 {{ hostname_output.stdout }}"
+        fail_msg: "主机名未修改为 xxx.host.com; The hostname is not modified to xxx.host.com"
+        success_msg: "主机名已修改 {{ hostname_output.stdout }}; The hostname has been modified to {{ hostname_output.stdout }}"
 
-    - name: 提取IP地址中的数字
+    - name: 提取IP地址中的数字; Extract numbers from IP addresses
       shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
       register: ip_number
       changed_when: false
 
-    - name: Check if the hostname contains the number
+    - name: 检查hostname里是否包含对应数字; Check if the hostname contains the number
       assert:
         that: " ip_number.stdout in hostname_output.stdout"
         fail_msg: "主机名未修改成功, 机器类型为{{ ip_number.stdout }}节点，主机名为 {{ hostname_output.stdout }}"
-        success_msg: "主机名已修改 {{ hostname_output.stdout }}"
+        success_msg: "主机名已修改 {{ hostname_output.stdout }}; The hostname has been modified to {{ hostname_output.stdout }}"
 
 
-- name: 检查连接互联网 Check internet connection
+- name: 检查连接互联网; Check internet connection
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
-    - name: 检查Ping连接 Check Ping Connection
+    - name: 检查Ping连接; Check Ping Connection
       command: ping -c 1 baidu.com
       register: ping_result
       changed_when: false
       failed_when: ping_result.rc != 0
 
-    - name: 检查Ping连接结果 Check the result of Ping Connection
+    - name: 检查Ping连接结果; Check the result of Ping Connection
       assert:
         that: ping_result.rc == 0
-        fail_msg: "无法Ping通 baidu.com"
-        success_msg: "成功Ping通 baidu.com"
+        fail_msg: "无法Ping通 baidu.com; Unable to ping baidu.com;"
+        success_msg: "成功Ping通 baidu.com; Ping baidu.com successfully;"
 
 

@@ -1,17 +1,14 @@
 [all]
-k8s_11 ansible_host=172.29.238.169
-k8s_12 ansible_host=172.29.238.172
-k8s_21 ansible_host=172.29.238.171
-k8s_22 ansible_host=172.29.238.168
-k8s_200 ansible_host=172.29.238.170
+k8s_11 ansible_host=172.29.238.188
+k8s_12 ansible_host=172.29.238.187
+k8s_21 ansible_host=172.29.238.184
+k8s_22 ansible_host=172.29.238.186
+k8s_200 ansible_host=172.29.238.185
 
 [all:vars]
-ansible_ssh_pass=xxx
+ansible_ssh_pass=****
 ansible_ssh_port=22
 ansible_ssh_user=root
 
-[master_node]
-k8s_21
-k8s_22
-
-
+[virtual_ip]
+k8s_10 ansible_host=172.29.238.10

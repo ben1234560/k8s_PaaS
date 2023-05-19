@@ -2,7 +2,7 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    - name: 获取开始时间戳
+    - name: 获取开始时间戳; Get start timestamp
       command: date +%s
       register: start_time
       changed_when: false
@@ -11,16 +11,16 @@
 - import_playbook: playbooks/pre_for_k8s.yml
 - import_playbook: playbooks/node_base_service.yml
 
-- name: 统计ansible运行耗时
+- name: 计算ansible运行耗时; Calculate the running time of ansible
   hosts: localhost
   gather_facts: no
   tasks:
-    - name: 获取结束时间戳
+    - name: 获取结束时间戳; Get end timestamp
       command: date +%s
       register: end_time
       changed_when: false
 
-    - name: 计算运行时间
+    - name: 计算运行时间; Calculate running time
       set_fact:
         ansible_run_time: "{{ end_time.stdout | int - start_time.stdout | int }}"
 
@@ -29,5 +29,5 @@
         msg: 
           - "开始时间: {{ start_time.start }}"
           - "结束时间: {{ end_time.end }}"
-          - "运行时间: {{ (ansible_run_time | int / 60) | int }}分钟, {{ (ansible_run_time | int % 60) | int }} 秒"
+          - "运行耗时: {{ (ansible_run_time | int / 60) | int }}分钟, {{ (ansible_run_time | int % 60) | int }} 秒"
 

@@ -1,18 +1,18 @@
 ---
-- name: K8S前置准备工作——bind9安装部署（DNS服务）Check named.conf
+- name: bind9安装部署（DNS服务）; Install bind9
   hosts: k8s_11
   gather_facts: no
   tasks:
-    - name: Gather internal IP address
+    - name: 获取IP地址; Gather internal IP address
       ansible.builtin.setup:
         filter: ansible_default_ipv4
 
-    - name: Read /etc/named.conf
+    - name: 读取/etc/named.conf; Read /etc/named.conf
       ansible.builtin.slurp:
         src: /etc/named.conf
       register: named_conf_content
 
-    - name: Check the content of /etc/named.conf
+    - name: 检查/etc/name.conf中是否有对应内容; Check the content of /etc/named.conf
       ansible.builtin.assert:
         that:
           - "'listen-on port 53 { {{ ansible_default_ipv4.address }}; };' in named_conf_content.content | b64decode"
@@ -21,29 +21,30 @@
           - "'dnssec-enable no;' in named_conf_content.content | b64decode"
           - "'dnssec-validation no;' in named_conf_content.content | b64decode"
           - "'listen-on-v6 port 53 { ::1; };' not in named_conf_content.content | b64decode"
-        fail_msg: "Error: /etc/named.conf does not have the required content."
-        success_msg: "Success: /etc/named.conf has the required content."
+        fail_msg: "错误: /etc/named.conf没有指定内容; Error: /etc/named.conf does not have the required content."
+        success_msg: "成功: /etc/named.conf有指定内容; Success: /etc/named.conf has the required content."
 
-    - name: Run named-checkconf command
+    - name: 运行named-checkconf检查配置; Run named-checkconf command
       ansible.builtin.command:
         cmd: named-checkconf
       register: named_checkconf_result
+      changed_when: false
       ignore_errors: yes
 
-    - name: Check if named-checkconf has no output
+    - name: 确认named-checkconf是否有内容输出; Check if named-checkconf has no output
       ansible.builtin.assert:
         that:
           - "named_checkconf_result.stdout == ''"
           - "named_checkconf_result.stderr == ''"
         fail_msg: "Error: named-checkconf returned output: {{ named_checkconf_result.stdout }} {{ named_checkconf_result.stderr }}"
-        success_msg: "Success: named-checkconf returned no output."
+        success_msg: "成功: named-checkconf无配置问题; Success: named-checkconf returned no output."
 
-    - name: Read /etc/named.rfc1912.zones
+    - name: 读取/etc/named.rfc1912.zones; Read /etc/named.rfc1912.zones
       ansible.builtin.slurp:
         src: /etc/named.rfc1912.zones
       register: named_rfc1912_zones_content
 
-    - name: Check the content of /etc/named.rfc1912.zones
+    - name: 检查/etc/named.rfc1912.zones是否有对应内容; Check the content of /etc/named.rfc1912.zones
       ansible.builtin.assert:
         that:
           - "'zone \"host.com\" IN {' in named_rfc1912_zones_content.content | b64decode"
@@ -55,14 +56,14 @@
           - "'file  \"od.com.zone\";' in named_rfc1912_zones_content.content | b64decode"
           - "'allow-update { {{ ansible_default_ipv4.address }}; };' in named_rfc1912_zones_content.content | b64decode"
         fail_msg: "Error: /etc/named.rfc1912.zones does not have the required content."
-        success_msg: "Success: /etc/named.rfc1912.zones has the required content."
+        success_msg: "成功: /etc/named.conf有指定内容; Success: /etc/named.rfc1912.zones has the required content."
 
-    - name: Read /var/named/host.com.zone
+    - name: 读取/var/named/host.com.zone; Read /var/named/host.com.zone
       ansible.builtin.slurp:
         src: /var/named/host.com.zone
       register: host_com_zone_content
 
-    - name: Check the content of /var/named/host.com.zone
+    - name: 检查/var/named/host.com.zone是否有对应内容; Check the content of /var/named/host.com.zone
       ansible.builtin.assert:
         that:
           - "'$ORIGIN host.com.' in host_com_zone_content.content | b64decode"
@@ -78,14 +79,14 @@
           - "'dns                A    {{ ansible_default_ipv4.address }}' in host_com_zone_content.content | b64decode"
           - "'HDSS7-11           A    {{ ansible_default_ipv4.address }}' in host_com_zone_content.content | b64decode"
         fail_msg: "Error: /var/named/host.com.zone does not have the required content."
-        success_msg: "Success: /var/named/host.com.zone has the required content."
+        success_msg: "成功: /var/named/host.com.zone有指定内容; Success: /var/named/host.com.zone has the required content."
 
-    - name: Read /var/named/od.com.zone
+    - name: 读取/var/named/od.com.zone; Read /var/named/od.com.zone
       ansible.builtin.slurp:
         src: /var/named/od.com.zone
       register: od_com_zone_content
 
-    - name: Check the content of /var/named/od.com.zone
+    - name: 检查/var/named/od.com.zone是否有对应内容; Check the content of /var/named/od.com.zone
       ansible.builtin.assert:
         that:
           - "'$ORIGIN od.com.' in od_com_zone_content.content | b64decode"
@@ -100,166 +101,162 @@
           - "'$TTL 60' in od_com_zone_content.content | b64decode"
           - "'dns                A    {{ ansible_default_ipv4.address }}' in od_com_zone_content.content | b64decode"
         fail_msg: "Error: /var/named/od.com.zone does not have the required content."
-        success_msg: "Success: /var/named/od.com.zone has the required content."
+        success_msg: "成功: /var/named/od.com.zone有指定内容; Success: /var/named/od.com.zone has the required content."
 
-    - name: Run named-checkconf command
+    - name: 运行named-checkconf; Run named-checkconf command
       ansible.builtin.command:
         cmd: named-checkconf
       register: named_checkconf_result
+      changed_when: false
       ignore_errors: yes
 
-    - name: Check if named-checkconf has no output
+    - name: 确认named-checkconf是否有内容输出; Check if named-checkconf has no output
       ansible.builtin.assert:
         that:
           - "named_checkconf_result.stdout == ''"
           - "named_checkconf_result.stderr == ''"
         fail_msg: "Error: named-checkconf returned output: {{ named_checkconf_result.stdout }} {{ named_checkconf_result.stderr }}"
-        success_msg: "Success: named-checkconf returned no output.i"
+        success_msg: "成功: named-checkconf无配置问题; Success: named-checkconf returned no output.i"
 
-- name: Check ifcfg-eth0 for specific content
+- name: 检查ifcfg-eth0中的配置; Check ifcfg-eth0 for specific content
   hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: no
   tasks:
-    - name: Read /etc/sysconfig/network-scripts/ifcfg-eth0
+    - name: 读取ifcfg-eth0; Read /etc/sysconfig/network-scripts/ifcfg-eth0
       ansible.builtin.slurp:
         src: /etc/sysconfig/network-scripts/ifcfg-eth0
       register: ifcfg_eth0_content
 
-    - name: Check if the content exists in ifcfg-eth0
+    - name: 检查指定内容是否存在ifcfg-eth0; Check if the content exists in ifcfg-eth0
       ansible.builtin.assert:
         that:
           - "'DNS1={{ hostvars['k8s_11']['ansible_host'] }}' in ifcfg_eth0_content.content | b64decode"
         fail_msg: "Error: DNS1={{ hostvars['k8s_11']['ansible_host'] }} not found in /etc/sysconfig/network-scripts/ifcfg-eth0."
         success_msg: "Success: DNS1={{ hostvars['k8s_11']['ansible_host'] }} found in /etc/sysconfig/network-scripts/ifcfg-eth0."
 
-    - name: Read /etc/sysconfig/network-scripts/ifcfg-eth0
-      ansible.builtin.slurp:
-        src: /etc/sysconfig/network-scripts/ifcfg-eth0
-      register: ifcfg_eth0_content
-
-    - name: 检查互联网连接
+    - name: 检查互联网连接; Check internet connection
       command: ping -c 1 baidu.com
       register: ping_result
       changed_when: false
       failed_when: ping_result.rc != 0
 
-    - name: 检查互联网连接结果
+    - name: 检查互联网连接结果; Check internet connection result
       assert:
         that: ping_result.rc == 0
-        fail_msg: "无法Ping通 baidu.com"
-        success_msg: "成功Ping通 baidu.com"
+        fail_msg: "无法Ping通 baidu.com; Unable to ping baidu.com"
+        success_msg: "成功Ping通 baidu.com; Ping baidu.com successfully"
 
-- name: Check the /opt/certs/ca-csr.json of k8s_200
+- name: 检查ca-csr.json配置; Check the /opt/certs/ca-csr.json
   hosts: k8s_200
   gather_facts: false
   tasks:
-    - name: 读取文件内容
+    - name: 读取文件内容; Read /opt/certs/ca-csr.json
       shell: cat /opt/certs/ca-csr.json
       register: file_content
       changed_when: false
 
-    - name: 检查文件内容中是否包含数字
+    - name: 检查文件内容中是否包含数字; Check if the content of ca-csr.json contains numbers
       assert:
         that: "'1752000' in file_content.stdout"
-        fail_msg: "授权时间较短，请设置为1752000h"
-        success_msg: "授权时间合理，有200年年限"
+        fail_msg: "授权时间较短，请设置为1752000h; The authorization time is short, please set it to 1752000h"
+        success_msg: "授权时间合理，有200年年限; The authorization time is reasonable, with a 200-year limit"
 
-- name: K8S前置工作——部署docke环境
+- name: 部署docke环境; Install the docker
   hosts: 
     - k8s_21
     - k8s_22
     - k8s_200
   gather_facts: false
   tasks:
-    - name: 检查是否包含 /data/docker
+    - name: 检查是否包含 /data/docker; Check if the file contains /data/docker
       command: grep -q '/data/docker' /etc/docker/daemon.json
       register: contains_data_docker
       changed_when: false
       failed_when: contains_data_docker.rc != 0
 
-    - name: 检查是否包含 overlay2
+    - name: 检查是否包含 overlay2; Check if the file contains overlay2
       command: grep -q 'overlay2' /etc/docker/daemon.json
       register: contains_overlay2
       changed_when: false
       failed_when: contains_overlay2.rc != 0
 
-    - name: 提取IP地址中的数字
+    - name: 提取IP地址中的数字; Get the number from hostname
       shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
       register: ip_number
       changed_when: false
 
-    - name: 检查是否包含 172.7.xx.1/24
+    - name: 检查是否包含 172.7.xx.1/24; Check if the file contains 172.7.xx.1/24
       command: grep -q '172.7.{{ ip_number.stdout }}.1/24' /etc/docker/daemon.json
       register: contains_ip
       changed_when: false
       failed_when: contains_ip.rc != 0
 
-    - name: 检查文件内容
+    - name: 检查文件内容; Check file content
       assert:
         that:
           - contains_data_docker.rc == 0
           - contains_overlay2.rc == 0
           - contains_ip.rc == 0
-        fail_msg: "文件内容不符合要求"
-        success_msg: "文件内容符合要求"
+        fail_msg: "文件内容不符合要求; The content of the file does not meet the requirements"
+        success_msg: "文件内容符合要求; The content of the file meets the requirements"
 
-- name: K8S前置工作——部署harbor仓库
+- name: 部署Harbor仓库; Install Harbor
   hosts: k8s_200
   gather_facts: false
   tasks:
-    - name: 检查文件内容
+    - name: 检查文件内容; Check file content
       command: cat /opt/harbor/harbor.yml
       register: file_content
       changed_when: false
 
-    - name: 检查port配置是否正确
+    - name: 检查port配置是否正确; Check whether the port configuration is correct
       assert:
         that: "'180' in file_content.stdout"
-        fail_msg: "/opt/harbor/harbor.yml文件不包含180"
-        success_msg: "/opt/harbor/harbor.yml文件包含180"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含180; /opt/harbor/harbor.yml file does not contain 180"
+        success_msg: "/opt/harbor/harbor.yml文件包含180; /opt/harbor/harbor.yml file contains 180"
 
-    - name: 检查data_volume配置是否正确
+    - name: 检查data_volume配置是否正确; Check whether the data_volume configuration is correct
       assert:
         that: "'/data/harbor' in file_content.stdout"
-        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor"
-        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor; The /opt/harbor/harbor.yml file does not contain /data/harbo"
+        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor; The /opt/harbor/harbor.yml file contains /data/harbor"
 
-    - name: 检查location配置是否正确
+    - name: 检查location配置是否正确; Check whether the location configuration is correct
       assert:
         that: "'/data/harbor/logs' in file_content.stdout"
-        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor/logs"
-        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor/logs"
+        fail_msg: "/opt/harbor/harbor.yml文件不包含/data/harbor/logs; The /opt/harbor/harbor.yml file does not contain /data/harbor/logs"
+        success_msg: "/opt/harbor/harbor.yml文件包含/data/harbor/logs; The /opt/harbor/harbor.yml file contains /data/harbor/logs"
 
-    - name: 读取文件内容
+    - name: 读取文件内容; Check file content
       shell: cat /etc/nginx/conf.d/harbor.od.com.conf
       register: file_content
       changed_when: false
 
-    - name: 检查是否包含 listen 80
+    - name: 检查是否包含 listen 80; Check the file if listen 80 is included
       assert:
         that: "'listen       80' in file_content.stdout"
         fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 'listen       80'"
         success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 'listen       80'"
 
-    - name: 检查是否包含 server_name harbor.od.com
+    - name: 检查是否包含 server_name harbor.od.com; Check the file if server_name harbor.od.com is included
       assert:
         that: "'server_name  harbor.od.com' in file_content.stdout"
         fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 'server_name  harbor.od.com'"
         success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 'server_name  harbor.od.com'"
 
-    - name: 检查是否包含 180
+    - name: 检查是否包含 180; Check the file if 180 is included
       assert:
         that: "'180' in file_content.stdout"
         fail_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件不包含 '180'"
         success_msg: "/etc/nginx/conf.d/harbor.od.com.conf文件包含 '180'"
 
-    - name: 检查Nginx服务状态
+    - name: 检查Nginx服务状态; Check Nginx service status
       command: systemctl is-enabled nginx
       register: nginx_status
       changed_when: false
 
-    - name: 检查是否启用了Nginx服务
+    - name: 检查是否启用了Nginx服务; Check if the Nginx service is enabled
       assert:
         that: nginx_status.stdout == 'enabled'
-        fail_msg: "Nginx服务未启用"
-        success_msg: "Nginx服务已启用"
+        fail_msg: "Nginx服务未启用; Nginx service is not enabled"
+        success_msg: "Nginx服务已启用; Nginx service is enabled"

@@ -1,5 +1,5 @@
 ---
-- name: 检查ca-config.json文件
+- name: 安装部署主控节点服务etcd,检查ca-config.json文件; Install the master control node service etcd and check the ca-config.json file;
   hosts: k8s_200
   tasks:
     - name: 检查文件中是否设置为1752000
@@ -7,15 +7,12 @@
       register: grep_result
       changed_when: false
 
-- name: 安装部署主控节点服务etcd-检查etcd-peer-csr.json文件
-  hosts: k8s_200
-  tasks:
     - name: 检查文件中IP地址是否正确
       shell: cat /opt/certs/etcd-peer-csr.json | grep -E "{{ hostvars['k8s_11']['ansible_host'] }}|{{ hostvars['k8s_12']['ansible_host'] }}|{{ hostvars['k8s_21']['ansible_host'] }}|{{ hostvars['k8s_22']['ansible_host'] }}"
       register: grep_result
       changed_when: false
 
-- name: 安装部署主控节点服务etcd-检查etcd用户组是否存在
+- name: 安装部署主控节点服务etcd,检查etcd用户组是否存在; Install the master control node service etcd and check whether the etcd user group exists
   hosts: k8s_12,k8s_21,k8s_22
   tasks:
     - name: 运行id etcd命令
@@ -23,7 +20,7 @@
       register: id_output
       changed_when: false
 
-- name: 安装部署主控节点服务etcd-检查etcd配置文件
+- name: 安装部署主控节点服务etcd,检查etcd配置文件; Install the master control node service etcd and check the etcd configuration file
   hosts: k8s_12,k8s_21,k8s_22
   tasks:
     - name: 检查IP地址数量
@@ -85,7 +82,7 @@
       debug:
         msg: "etcd-server-startup.sh文件配置完成"
 
-- name: 安装部署主控节点服务etcd-检查etcd-server.ini文件中是否包含修改正确
+- name: 安装部署主控节点服务etcd,检查etcd-server.ini文件中是否修改正确; Install the master control node service etcd, and check whether the etcd-server.ini file is modified correctly
   hosts: k8s_12,k8s_21,k8s_22
   tasks:
 
@@ -109,7 +106,7 @@
       debug:
         msg: "etcd-server.ini文件中包含了指定的字符串"
 
-- name: 部署API-server集群-检查apiserver-csr.json文件中的IP地址
+- name: 部署API-server集群,检查apiserver-csr.json文件中的IP地址; Deploy the API-server cluster and check the IP address in the apiserver-csr.json file
   hosts: k8s_200
   tasks:
     - name: 检查虚拟IP地址是否存在于文件中
@@ -136,7 +133,7 @@
       debug:
         msg: "apiserver-csr.json文件中包含了指定的IP地址"
 
-- name: 部署API-server集群-检查kube-apiserver.sh文件中的IP地址
+- name: 部署API-server集群,检查kube-apiserver.sh文件中的IP地址; Deploy the API-server cluster and check the IP address in the kube-apiserver.sh file
   hosts: k8s_21,k8s_22
   tasks:
     - name: 检查虚拟IP地址是否存在于文件中
@@ -163,7 +160,7 @@
       debug:
         msg: "kube-apiserver.sh文件中包含了指定的IP地址"
 
-- name: 部署API-server集群--检查kube-apiserver.ini文件中的命名
+- name: 部署API-server集群,检查kube-apiserver.ini文件中的命名; Deploy the API-server cluster, check the naming in the kube-apiserver.ini file
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -187,7 +184,7 @@
       debug:
         msg: "kube-apiserver.ini文件中包含了指定的字符串"
 
-- name: 安装部署主控节点L4反代服务-检查nginx.conf配置
+- name: 安装部署主控节点L4反代服务,检查nginx.conf配置; Install the master control node L4 reverse generation service, check nginx.conf configuration
   hosts: k8s_11,k8s_12
   gather_facts: false
 
@@ -239,7 +236,7 @@
       debug:
         msg: "11机器keepalived.conf文件配置完成"
 
-- name: 安装部署主控节点L4反代服务,检查12机器keepalived.conf配置
+- name: 安装部署主控节点L4反代服务,检查12机器keepalived.conf配置; Install the master control node L4 anti-generation service, check the keepalived.conf configuration of 12 machines
   hosts: k8s_12
   gather_facts: false
   tasks:
@@ -267,7 +264,7 @@
       debug:
         msg: "12机器keepalived.conf文件配置完成"
 
-- name: 安装部署controller-manager,检查kube-conntroller-manager.ini文件中是否包含修改正确
+- name: 安装部署controller-manager,检查kube-conntroller-manager.ini文件中是否包含修改正确; Install controller-manager and check whether the kube-conntroller-manager.ini file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -292,7 +289,7 @@
         msg: "kube-conntroller-manager.ini文件中包含了指定的字符串"
 
 
-- name: 安装部署controller-manager,检查kube-scheduler.ini文件中是否包含修改正确
+- name: 安装部署controller-manager,检查kube-scheduler.ini文件中是否包含修改正确; Install controller-manager and check whether the kube-scheduler.ini file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -316,7 +313,7 @@
       debug:
         msg: "kube-scheduler.ini文件中包含了指定的字符串"
 
-- name: 安装部署运算节点服务,检查kubelet-csr.json配置
+- name: 安装部署运算节点服务,检查kubelet-csr.json配置; Install computing node service, check kubelet-csr.json configuration
   hosts: k8s_200
   gather_facts: false
   tasks:
@@ -355,7 +352,7 @@
         msg: "kubelet-csr.json文件配置完成"
 
 
-- name: 安装部署运算节点服务,检查kubelet.kubeconfig配置
+- name: 安装部署运算节点服务,检查kubelet.kubeconfig配置; Install computing node service, check kubelet.kubeconfig configuration
   hosts: k8s_21,k8s_22
   gather_facts: false
   tasks:
@@ -373,7 +370,7 @@
       debug:
         msg: "kubelet.kubeconfig文件配置完成"
 
-- name: 安装部署运算节点服务,检查kubelet.sh文件中是否包含修改正确
+- name: 安装部署运算节点服务,检查kubelet.sh文件中是否包含修改正确; Install the computing node service, check whether the kubelet.sh file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -397,7 +394,7 @@
       debug:
         msg: "kubelet.sh文件中包含了指定的字符串"
 
-- name: 安装部署运算节点服务,检查kube-kubelet.ini文件中是否包含修改正确
+- name: 安装部署运算节点服务,检查kube-kubelet.ini文件中是否包含修改正确; Install the computing node service and check whether the kube-kubelet.ini file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -421,7 +418,7 @@
       debug:
         msg: "kube-kubelet.ini文件中包含了指定的字符串"
 
-- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.kubeconfig配置
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.kubeconfig配置; Install computing node service (kube-proxy), check kube-proxy.kubeconfig configuration
   hosts: k8s_21,k8s_22
   gather_facts: false
   tasks:
@@ -439,7 +436,7 @@
       debug:
         msg: "kube-proxy.kubeconfig文件配置完成"
 
-- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.sh文件中是否包含修改正确
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.sh文件中是否包含修改正确; Install the computing node service (kube-proxy), check whether the kube-proxy.sh file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
@@ -463,7 +460,7 @@
       debug:
         msg: "kube-proxy.sh文件中包含了指定的字符串"
 
-- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.ini文件中是否包含修改正确
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.ini文件中是否包含修改正确; Install the computing node service (kube-proxy), and check whether the kube-proxy.ini file contains the correct modification
   hosts: k8s_21,k8s_22
   tasks:
 
