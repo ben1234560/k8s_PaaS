@@ -26,22 +26,18 @@
 - name: 安装部署主控节点服务etcd-检查etcd配置文件
   hosts: k8s_12,k8s_21,k8s_22
   tasks:
-    - name: 获取当前ip地址
-      shell: hostname -I
-      register: ip_output
-
     - name: 检查IP地址数量
-      shell: grep -c -E {{ ip_output.stdout }} /opt/etcd/etcd-server-startup.sh
+      shell: grep -c -E {{ ansible_default_ipv4.address }} /opt/etcd/etcd-server-startup.sh
       register: grep_result
       changed_when: false
 
-    - name: 检查IP地址是否存在于文件中
+    - name: 检查当前IP地址是否有5个存在于文件中
       fail:
         msg: "etcd-server-startup.sh文件中没有5个{{ ip_output.stdout }}地址"
       when: grep_result.stdout != "5"
 
     - name: 检查IP地址是否存在于文件中
-      shell: grep -q "{{ hostvars['k8s_12']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      shell: grep -E "{{ hostvars['k8s_12']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
       register: grep_12_result
       changed_when: false
 
@@ -51,12 +47,12 @@
       when: grep_12_result.rc != 0
 
     - name: 检查IP地址是否存在于文件中
-      shell: grep -q "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      shell: grep -E "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
       register: grep_21_result
       changed_when: false
 
     - name: 检查IP地址是否存在于文件中
-      shell: grep -q "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
+      shell: grep -E "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/etcd/etcd-server-startup.sh
       register: grep_22_result
       changed_when: false
 
@@ -99,7 +95,7 @@
       changed_when: false
 
     - name: 检查文件中是否包含特定的字符串
-      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/etcd-server.ini
+      shell: grep -E "{{ ip_number.stdout }}" /etc/supervisord.d/etcd-server.ini
       register: grep_result
       changed_when: false
       ignore_errors: true
@@ -190,3 +186,303 @@
     - name: 报告成功
       debug:
         msg: "kube-apiserver.ini文件中包含了指定的字符串"
+
+- name: 安装部署主控节点L4反代服务-检查nginx.conf配置
+  hosts: k8s_11,k8s_12
+  gather_facts: false
+
+  tasks:
+    - name: 检查21机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_21']['ansible_host'] }}" /etc/nginx/nginx.conf
+      register: grep_result
+      changed_when: false
+
+    - name: 检查22机器IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_22']['ansible_host'] }}" /etc/nginx/nginx.conf
+      register: grep_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "nginx.conf文件中没有包含指定的IP地址"
+      when: grep_result.stdout == ""
+
+    - name: 报告成功
+      debug:
+        msg: "nginx.conf文件中包含了指定的IP地址"
+
+- name: 安装部署主控节点L4反代服务-检查11机器keepalived.conf配置
+  hosts: k8s_11
+  gather_facts: false
+  tasks:
+    - name: 检查IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_10']['ansible_host'] }}" /etc/keepalived/keepalived.conf
+      register: grep_10_result
+      changed_when: false
+
+    - name: 统计11机器IP在文件中出现的次数
+      shell: grep -o -c "{{ hostvars['k8s_11']['ansible_host'] }}" /etc/keepalived/keepalived.conf
+      register: grep_result
+      changed_when: false
+
+    - name: 检查字符串出现的次数是否满足条件
+      fail:
+        msg: "keepalived.conf文件中没有出现两次11机器IP"
+      when: grep_result.stdout | int != 2
+
+    - name: 检查结果并报告
+      fail:
+        msg: "keepalived.conf文件中虚拟10机器IP地址"
+      when: grep_10_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "11机器keepalived.conf文件配置完成"
+
+- name: 安装部署主控节点L4反代服务,检查12机器keepalived.conf配置
+  hosts: k8s_12
+  gather_facts: false
+  tasks:
+    - name: 检查IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_10']['ansible_host'] }}" /etc/keepalived/keepalived.conf
+      register: grep_10_result
+      changed_when: false
+
+    - name: 统计12机器IP在文件中出现的次数
+      shell: grep -o -c "{{ hostvars['k8s_12']['ansible_host'] }}" /etc/keepalived/keepalived.conf
+      register: grep_result
+      changed_when: false
+
+    - name: 检查字符串出现的次数是否满足条件
+      fail:
+        msg: "keepalived.conf文件中没有出现两次12机器IP"
+      when: grep_result.stdout | int != 2
+
+    - name: 检查结果并报告
+      fail:
+        msg: "keepalived.conf文件中虚拟10机器IP地址"
+      when: grep_10_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "12机器keepalived.conf文件配置完成"
+
+- name: 安装部署controller-manager,检查kube-conntroller-manager.ini文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/kube-conntroller-manager.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-conntroller-manager.ini文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-conntroller-manager.ini文件中包含了指定的字符串"
+
+
+- name: 安装部署controller-manager,检查kube-scheduler.ini文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/kube-scheduler.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-scheduler.ini文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-scheduler.ini文件中包含了指定的字符串"
+
+- name: 安装部署运算节点服务,检查kubelet-csr.json配置
+  hosts: k8s_200
+  gather_facts: false
+  tasks:
+    - name: 检查虚拟IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_10']['ansible_host'] }}" /opt/certs/kubelet-csr.json
+      register: grep_10_result
+      changed_when: false
+
+    - name: 检查21机器IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_21']['ansible_host'] }}" /opt/certs/kubelet-csr.json
+      register: grep_21_result
+      changed_when: false
+
+    - name: 检查22机器IP地址是否存在于文件中
+      shell: grep -q "{{ hostvars['k8s_22']['ansible_host'] }}" /opt/certs/kubelet-csr.json
+      register: grep_22_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kubelet-csr.json文件中虚拟10机器IP地址"
+      when: grep_10_result.rc != 0
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kubelet-csr.json文件中虚拟21机器IP地址"
+      when: grep_21_result.rc != 0
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kubelet-csr.json文件中虚拟22机器IP地址"
+      when: grep_22_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kubelet-csr.json文件配置完成"
+
+
+- name: 安装部署运算节点服务,检查kubelet.kubeconfig配置
+  hosts: k8s_21,k8s_22
+  gather_facts: false
+  tasks:
+    - name: 检查虚拟IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_10']['ansible_host'] }}" /opt/kubernetes/server/bin/conf/kubelet.kubeconfig
+      register: grep_10_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kubelet.kubeconfig文件中虚拟10机器IP地址"
+      when: grep_10_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kubelet.kubeconfig文件配置完成"
+
+- name: 安装部署运算节点服务,检查kubelet.sh文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}.host.com" /opt/kubernetes/server/bin/kubelet.sh
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kubelet.sh文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kubelet.sh文件中包含了指定的字符串"
+
+- name: 安装部署运算节点服务,检查kube-kubelet.ini文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/kube-kubelet.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-kubelet.ini文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-kubelet.ini文件中包含了指定的字符串"
+
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.kubeconfig配置
+  hosts: k8s_21,k8s_22
+  gather_facts: false
+  tasks:
+    - name: 检查虚拟IP地址是否存在于文件中
+      shell: grep -E "{{ hostvars['k8s_10']['ansible_host'] }}" /opt/kubernetes/server/bin/conf/kube-proxy.kubeconfig
+      register: grep_10_result
+      changed_when: false
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-proxy.kubeconfig文件中虚拟10机器IP地址"
+      when: grep_10_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-proxy.kubeconfig文件配置完成"
+
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.sh文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}.host.com" /opt/kubernetes/server/bin/kube-proxy.sh
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-proxy.sh文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-proxy.sh文件中包含了指定的字符串"
+
+- name: 安装部署运算节点服务（kube-proxy）,检查kube-proxy.ini文件中是否包含修改正确
+  hosts: k8s_21,k8s_22
+  tasks:
+
+    - name: 提取IP地址中的数字
+      shell: echo "{{ inventory_hostname }}" | awk -F "_" '{print $NF}'
+      register: ip_number
+      changed_when: false
+
+    - name: 检查文件中是否包含特定的字符串
+      shell: grep -q "{{ ip_number.stdout }}" /etc/supervisord.d/kube-proxy.ini
+      register: grep_result
+      changed_when: false
+      ignore_errors: true
+
+    - name: 检查结果并报告
+      fail:
+        msg: "kube-proxy.ini文件中没有包含指定的字符串"
+      when: grep_result.rc != 0
+
+    - name: 报告成功
+      debug:
+        msg: "kube-proxy.ini文件中包含了指定的字符串"

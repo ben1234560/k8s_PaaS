@@ -1,6 +1,6 @@
 ---
 - name: 检查虚拟机最低配置 Check virtual machine minimum configurations
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: true
 
   tasks:
@@ -16,7 +16,7 @@
         msg: "Configuration check passed."
 
 - name: 检查主控+计算节点标配 Check master_node virtual machine configurations
-  hosts: master_node
+  hosts: k8s_21,k8s_22
   gather_facts: true
   tasks:
     - name: Check if memory is greater than 16GB
@@ -28,7 +28,7 @@
       ignore_errors: true
 
 - name: 检查时间同步
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: true
   tasks:
     - name: 检查时间同步状态
@@ -49,7 +49,7 @@
         msg: "主机 {{ inventory_hostname }} 的当前时间是 {{ ansible_date_time.date }} {{ ansible_date_time.time }}"
 
 - name: 检查防火墙状态 Check firewall status
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
     - name: Check firewall status
@@ -62,7 +62,7 @@
         msg: "主机 {{ inventory_hostname }} 的防火墙状态为 {{ firewall_status.stdout }}"
 
 - name: 检查SELinux配置
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
     - name: 读取SELinux配置
@@ -77,7 +77,7 @@
         success_msg: "/etc/selinux/config文件中SELINUX已设置为disabled"
 
 - name: 检查主机名是否已修改 Check if the hostname has been modified
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
     - name: get hostname
@@ -104,7 +104,7 @@
 
 
 - name: 检查连接互联网 Check internet connection
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: false
   tasks:
     - name: 检查Ping连接 Check Ping Connection

@@ -2,25 +2,32 @@
 - hosts: localhost
   gather_facts: no
   tasks:
-    - name: 创建检查报告归档目录
-      file:
-        path: ../log/inspector
-        state: directory
-        mode: '0755'
-
-    - name: 获取当前日期后缀
-      shell: date "+%y%m%d%H%M"
-      register: date_time
-
+    - name: 获取开始时间戳
+      command: date +%s
+      register: start_time
+      changed_when: false
 
 - import_playbook: playbooks/pre_check.yml
-- import_playbook: playbooks/pre_before_k8s.yml
-- hosts: localhost
+- import_playbook: playbooks/pre_for_k8s.yml
+- import_playbook: playbooks/node_base_service.yml
+
+- name: 统计ansible运行耗时
+  hosts: localhost
   gather_facts: no
   tasks:
-    - name: 检查结果总结, 待定
-      shell: ls ../log/inspector/
-    - name: 生成二维码脚本
-      shell: ls ../log/inspector/
-    - name: 生成检查二维码，并输出
-      shell: ls ../log/inspector/ 
+    - name: 获取结束时间戳
+      command: date +%s
+      register: end_time
+      changed_when: false
+
+    - name: 计算运行时间
+      set_fact:
+        ansible_run_time: "{{ end_time.stdout | int - start_time.stdout | int }}"
+
+    - name: 打印时间
+      debug:
+        msg: 
+          - "开始时间: {{ start_time.start }}"
+          - "结束时间: {{ end_time.end }}"
+          - "运行时间: {{ (ansible_run_time | int / 60) | int }}分钟, {{ (ansible_run_time | int % 60) | int }} 秒"
+
