@@ -186,6 +186,84 @@
 > 当然我也有提供软件包：https://pan.baidu.com/s/1mkIzua1XQmew240XBbvuFA 提取码：7p6h 。里面还有Xftp，是用来进行本地电脑和虚拟机的文件传输
 
 ~~~
+# 全部机器，查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
+~]# getforce
+# 查看内核版本，确保在3.8以上版本
+~]# uname -a
+# 关闭firewalld
+~]# systemctl stop firewalld
+# 安装epel源及相关工具
+~]# yum install epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd -y
+# 检查是否安装成功
+~]# rpm -q epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd
+# out:
+epel-release-7-14.noarch
+wget-1.14-18.el7_6.1.x86_64
+net-tools-2.0-0.25.20131004git.el7.x86_64
+telnet-0.17-66.el7.x86_64
+tree-1.6.0-10.el7.x86_64
+nmap-6.40-19.el7.x86_64
+sysstat-10.1.5-20.el7_9.x86_64
+lrzsz-0.12.20-36.el7.x86_64
+dos2unix-6.0.3-7.el7.x86_64
+bind-utils-9.11.4-26.P2.el7_9.13.x86_64
+yum-utils-1.1.31-54.el7_8.noarch
+~~~
+
+> **uname**:显示系统信息
+>
+> - **-a/-all**：显示全部
+>
+> **yum**：提供了查找、安装、删除某一个、一组甚至全部软件包的命令
+>
+> - **install**：安装
+> - **-y**：当安装过程提示选择全部为"yes"
+
+<img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
+
+后续代理后，yum安装会出现网络等问题，为了减少处理的时间，我们提前下载
+
+~~~
+# 全部机器，安装后续需要的服务工具，不启动则不会有影响（我就不区分每个机器所需的了，后面会看到）
+# 追加docker的repo源
+~]# yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+# 安装后续所需的软件包
+~]# yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived deltarpm docker-ce ipvsadm -y
+# 检查安装情况
+~]# rpm -q supervisor docker-compose nginx nginx-mod-stream ipvsadm 
+# out:
+supervisor keepalived deltarpm docker-ce
+supervisor-3.4.0-1.el7.noarch
+docker-compose-1.18.0-4.el7.noarch
+nginx-1.20.1-10.el7.x86_64
+nginx-mod-stream-1.20.1-10.el7.x86_64
+supervisor-3.4.0-1.el7.noarch
+keepalived-1.3.5-19.el7.x86_64
+deltarpm-3.6-3.el7.x86_64
+docker-ce-23.0.6-1.el7.x86_64
+~~~
+
+后续章节需要用到的（可后续再装）
+
+~~~
+# 全部机器
+# 第三章
+~]# yum install -y iptables-services
+# 第四章
+~]# yum install -y openssl
+# 第五章
+~]# yum install -y java-1.8.0-openjdk*
+~]# yum install curl policycoreutils openssh-server openssh-clients policycoreutils-python -y
+
+# 全部一起下载
+~]# yum install -y iptables-services openssl policycoreutils openssh-server openssh-clients policycoreutils-python java-1.8.0-openjdk*
+# 检查安装情况
+~]# rpm -q iptables-services openssl java-1.8.0-openjdk-javadoc-zip java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel java-1.8.0-openjdk-src java-1.8.0-openjdk-accessibility java-1.8.0-openjdk-demo java-1.8.0-openjdk java-1.8.0-openjdk-javadoc curl policycoreutils openssh-server openssh-clients policycoreutils-python
+~~~
+
+配置机器名及网络
+
+~~~
 # 全部机器，设置名字，11是hdss7-11,12是hdss7-12,以此类推
 ~]# hostnamectl set-hostname hdss7-11.host.com
 ~]# exit
@@ -234,84 +312,6 @@ IPV6_PRIUACY=no
 
 
 
-~~~
-# 全部机器，查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
-~]# getforce
-# 查看内核版本，确保在3.8以上版本
-~]# uname -a
-# 关闭firewalld
-~]# systemctl stop firewalld
-# 安装epel源及相关工具
-~]# yum install epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd -y
-# 检查是否安装成功
-~]# rpm -q epel-release wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils yum-utils ntpd
-# out:
-epel-release-7-14.noarch
-wget-1.14-18.el7_6.1.x86_64
-net-tools-2.0-0.25.20131004git.el7.x86_64
-telnet-0.17-66.el7.x86_64
-tree-1.6.0-10.el7.x86_64
-nmap-6.40-19.el7.x86_64
-sysstat-10.1.5-20.el7_9.x86_64
-lrzsz-0.12.20-36.el7.x86_64
-dos2unix-6.0.3-7.el7.x86_64
-bind-utils-9.11.4-26.P2.el7_9.13.x86_64
-yum-utils-1.1.31-54.el7_8.noarch
-~~~
-
-> **uname**:显示系统信息
->
-> - **-a/-all**：显示全部
->
-> **yum**：提供了查找、安装、删除某一个、一组甚至全部软件包的命令
->
-> - **install**：安装
-> - **-y**：当安装过程提示选择全部为"yes"
-
-<img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
-
-后续代理后，yum安装会出现网络等问题，为了减少处理的时间，我们提前下载
-
-~~~
-# 全部机器，安装后续需要的服务工具（我就不区分每个机器所需的了，后面会看到）
-# 追加docker的repo源
-~]# yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
-# 安装后续所需的软件包
-~]# yum install supervisor docker-compose nginx nginx-mod-stream supervisor keepalived deltarpm docker-ce ipvsadm -y
-# 检查安装情况
-~]# rpm -q supervisor docker-compose nginx nginx-mod-stream ipvsadm 
-# out:
-supervisor keepalived deltarpm docker-ce
-supervisor-3.4.0-1.el7.noarch
-docker-compose-1.18.0-4.el7.noarch
-nginx-1.20.1-10.el7.x86_64
-nginx-mod-stream-1.20.1-10.el7.x86_64
-supervisor-3.4.0-1.el7.noarch
-keepalived-1.3.5-19.el7.x86_64
-deltarpm-3.6-3.el7.x86_64
-docker-ce-23.0.6-1.el7.x86_64
-~~~
-
-后续章节需要用到的（可后续再装）
-
-~~~
-# 全部机器
-# 第三章
-~]# yum install -y iptables-services
-# 第四章
-~]# yum install -y openssl
-# 第五章
-~]# yum install -y java-1.8.0-openjdk*
-~]# yum install curl policycoreutils openssh-server openssh-clients policycoreutils-python -y
-
-# 全部一起下载
-~]# yum install -y iptables-services openssl policycoreutils openssh-server openssh-clients policycoreutils-python java-1.8.0-openjdk*
-# 检查安装情况
-~]# rpm -q iptables-services openssl java-1.8.0-openjdk-javadoc-zip java-1.8.0-openjdk-headless java-1.8.0-openjdk-devel java-1.8.0-openjdk-src java-1.8.0-openjdk-accessibility java-1.8.0-openjdk-demo java-1.8.0-openjdk java-1.8.0-openjdk-javadoc curl policycoreutils openssh-server openssh-clients policycoreutils-python
-~~~
-
-
-
 ### K8S前置准备工作——bind9安装部署（DNS服务）
 
 > **WHAT**：DNS（域名系统）说白了，就是把一个域和IP地址做了一下绑定，如你在里机器里面输入 nslookup www.qq.com，出来的Address是一堆IP，IP是不容易记的，所以DNS让IP和域名做一下绑定，这样你输入域名就可以了
@@ -354,7 +354,7 @@ dnssec-validation no;  # 原本是yes
 
 ~~~
 # 11机器，经验：主机域一定得跟业务是一点关系都没有，如host.com，而业务用的是od.com，因为业务随时可能变
-# 区域配置文件，加在最下面，需要修改两处：allow-update
+# 区域配置文件，加在最下面，需要修改两处：allow-update为11机器ip
 ~]# vi /etc/named.rfc1912.zones
 zone "host.com" IN {
         type  master;
@@ -811,7 +811,7 @@ server {
 追加域名解析
 
 ~~~
-# 在11机器解析域名：
+# 在11机器解析域名，IP使用200机器的IP：
 ~]# vi /var/named/od.com.zone
 # 注意serial前滚一个序号
 # 最下面添加域名
