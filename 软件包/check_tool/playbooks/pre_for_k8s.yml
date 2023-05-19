@@ -117,7 +117,7 @@
         success_msg: "Success: named-checkconf returned no output.i"
 
 - name: Check ifcfg-eth0 for specific content
-  hosts: all
+  hosts: k8s_11,k8s_12,k8s_21,k8s_22,k8s_200
   gather_facts: no
   tasks:
     - name: Read /etc/sysconfig/network-scripts/ifcfg-eth0
