@@ -136,7 +136,7 @@
 - name: 部署API-server集群,检查kube-apiserver.sh文件中的IP地址; Deploy the API-server cluster and check the IP address in the kube-apiserver.sh file
   hosts: k8s_21,k8s_22
   tasks:
-    - name: 检查虚拟IP地址是否存在于文件中
+    - name: 检查12机器IP地址是否存在于文件中
       shell: grep -E "{{ hostvars['k8s_12']['ansible_host'] }}" /opt/kubernetes/server/bin/kube-apiserver.sh
       register: grep_result
       changed_when: false
