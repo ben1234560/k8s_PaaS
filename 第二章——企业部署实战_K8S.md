@@ -195,7 +195,8 @@
 
 ~~~
 # 查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
-~]# getforce
+~]# getenforce
+# 如果不为disabled，需要vim /etc/selinux/config，将SELINUX=后改为disabled后重启即可
 # 查看内核版本，确保在3.8以上版本
 ~]# uname -a
 # 关闭firewalld
