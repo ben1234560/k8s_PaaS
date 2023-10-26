@@ -199,8 +199,9 @@
 # 如果不为disabled，需要vim /etc/selinux/config，将SELINUX=后改为disabled后重启即可
 # 查看内核版本，确保在3.8以上版本
 ~]# uname -a
-# 关闭firewalld
+# 关闭并禁止firewalld自启
 ~]# systemctl stop firewalld
+~]# systemctl disable firewalld
 # 安装epel源及相关工具
 ~]# yum install epel-release -y
 ~]# yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
@@ -316,6 +317,7 @@ dns                A    10.4.7.11
 # 看一下有没有报错
 7-11 ~]# named-checkconf
 7-11 ~]# systemctl start named
+7-11 ~]# systemctl enable named
 7-11 ~]# netstat -luntp|grep 53
 ~~~
 
