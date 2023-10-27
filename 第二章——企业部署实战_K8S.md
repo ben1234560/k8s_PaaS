@@ -195,11 +195,13 @@
 
 ~~~
 # 查看enforce是否关闭，确保disabled状态，当然可能没有这个命令
-~]# getforce
+~]# getenforce
+# 如果不为disabled，需要vim /etc/selinux/config，将SELINUX=后改为disabled后重启即可
 # 查看内核版本，确保在3.8以上版本
 ~]# uname -a
-# 关闭firewalld
+# 关闭并禁止firewalld自启
 ~]# systemctl stop firewalld
+~]# systemctl disable firewalld
 # 安装epel源及相关工具
 ~]# yum install epel-release -y
 ~]# yum install wget net-tools telnet tree nmap sysstat lrzsz dos2unix bind-utils -y
@@ -274,8 +276,6 @@ zone "od.com" IN {
 
 ![1578818520796](assets/1578818520796.png)
 
-> **注意：**当配置10.4.7.11后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
-
 ~~~
 # 11机器：
 # 注意serial行的时间，代表今天的时间+第一条记录：20200112+01
@@ -315,6 +315,7 @@ dns                A    10.4.7.11
 # 看一下有没有报错
 7-11 ~]# named-checkconf
 7-11 ~]# systemctl start named
+7-11 ~]# systemctl enable named
 7-11 ~]# netstat -luntp|grep 53
 ~~~
 
