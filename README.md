@@ -139,7 +139,7 @@
 
 ##### 资料参考：
 
-[深入剖析kubernetes](https://time.geekbang.org/column/intro/116)也可以免费下载（在Docker章节最下面）
+[深入剖析kubernetes](https://time.geekbang.org/column/intro/116)也可以[免费下载（在Docker章节最下面）](https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%80%E7%AB%A0%E2%80%94%E2%80%94Docker%EF%BC%88%E5%B7%B2%E7%86%9F%E6%82%89%E7%9A%84%E5%8F%AF%E4%BB%A5%E4%BB%8E%E7%AC%AC%E4%BA%8C%E7%AB%A0%E5%BC%80%E5%A7%8B%EF%BC%89.md#docker%E9%83%A8%E5%88%86%E5%AE%8C%E7%BB%93)
 
 [老男孩教育K8S容器云架构师1期](https://www.luffycity.com/home)
 
@@ -168,4 +168,3 @@ QQ群号：676040917（群未回的，请一定要提Issues或者发邮件给作
 <p> 本人水平有限，文字代码难免有遗漏错误的地方，望不吝赐教，万分感谢。
 <p> Email：909336740@qq.com
 <p> PS：看到点赞很开心，谢谢😊
-
