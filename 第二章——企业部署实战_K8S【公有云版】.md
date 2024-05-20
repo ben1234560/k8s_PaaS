@@ -215,7 +215,7 @@ yum-utils-1.1.31-54.el7_8.noarch
 > - **install**：安装
 > - **-y**：当安装过程提示选择全部为"yes"
 
-<img src="assets/WX20230511-152710@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
+<img src="assets/WX20230511-152710@2x.png">
 
 后续代理后，yum安装会出现网络等问题，为了减少处理的时间，我们提前下载
 
@@ -304,7 +304,7 @@ IPV6_PRIUACY=no
 > BOOTPROTO=dhcp
 > ONBOOT=yes
 
-<img src="assets/WX20230511-152352@2x.png" alt="image-实操图" style="zoom:50%;" align="left"/>
+<img src="assets/WX20230511-152352@2x.png" >
 
 
 
@@ -344,7 +344,7 @@ dnssec-validation no;  # 原本是yes
 > - **allow-query**：哪些客户端能通过自建的DNS查
 > - **forwarders**：上级DNS是什么
 
-<img src="assets/WX20230511-153237@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-153237@2x.png"  />
 
 
 
@@ -366,7 +366,7 @@ zone "od.com" IN {
 
 ~~~
 
-<img src="assets/WX20230511-153512@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-153512@2x.png" >
 
 > **注意：**当配置11机器内网ip后，该机器应保存运行状态，重启后其它机器可能无法连接外网。@https://github.com/xinzhuxiansheng感谢建议！
 
@@ -427,7 +427,7 @@ dns                A    172.27.139.122
 >
 > **netstat -luntp**：显示 tcp,udp 的端口和进程等相关情况
 
-<img src="assets/WX20230511-153817@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-153817@2x.png" />
 
 ~~~
 # 11机器，检查主机域是否解析
@@ -446,7 +446,7 @@ DNS1=172.27.139.122
 >
 > - **+short**：表示只返回IP
 
-<img src="assets/WX20230511-154100@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-154100@2x.png" />
 
 ~~~
 # 在非11机器上，最下面追加dns1=11机器内网ip
@@ -463,7 +463,7 @@ DNS1=172.27.139.122
 
 > 让其它机器的DNS全部改成11机器的好处是，全部的机器访问外网就只有通过11端口，更好控制
 
-<img src="assets/WX20230511-154412@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-154412@2x.png"  />
 
 机器准备工作完成:tada:
 
@@ -507,7 +507,7 @@ DNS1=172.27.139.122
 200 ~]# which cfssl-certinfo
 ~~~
 
-<img src="assets/WX20230511-155452@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-155452@2x.png" />
 
 
 
@@ -564,7 +564,7 @@ certs]# cat ca.pem
 >
 > <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E4%B8%AD%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E5%AD%97%E6%AE%B5%E7%9A%84%E5%90%AB%E4%B9%89%E5%92%8C%E7%94%A8%E6%B3%95">Pod中几个重要字段的含义和用法</a>
 
-<img src="assets/WX20230511-155653@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-155653@2x.png" />
 
 
 
@@ -608,6 +608,7 @@ certs]# cat ca.pem
 
 报错信息：
 
+```bash
 http://mirrors.cloud.aliyuncs.com/centos/7/updates/x86_64/Packages/libxml2-2.9.1-6.el7_9.6.x86_64.rpm: [Errno 14] curl#6 - "Could not resolve host: mirrors.cloud.aliyuncs.com; Unknown error"
 Trying other mirror.
 
@@ -617,6 +618,9 @@ Error downloading packages:
   yum-utils-1.1.31-54.el7_8.noarch: [Errno 256] No more mirrors to try.
   python-chardet-2.2.1-3.el7.noarch: [Errno 256] No more mirrors to try.
   libxml2-python-2.9.1-6.el7_9.6.x86_64: [Errno 256] No more mirrors to try.
+```
+
+
 
 原因：yum源出现问题
 
@@ -632,7 +636,7 @@ yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/d
 yum install -y docker-ce
 ~~~
 
-<img src="assets/WX20230511-162032@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-162032@2x.png" />
 
 
 
@@ -719,9 +723,9 @@ location: /data/harbor/logs
 200 harbor]# ./install.sh
 ~~~
 
-<img src="assets/WX20230511-165532@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-165532@2x.png" />
 
-<img src="assets/WX20230511-165640@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-165640@2x.png" />
 
 
 
@@ -817,7 +821,7 @@ harbor             A    172.27.139.121
 # out:172.29.238.162
 ~~~
 
-<img src="assets/WX20230511-163252@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-163252@2x.png" />
 
 ~~~
 # 200机器上curl：
@@ -831,11 +835,11 @@ harbor]# curl harbor.od.com
 > 永久关闭，改配置文件 vi /etc/selinux/config
 > SELINUX=disabled
 
-<img src="assets/WX20230511-163549@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-163549@2x.png"/>
 
 公有云的安全组添加tcp 180端口权限
 
-<img src="assets/WX20230511-164140@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-164140@2x.png" />
 
 在本机（window/mac）hosts，在文件末尾添加新的 DNS 域名解析（确保能telnet通），如：
 
@@ -845,9 +849,9 @@ harbor]# curl harbor.od.com
 
 [访问harbor.od.com:180](harbor.od.com:180)
 
-<img src="assets/WX20230511-190408@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-190408@2x.png"  />
 
-<img src="assets/WX20230512-095227@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-095227@2x.png"  />
 
 ~~~
 账号：admin
@@ -885,7 +889,7 @@ harbor]# docker push harbor.od.com/public/nginx:v1.7.9
 ~]curl -u "admin:Harbor12345" -X GET "http://harbor.od.com/api/projects"
 ~~~
 
-<img src="assets/WX20230511-191809@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-191809@2x.png"  />
 
 检查推送nginx是否成功
 
@@ -1005,7 +1009,7 @@ certs]# ll
 >
 > **cfssl gencert**：生成证书
 
-<img src="assets/WX20230512-100209@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-100209@2x.png"  />
 
 ~~~
 # 12/21/22机器，安装etcd：
@@ -1042,7 +1046,7 @@ opt]# cd etcd
 >
 > **-M**：不要自动建立用户的登入目录
 
-<img src="assets/WX20230511-194515@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230511-194515@2x.png"  />
 
 ~~~
 # 12/21/22机器：
@@ -1097,7 +1101,7 @@ etcd]# ll
 >
 > **ll**：列出权限、大小、名称等信息
 
-<img src="assets/WX20230512-105320@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-105320@2x.png"  />
 
 ~~~
 # 12/21/22机器，我们同时需要supervisor（守护进程工具）来确保etcd是启动的，后面还会不断用到：
@@ -1150,7 +1154,7 @@ tcp        0      0 172.27.139.119:2380     0.0.0.0:*               LISTEN      
 22 etcd]# ./etcdctl member list
 ~~~
 
-<img src="assets/WX20230512-154055@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-154055@2x.png"  />
 
 > 这里你再哪个机器先update，哪个机器就是leader
 
@@ -1200,7 +1204,7 @@ bin]# ll
 >
 > ***.tar**： 这里的*的意思是模糊法，即只要你的结尾是.tar的都匹配上加上rm，就是把所有.tar结尾的文件都删除
 
-<img src="assets/WX20230512-113733@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-113733@2x.png"  />
 
 ~~~
 # 200机器，签发client证书：
@@ -1229,7 +1233,7 @@ bin]# ll
 200 certs]# ll
 ~~~
 
-<img src="assets/WX20230512-133747@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-133747@2x.png" />
 
 ~~~
 # 200机器，给API-server做证书，其中"127.0.0.1"和"192.168.0.1"不变，下面4个ip分别是当前网段.10做虚拟vip、21机器ip、22机器ip以及预留的23机器ip（后续如果需要则扩容，也可以不填）
@@ -1269,7 +1273,7 @@ bin]# ll
 
 > 请确保作为虚拟vip172.27.139.10并不真实存在，ping 172.27.139.10应该是不通的
 
-<img src="assets/WX20230512-141539@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-141539@2x.png"  />
 
 ~~~
 # 21/22机器：
@@ -1437,7 +1441,7 @@ bin]# supervisorctl status
 >
 > - 可以参考这篇文章[点击跳转](https://www.baidu.com/link?url=tFECOG31lKlcqDWeAZGF1VyjhzVAN9vUKHKEKKw5G8y0AC8MKpJxSZeL647MIFdw&wd=&eqid=dafe84b80019e4a3000000065e51d2e2)，当然这里的audit.yaml可能会有些不一样，但是我们后面用到的yaml文件就很相似了
 
-<img src="assets/WX20230512-143347@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-143347@2x.png"  />
 
 > <a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E5%8E%9F%E7%90%86%E5%8F%8A%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/Kubernetes%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5.md#pod%E7%9A%84%E5%87%A0%E7%A7%8D%E7%8A%B6%E6%80%81">Pod的几种状态</a>
 
@@ -1590,7 +1594,7 @@ vrrp_instance VI_1 {
 11 ~]# ip add
 ~~~
 
-<img src="assets/WX20230512-144506@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-144506@2x.png" />
 
 确保21/22机器能够telnet通虚拟vip 10的7443端口
 
@@ -1925,7 +1929,7 @@ bin]# kubectl label node hdss7-22.host.com node-role.kubernetes.io/node=
 bin]# kubectl get nodes
 ~~~
 
-<img src="assets/WX20230512-155833@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-155833@2x.png"  />
 
 完成
 
@@ -2029,7 +2033,7 @@ done
 >
 > **./ipvs.sh**：运行文件
 
-<img src="assets/WX20230512-161204@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-161204@2x.png" />
 
 ~~~
 # 21/22机器：
@@ -2094,7 +2098,7 @@ kubernetes   ClusterIP   192.168.0.1   <none>        443/TCP   154m
 >
 > **ipvsadm -Ln** ：查看当前配置的虚拟服务和各个RS的权重
 
-<img src="assets/WX20230512-170820@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-170820@2x.png"  />
 
 ~~~
 # 验证一下集群，21机器(在任意节点机器，我选的是21)：
@@ -2135,7 +2139,7 @@ nginx-ds-tv6dk   1/1     Running   0          13s   172.7.21.2   hdss7-21.host.c
 >
 > - 可以参考这篇文章[点击跳转](https://www.baidu.com/link?url=tFECOG31lKlcqDWeAZGF1VyjhzVAN9vUKHKEKKw5G8y0AC8MKpJxSZeL647MIFdw&wd=&eqid=dafe84b80019e4a3000000065e51d2e2)，这里的nginx-ds.yaml建议自己手敲一遍，敲的同时要知道自己敲的是什么，记住，yaml语法不允许使用Tab键，只允许空格
 
-<img src="assets/WX20230512-171106@2x.png" alt="image-实操图" align="left" style="zoom:50%;" />
+<img src="assets/WX20230512-171106@2x.png"  />
 
 恭喜:tada::tada::tada:
 
