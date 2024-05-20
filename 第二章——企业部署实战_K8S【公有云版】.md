@@ -691,7 +691,7 @@ location: /data/harbor/logs
 >
 > 如图#https:
 >
-> ![1635775214057](/Users/xueweiguo/Desktop/GitHub/k8s_PaaS/assets/1635775214057.png)
+> ![1635775214057](assets/1635775214057.png)
 >
 > 感谢@https://github.com/xinzhuxiansheng
 >
