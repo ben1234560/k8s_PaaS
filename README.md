@@ -95,7 +95,7 @@
       <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E5%85%AD%E7%AB%A0%E2%80%94%E2%80%94%E5%9C%A8K8S%E4%B8%AD%E9%9B%86%E6%88%90Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83.md#%E5%AE%9E%E6%88%98%E6%BC%94%E7%A4%BA%E9%A1%B9%E7%9B%AE%E6%8F%90%E6%B5%8B%E5%8F%91%E7%89%88%E6%B5%81%E7%A8%8B">实战演示项目提测，发版流程</a>
     </ul>
   </li>
-  <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E7%BA%A7%E5%BA%94%E7%94%A8.md">第七章——Promtheus监控k8s企业家应用</a>
+  <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E7%BA%A7%E5%BA%94%E7%94%A8.md">第七章——Promtheus监控k8s企业级应用</a>
     <ul>
       <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E7%BA%A7%E5%BA%94%E7%94%A8.md#prometheus%E7%9B%91%E6%8E%A7%E8%BD%AF%E4%BB%B6%E6%A6%82%E8%BF%B0">Prometheus监控软件概述</a>
       <li><a href="https://github.com/ben1234560/k8s_PaaS/blob/master/%E7%AC%AC%E4%B8%83%E7%AB%A0%E2%80%94%E2%80%94Promtheus%E7%9B%91%E6%8E%A7k8s%E4%BC%81%E4%B8%9A%E7%BA%A7%E5%BA%94%E7%94%A8.md#%E4%BA%A4%E4%BB%98kube-state-metric">交付kube-state-metric</a>
