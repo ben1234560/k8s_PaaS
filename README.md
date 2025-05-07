@@ -153,7 +153,7 @@
 
 群内禁止一切广告，只为解决问题而存在。
 
-首群的QQ群号：676040917
+首群的QQ群号：676040917（满员了）
 
 <div align='left'>
     <img src="assets/1637049717005.png" alt="qq_group" style="max-width: 100%;">
