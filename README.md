@@ -148,7 +148,7 @@
 2025年5月1日创建了新群，QQ群号：1045126911（群未回的，请一定要提Issues或者发邮件给作者）
 
 <div align='left'>
-    <img src="assets/20250507161451121.png" alt="qq_group1" style="max-width: 35%;">
+    <img src="assets/20250507161451121.png" alt="qq_group1" style="width: 270px; height: auto;">
 </div>
 
 群内禁止一切广告，只为解决问题而存在。
